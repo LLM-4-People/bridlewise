@@ -179,11 +179,11 @@ The public smoke tests verify the launcher, the typed `harness` refusal, the `pr
 | [CI: Build and verify](https://github.com/LLM-4-People/bridlewise/actions/workflows/ci.yml) | Typechecks, secret scan, 11 public smoke tests, both builds, guardian build and tests |
 | [Secret and privacy scan](https://github.com/LLM-4-People/bridlewise/actions/workflows/secret-scan.yml) | The tracked tree passes the public-snapshot scanner |
 | [CodeQL and code scanning](https://github.com/LLM-4-People/bridlewise/security) | Analysis runs; the open alert queue is visible and not claimed clean |
-| [Scorecard](https://scorecard.dev/viewer/?uri=github.com/LLM-4-People/bridlewise) | Repository hygiene, scored 4.4 in the 2026-10-19 snapshot; a heuristic, not an audit |
+| [Scorecard](https://scorecard.dev/viewer/?uri=github.com/LLM-4-People/bridlewise) | Repository hygiene, scored 5.8 in the 2026-10-19 snapshot; a heuristic, not an audit |
 | [Product smoke suite](https://github.com/LLM-4-People/bridlewise/blob/main/tests/public/README.md) | 11/11 on a fresh clone |
 | [Testing-floor smoke suite](https://github.com/LLM-4-People/bridlewise-testing) | 13/13; the larger prevention and benchmark floor lives there with extra prerequisites |
 | [Guardian tests](https://github.com/LLM-4-People/bridlewise/tree/main/engine/guardian/tests) | 40/40 in CI; 44/44 where the mount-namespace checks run; a skip is not a pass |
-| [Release v0.0.2-preview](https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.2-preview) | Source, cockpit, engine bundle, SPDX SBOMs, and SHA256SUMS; build provenance attestation |
+| [Release v0.0.2-preview](https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.2-preview) | Prerelease: source, cockpit, engine bundle, SPDX SBOMs, verified SHA256SUMS, and build provenance attestation |
 | [Docs links](https://github.com/LLM-4-People/bridlewise/actions/workflows/docs-links.yml) | Relative Markdown links resolve in the tracked tree; the same check runs in CI |
 
 [Evidence, not vibes](https://llm-4-people.github.io/bridlewise/evidence/) gives the commands, the expected output, and a candid list of what none of this proves.

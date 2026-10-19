@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "Known issues and current gaps"
-description: "The honest gap register for the Bridlewise developer preview: pre-admission, missing audit, unpublished corpus, open alerts, Linux-only confinement, and more."
+description: "The honest gap register for the Bridlewise developer preview: pre-admission, missing audit, unpublished corpus, dependency queues, Linux-only confinement, and more."
 permalink: /known-issues/
 ---
 
@@ -16,7 +16,7 @@ This is a gap register, not a roadmap promise. Every item below is known, stated
 | [Pre-admission](#1-pre-admission) | The readiness receipt says no; interactive capabilities are denied by the root policy | Open, by design for the preview |
 | [No security audit](#2-no-security-audit) | No independent assurance; unknown vulnerabilities may remain | Open |
 | [Full corpus not published](#3-full-corpus-not-published) | The complete engine suite is not reproducible from a fresh clone | By design for now |
-| [Dependency alerts not fully triaged](#4-dependency-alerts-not-fully-triaged) | The queue can lag behind lockfile fixes; future advisories will reappear | Closed for the current lockfiles |
+| [Dependency alerts can return](#4-dependency-alerts-can-return) | New advisories can reopen the queue at any time | Closed for the current lockfiles |
 | [CodeQL findings](#5-codeql-findings) | Static-analysis findings need review; test-only and false positives must not hide a real one | Closed for the current analysis |
 | [Linux-only confinement](#6-linux-only-confinement) | No OS-level filesystem boundary on macOS or Windows | By design |
 | [Provider coverage](#7-provider-coverage) | Only OpenAI-style protocols are verified; native Anthropic and Gemini adapters are not | Partial |
@@ -60,7 +60,7 @@ Read the capability decisions, not just the boolean. Use a disposable copy. Trea
 
 **Status:** By design for now. See [Testing]({{ '/testing/' | relative_url }}#development-floor-setup) and the [testing floor](https://github.com/LLM-4-People/bridlewise-testing).
 
-## 4. Dependency alerts not fully triaged
+## 4. Dependency alerts can return
 
 **What it is.** At the 2026-10-19 snapshot, the product repository had 21 open Dependabot alerts, mostly transitive or development dependencies. The lockfiles were then updated: `npm audit` reports **0 vulnerabilities** in the root and engine trees, and the production-only audit is clean. The engine's former `@xenova/transformers` tree was moved to an optional peer so its vulnerable `sharp`/`protobufjs` chain is not installed by default. Dependabot's queue may lag until its next scan.
 
@@ -72,7 +72,7 @@ Read the capability decisions, not just the boolean. Use a disposable copy. Trea
 
 ## 5. CodeQL findings
 
-**What it is.** CodeQL analysis runs and uploads results. At the 2026-10-19 snapshot, the product repository had 15 open security-query alerts plus 29 OpenSSF Scorecard checks in the same queue. The code was then changed: unknown server errors no longer expose arbitrary messages, HTML script-tag parsing is case-insensitive, and action references and token permissions were hardened. Test-only, benchmark, and documented-limitation findings were dismissed with path-specific reasons. The queue is pending a fresh analysis.
+**What it is.** CodeQL analysis runs and uploads results. At the 2026-10-19 snapshot, the product repository had 15 open security-query alerts plus 29 OpenSSF Scorecard checks in the same queue. The code was then changed: unknown server errors no longer expose arbitrary messages, HTML script-tag parsing is case-insensitive, and action references and token permissions were hardened. Test-only, benchmark, and documented-limitation findings were dismissed with path-specific reasons. The reviewed script-tag false positive also carries an inline suppression with the reason in the source.
 
 **Impact.** A dismissed finding is not a fixed finding unless the comment says so. A green CodeQL workflow proves the analyzer ran, not that the code is clean. The preview does not claim a clean scan.
 
@@ -106,7 +106,7 @@ Read the capability decisions, not just the boolean. Use a disposable copy. Trea
 
 **Impact.** `SHA256SUMS` proves the downloaded bytes match the published list. A provenance attestation says which workflow and commit produced the asset under GitHub's OIDC identity; it does not prove the source is correct, the build is reproducible, or the maintainer account was uncompromised. A tag ruleset reduces accidental or forced tag movement but is not a signature.
 
-**Mitigation.** Build from source and compare what you run. Verify checksums and `gh attestation verify` for the new release. Review the commit and the workflow. Do not treat the release as a deployment artifact.
+**Mitigation.** Build from source and compare what you run. For `v0.0.2-preview`, all five checksummed assets passed `sha256sum -c`, the release is marked prerelease with six assets, and `gh attestation verify` exited `0` for the source archive. Review the commit and the workflow. Do not treat the release as a deployment artifact.
 
 **Status:** Partial. Provenance and SBOM are added for new releases; OS signing and independent audit remain absent. See [Shipping and releases]({{ '/shipping/' | relative_url }}) and [Evidence]({{ '/evidence/' | relative_url }}#5-the-release).
 

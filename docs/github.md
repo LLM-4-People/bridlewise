@@ -92,7 +92,7 @@ The [v0.0.2-preview release](https://github.com/LLM-4-People/bridlewise/releases
 - `bridlewise-v0.0.2-preview-sbom-web.spdx.json` and `...-engine.spdx.json` — SPDX SBOMs;
 - `SHA256SUMS` — checksums for all assets.
 
-The `v0.0.2-preview` assets are not OS-signed. They carry SPDX SBOMs and a GitHub build-provenance attestation; the attestation is signed by GitHub's OIDC identity, not by a maintainer key, and it is not a reproducible-build proof. `SHA256SUMS` proves that the bytes you downloaded match the published list. See [Evidence]({{ '/evidence/' | relative_url }}) for the verification command.
+The release is a **prerelease**, and its assets are not OS-signed. All five checksummed assets passed `sha256sum -c` on 2026-10-19 (the release has six assets, including `SHA256SUMS`); the source archive passed `gh attestation verify`. The provenance attestation is signed by GitHub's OIDC identity, not by a maintainer key, and it is not a reproducible-build proof. `SHA256SUMS` proves that the bytes you downloaded match the published list. See [Evidence]({{ '/evidence/' | relative_url }}) for the verification commands.
 
 ## Rulesets: the gate that exists, and the review that does not
 
@@ -126,7 +126,7 @@ That is a useful disposable workspace. It is not a governed run, and it does not
 
 **Topics** are luggage tags. The product repository carries `agpl`, `ai`, `coding-agents`, `developer-tools`, `landlock`, `llm`, `local-first`, `nodejs`, `sqlite`, `svelte`, and `typescript`. They help someone find the project; they do not describe its readiness.
 
-**Citation** is a return address. `CITATION.cff` names the project, version `0.0.1-preview`, license, repository, site, and release date. It makes the work citable. It does not make it peer-reviewed.
+**Citation** is a return address. `CITATION.cff` names the project, version `0.0.2-preview`, license, repository, site, and release date. It makes the work citable. It does not make it peer-reviewed.
 
 ## What the record does not show
 
