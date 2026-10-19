@@ -1324,7 +1324,7 @@ const ROOT_POLICY_VALUE = {
     binaryRelativePath: "guardian/build/harness-landlock-guardian",
     binarySha256: "28ee831d1359c87d339f36899de33d5de9c246d1294f556430c3b6d1a30fb9c1",
     bundleRelativePath: "dist/bundle.js",
-    bundleSha256: "ab1600fbb6f68e6d9f0350ad9634af761525c6172f3dc52a8267243877ae4223",
+    bundleSha256: "c4c57f62f68386f27fe61a2dde7511c6d8f817d53f28331d962a500faaa92ad5",
     specSchemaArtifactPath: "traceability/self-protection/guardian-spec-schema.json",
     specSchemaArtifactSha256: "689cf67a9a516786b6fedae6716c94c07c818d97b144393e1eb8d26b89668d70",
     /**

@@ -1773,7 +1773,7 @@ export const ARCHITECTURE_MANIFEST: ArchitectureManifest = deepFreeze({
     moduleContract({
       id: "shared-memory-retrieval-embeddings", path: "src/shared/memory/retrieval/embeddings.ts", realm: "shared", layer: "domain",
       owner: "shared-memory-retrieval", publicApi: { exportCount: 5, namesSha256: "e9fd0d58ddf875c29a4ddaa3561f8aa27d7035551a52a134b7a6efd8332d1775" },
-      dependencies: ["@xenova/transformers","src/kernel/errors.ts","src/shared/debug/debug-system.ts","src/shared/memory/memory-config.ts"],
+      dependencies: ["src/kernel/errors.ts","src/shared/debug/debug-system.ts","src/shared/memory/memory-config.ts"],
     }),
     moduleContract({
       id: "shared-memory-retrieval-hnsw", path: "src/shared/memory/retrieval/hnsw.ts", realm: "shared", layer: "domain",
@@ -2373,7 +2373,7 @@ export const ARCHITECTURE_MANIFEST: ArchitectureManifest = deepFreeze({
     moduleContract({
       id: "src-memory-tool-result-retrieval", path: "src/memory/tool-result-retrieval.ts", realm: "runtime", layer: "domain",
       owner: "memory", publicApi: { exportCount: 18, namesSha256: "f4848509729c0ce4a3f2bed0a7ff44a7464f61e7ceaa12fd5b465e22f83ce73e" },
-      dependencies: ["@xenova/transformers","src/kernel/errors.ts","src/kernel/integrity.ts","src/shared/memory/retrieval/cosine.ts","src/shared/memory/retrieval/text-utils.ts","src/shared/memory/retrieval/tfidf.ts"],
+      dependencies: ["src/kernel/errors.ts","src/kernel/integrity.ts","src/shared/memory/retrieval/cosine.ts","src/shared/memory/retrieval/text-utils.ts","src/shared/memory/retrieval/tfidf.ts"],
     }),
     moduleContract({
       id: "src-memory-tool-result-store", path: "src/memory/tool-result-store.ts", realm: "runtime", layer: "domain",
@@ -2413,7 +2413,7 @@ export const ARCHITECTURE_MANIFEST: ArchitectureManifest = deepFreeze({
     moduleContract({
       id: "src-memory-unified-unified-embeddings", path: "src/memory/unified/unified-embeddings.ts", realm: "runtime", layer: "domain",
       owner: "memory", publicApi: { exportCount: 7, namesSha256: "6101df4507f21e7a3f7bde02e3e05cf4968fef16ed2050450c6d899da779a67c" },
-      dependencies: ["@xenova/transformers","src/kernel/errors.ts","src/kernel/integrity.ts"],
+      dependencies: ["src/kernel/errors.ts","src/kernel/integrity.ts"],
     }),
     moduleContract({
       id: "src-memory-unified-index", path: "src/memory/unified/index.ts", realm: "runtime", layer: "domain",
