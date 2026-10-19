@@ -84,6 +84,7 @@ jobs:
         run: |
           gh release create "$TAG" \
             --title "Bridlewise $TAG (developer preview)" \
+            --prerelease \
             --notes "**Developer preview. Not production-ready. Do not use Bridlewise with sensitive, proprietary, regulated, or production codebases.** Every release is a preview: the source, cockpit build, and engine bundle are attached for inspection, not for deployment. Read the repository warning and SECURITY.md before running anything." \
             --generate-notes \
             --verify-tag \
