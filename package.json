@@ -1,0 +1,57 @@
+{
+  "name": "bridlewise-web",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Bridlewise cockpit: a local-first, inspectable coding harness (developer preview).",
+  "engines": {
+    "node": ">=24.18.0 <25.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "dev:api": "node --experimental-strip-types server/index.ts",
+    "dev:all": "node --experimental-strip-types scripts/dev-all.ts",
+    "dev:stop": "node --experimental-strip-types scripts/dev-stop.ts",
+    "db-key": "node --experimental-strip-types scripts/db-key.ts",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "node --experimental-strip-types server/index.ts",
+    "typecheck:client": "tsc --noEmit --checkers 1 -p tsconfig.json",
+    "typecheck:server": "tsc --noEmit --checkers 1 -p tsconfig.server.json",
+    "typecheck": "npm run typecheck:client && npm run typecheck:server",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "verify": "npm run typecheck && npm run check:secrets && npm run test:public && npm run build",
+    "bridlewise": "node bin/bridlewise.mjs",
+    "preflight": "node bin/bridlewise.mjs preflight",
+    "test:public": "node --test tests/public/*.test.mjs"
+  },
+  "dependencies": {
+    "nanostores": "^1.4.1",
+    "tree-sitter-wasms": "^0.1.13",
+    "web-tree-sitter": "^0.22.6",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.2.0",
+    "@types/node": "^24.13.3",
+    "svelte": "^5.56.7",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.5"
+  },
+  "license": "AGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LLM-4-People/bridlewise.git"
+  },
+  "homepage": "https://llm-4-people.github.io/bridlewise/",
+  "bugs": {
+    "url": "https://github.com/LLM-4-People/bridlewise/issues"
+  },
+  "author": {
+    "name": "Bridlewise contributors"
+  },
+  "packageManager": "npm@11.19.0",
+  "bin": {
+    "bridlewise": "./bin/bridlewise.mjs"
+  }
+}

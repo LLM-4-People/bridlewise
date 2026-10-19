@@ -1,0 +1,118 @@
+# EVERY PATTERN SAYS WHICH OF TWO THINGS IT MEANS.
+#
+# A leading `/` names ONE place, resolved relative to this file — so it keeps
+# meaning the right place if this tree becomes a subdirectory of another. A
+# leading `**/` means every depth, on purpose. A pattern with neither behaves
+# exactly like `**/` and nobody said so, which is how a rule written for one
+# output directory comes to swallow a source directory somebody adds later,
+# or another tree's tracked files once the trees are merged.
+#
+# `.bkp` is anchored for exactly that reason. The reason was measured at the
+# assembly: another repository in this workspace TRACKED seven files under a
+# `.bkp/` directory, and an every-depth rule here would have taken them out of
+# the index the moment the trees became one — silently, because `mv` plus
+# `git add -A` exits 0 and leaves `git status` clean.
+#
+# THOSE SEVEN ARE GONE NOW (the root's clean-up retired them and the root
+# ignores `/.bkp/` itself), so the anchoring no longer defends a live file.
+# It stays anyway, and not out of caution: `.bkp/` is where this workspace's
+# own convention says to put a file before mutating it, so the directory is
+# expected to keep reappearing at whichever root someone is working in, and an
+# every-depth rule here would reach every one of them. Each root ignores its
+# own, which is what makes each root's rule reviewable.
+
+# The merge round's STAGING TREE, and it is declared here because here is
+# where it lands. `scripts/harness-root/merge-round.mjs` builds it at
+# `resolve(integrationDir, ".staging")`, and the integration directory IS this
+# one — so the staging tree is `<this root>/.staging`, never the enclosing
+# root's. The enclosing root carried the rule for a while and it defended a
+# place nothing writes; anchored patterns resolve relative to the file that
+# declares them, so only this file can name the real one.
+#
+# It is not transient in the way the lock and the report are: `--no-e2e`
+# deliberately leaves the staging tree in place for inspection rather than
+# deleting it, so the window in which it can be committed is as long as
+# somebody's inspection takes.
+/.staging/
+
+# Dependencies and build output. Every-depth on purpose: npm creates nested
+# `node_modules`, and build output lands beside whatever produced it.
+**/node_modules/
+**/dist/
+**/*.tsbuildinfo
+
+# A nested `.git` belongs to a vendored checkout, never to this repository.
+**/.git/
+
+# Large vendored trees and generated working state, all at this root.
+#
+# `/large-codebases` carries NO trailing slash, and that is measured rather
+# than stylistic: it is a SYMLINK to the sibling tree, and a trailing slash
+# makes git match directories only — a symlink is not one. Adding the slash
+# for consistency took it out of the ignore set and it appeared as untracked.
+# The two below are real directories and keep their slash.
+/large-codebases
+/babel-work/
+/.bkp/
+
+# A merge manifest at a repository ROOT is a stray copy, always.
+#
+# `scripts/harness-root/merge-round.mjs` reads `<experiments-root>/<expNNN-…>/
+# merge-manifest.json` — one level down from the experiments root it is given
+# on the command line, never at a repository root — so a manifest sitting HERE
+# was copied aside by somebody looking at it and then committed. Three of them
+# were (`merge-manifest.json`, `-exp470`, `-exp472`), and five more at the
+# other root.
+#
+# ANCHORED, and that is the whole point of the rule: the every-depth spelling
+# would ignore the manifests the merge tool actually reads, which are the one
+# input the round cannot run without. The rule names the wrong PLACE for a
+# file whose right place is one directory deeper.
+/merge-manifest*.json
+
+# `/experiments/` — the 27 files recording this tree's own closed experiment
+# rounds lived HERE until the experiments-shape decision (the archive now
+# sits at the repository root under `experiments/`, tracked as a record).
+# The rule stays: it is anchored to this subtree and keeps any future stray
+# `engine/experiments/` from being committed beside the engine.
+#
+# (The evidence archive `traceability/evidence/` is a tracked record, named by
+# no rule: what ships to the product branch is the promotion profile's answer
+# — `promotion/testing-to-master.json` excludes it — never an ignore rule. The
+# anchored rule and its re-admission that made it "floor bytes" retired with
+# the merge door, PROMO-4.)
+/experiments/
+
+# Harness runtime state (databases, caches, ledgers). Every-depth: a harness
+# run writes one wherever its project root is, including under a fixture.
+**/.bridlewise/
+
+# Compiled guardian binary and benchmark run output. Both already name a
+# path, so git resolves them relative to this file and they move with it.
+guardian/build/
+verification/benchmarks/evaluation/runs/
+
+# Python bytecode, which lands beside its source.
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# SQLite databases and their write-ahead sidecars, wherever a run writes one.
+**/*.db
+**/*.db-shm
+**/*.db-wal
+
+# Two TRACKED experiment logs live under scripts/ here. Before the monorepo
+# assembly nothing ignored them; the merged root now carries an every-depth
+# `**/*.log`, which reached them. They are recorded evidence, not build output,
+# so they are named back in one by one — a blanket `!/scripts/**/*.log` would
+# also re-admit every future run's output, which the root rule is right about.
+!/scripts/exp/exp392-C-test.log
+!/scripts/exp463/exp463-scale10.log
+
+# The confinement guard's per-process config, written beside this root for the
+# lifetime of one probe (the runner derives the harness root from the config's
+# location, so the file cannot live anywhere else) and deleted when the probe
+# ends. A whole-tree census that runs mid-probe would otherwise call the file
+# undeclared residue. Anchored: the file always lands at exactly this root.
+/.confinement-test-*.json

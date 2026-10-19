@@ -1,0 +1,2213 @@
+/**
+ * CARBON / LOGBOOK — the cockpit visual system. DESIGN-COCKPIT-V2 §12.
+ *
+ * The ONLY visual-constant owner for `src/cockpit/**`. No cockpit component
+ * may declare a color, duration, radius, space or font literal in its own
+ * <style> block (guard: tests/cockpit/cockpit-tokens-owner.test.ts).
+ *
+ * ZERO imports from the old token file (`src/styles/tokens.css`): no
+ * `--color-*`, `--font-*`, `--spacing-*`, `--duration-*` names are consumed
+ * here or in any cockpit component. The two systems share a page only until
+ * cutover (§13), at which point the old file dies.
+ *
+ * Character: instrument glass over a paper logbook — cool carbon grounds,
+ * engraved micro-labels, ONE electron-beam hue for "live", and a light
+ * theme that is a real paper logbook, not an inverted dark theme.
+ *
+ * Fonts (§12.4): IBM Plex Sans / IBM Plex Mono. No CDN is permitted and no
+ * woff2 is vendored in this repo yet, so the stacks lead with the Plex
+ * faces (used when locally installed) and fall back to the system stack.
+ * Self-hosting the two latin-subset woff2 files is an open task — when they
+ * land under `public/fonts/`, the @font-face blocks belong HERE and nowhere
+ * else. Both fallback stacks are chosen for true tabular figures.
+ */
+
+:root {
+  /* ── §12.1 Ground (dark default — "carbon") ─────────────────────────── */
+  --ground-0: #101216; /* app ground — cool, hue ~250, chroma ≈ 0 */
+  --ground-1: #15181d; /* flow bleed rows, sweep housing */
+  --ground-2: #1b1f25; /* beats, cells, desk */
+  --ground-3: #232830; /* raised: sheets, grammar menu */
+  --line-1: #262b33; /* hairline */
+  --line-2: #39404b; /* structural rule, bezel */
+
+  /* ── §12.2 Ink, beam, alarm ─────────────────────────────────────────── */
+  --ink-1: #e8ebef;
+  --ink-2: #a6adb8;
+  --ink-3: #79818d;
+  --ink-4: #4d545e; /* disabled only */
+
+  /* THE one live hue — electron-beam blue. Spent ONLY on: streaming caret,
+   * the bead, sweep head + now edge, causal ribbons, the registration
+   * caret, live chips. Its rarity is the meaning. There is no "info" blue. */
+  --beam: #8fd3ff;
+  /* Shared expressive accents: primary actions, saved captures and active
+   * selection. Outcome warnings/errors retain their distinct semantics. */
+  --accent: var(--beam);
+  --accent-secondary: var(--cat-heal);
+  --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-capture: var(--cat-finding);
+  --login-w: 540px;
+  --f-display-size: clamp(30px, 4vw, 44px);
+  --f-display-track: -0.035em;
+  --ok: #5fc78e;
+  --warn: #d9a84e;
+  --alarm: #e26a5f;
+
+  /* Interaction states — luminance layers, never hue (§12.2). */
+  --layer-hover: rgba(232, 235, 239, 0.05);
+  --layer-select: rgba(232, 235, 239, 0.08);
+  --layer-press: rgba(232, 235, 239, 0.13);
+  /* THE REFUSED/UNAVAILABLE INK — the state a CONTROL wears when it cannot
+   * be used (disabled) or will not be used (refused). This used to be faked
+   * as `--ink-4`, and the first version of this token was declared AS
+   * `var(--ink-4)` — an alias of the thing it replaced, so the migration
+   * would have changed every spelling and no pixel. `--ink-4`'s job in this
+   * system is "the faintest ink that still reads" (placeholder text, canvas
+   * grid ink, retired rows); an unusable control is not faint text, it is a
+   * DIFFERENT promise — the affordance is withdrawn. So the disabled ink is
+   * deliberately a half-step DARKER than the faintest text ink: a disabled
+   * control reads as recessed, not as quiet writing. Still one step of the
+   * same achromatic ramp (never a hue — a refused control is not a warning),
+   * still consumed through the owned control recipe below, and re-derived by
+   * the logbook theme like every other ink. */
+  --layer-disabled: #454b53;
+
+  /* ── THE ANSWER AXIS — what a surface says when it has no content ───────
+   * The four states are declared in `response/grammar.ts`, which is the
+   * source of truth for the SET; these are their inks and nothing more. The
+   * contract that the two cannot drift is mechanical: the grammar exports
+   * `REQUIRED_STATE_TOKENS` derived from its own declaration and the token
+   * guard asserts every name in it is declared here, so adding a state
+   * without dressing it fails the suite.
+   *
+   * EVERY ONE IS A `var()` INTO AN EXISTING TOKEN, NOT A NEW HEX. That is
+   * the whole reason the light "logbook" theme needs no entry for any of
+   * them: it already re-derives `--ink-2/3`, `--warn` and `--alarm`, so
+   * these follow for free. A fifth hex here would have been a second place
+   * to remember at every theme change, which is how the eight `--on-cat-*`
+   * duplicates of `#101216` came to exist.
+   *
+   * WHY THESE PAIRINGS, since the ink is the only thing distinguishing four
+   * states a reader must tell apart:
+   *   pending  — brighter than absence, because something IS happening. Not
+   *              `--beam`: that hue is reserved for the handful of genuinely
+   *              live marks and spending it on every in-flight read would
+   *              destroy the rarity that is its meaning.
+   *   absent   — the settled quiet. There is nothing, the read succeeded,
+   *              and no one needs to act.
+   *   refused  — `--warn`, because a refusal is a DECISION this product made
+   *              on purpose. It is not a malfunction and must not wear the
+   *              alarm hue, or users learn to read our deliberate choices as
+   *              our failures.
+   *   failed   — `--alarm`. Something broke. */
+  --state-pending-ink: var(--ink-2);
+  --state-absent-ink: var(--ink-2);
+  --state-refused-ink: var(--warn);
+  --state-failed-ink: var(--alarm);
+
+  /* ── THE CONTROL STATE VOCABULARY — the missing half, derived from the
+   * audit's measurement of what the tree actually spells ─────────────────
+   *
+   * The answer axis above dresses CONTENT that has nothing to say. A CONTROL
+   * has different states to wear: it can be at rest, hovered, focused, ARMED
+   * (a destructive or live control held one deliberate gesture away from
+   * acting), WORKING (its action is in flight), or REFUSED (unusable right
+   * now, with the reason on it). The states the task names — rest, hover,
+   * focus, armed, working, succeeded, refused, absent — partition across the
+   * two axes: hover/focus live in `--layer-*` and `--focus-ring-*`; succeeded
+   * is the outcome axis's `ok`; absent is the answer axis. The remaining
+   * declarations:
+   *
+   *   armed   — the confirm-before-it-fires state. Its treatment is the
+   *             alarm hue spent on the EDGE, never the fill: the control is
+   *             saying "I will destroy" the way a warning stripe on an
+   *             instrument says it — by framing the live region, not by
+   *             painting the whole control red. The edge is spent by the
+   *             delete confirmation (editor/DeleteConfirm.svelte); the
+   *             switch's armed landing wears the same grammar word with the
+   *             brightest ink instead — its arming is a fact to READ, not a
+   *             destruction to frame.
+   *   working — ONE name. The audit found one idea spelled three ways
+   *             (`pending` on the answer axis, `live` on the outcome axis,
+   *             `running` on the beat's data-state). The canonical name is
+   *             the outcome axis's `working` (response/grammar.ts owns the
+   *             set); the beat's `data-state` derives from it below, and the
+   *             answer axis's `pending` remains the CONTENT-side word for a
+   *             measurement in flight — a different question, deliberately
+   *             not merged.
+   *   refused — a control that cannot be used wears `--layer-disabled`
+   *             (declared above, beside the interaction layers it belongs
+   *             to). The owned control recipe at the foot of this file is
+   *             the ONE place it is applied: `.cockpit .verb:disabled`.
+   *
+   * `rest` is DELIBERATELY UNNAMED. Rest is the default declaration — a
+   * control at rest wears its base recipe and no state attribute, and a
+   * token named `--state-rest-*` would invite a surface to assert a state
+   * that means "nothing is true of me", which is not a state at all. The
+   * vocabulary names the departures from rest; rest is what remains.
+   *
+   * DOMINANCE IS A STATE, AND ITS DIMENSION IS THE INK RAMP. The task's
+   * "dominance is a state" needs no `--emphasis-*` scale: this system
+   * already has exactly one emphasis dimension with real range — the
+   * four-rung ink ramp (`--ink-1..4`) — and one luminance depth
+   * (`--layer-*`). A dominant element is one wearing a BRIGHTER RUNG of the
+   * same ramp (or the one live hue, when the dominance is earned by being
+   * in flight) — never a bespoke treatment. That is stated here so the next
+   * reach for an "emphasis scale" meets the answer that already exists. */
+  --armed-edge: var(--alarm);
+
+  /* Opacity rungs — the ONLY three opacities the tree consumes. An opacity
+   * is a state, not a style: `off` is "present but not yet revealed" (the
+   * hover-reveal affordance below), `on` is fully revealed, and
+   * `ribbon-veil` is the causal ribbon's resting translucency (a connection
+   * that is visible but not shouting). Nothing else may spend an opacity. */
+  --opacity-off: 0;
+  --opacity-on: 1;
+  --opacity-ribbon-veil: 0.9;
+
+  /* Focus ring — one global rule at the bottom of this file consumes these. */
+  --focus-ring-color: var(--ink-1);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
+  /* ── §12.3 Category hues — 8-hue wheel, equal lightness ─────────────────
+   * OKLCH L≈0.72 (dark) / 0.50 (light), chroma 0.10, hues ≥40° apart.
+   * THE single mapping table from the EVENT_KINDS + ledger category
+   * vocabulary (shared/event-types.ts) to a hue. Never chrome; only
+   * sweep bins, beat glyphs, scope headers. Each ships an --on-* pair.
+   *   turn      — your/model words          (ledger: turn)
+   *   tool      — tool calls                (ledger: tool)
+   *   effect    — file effects              (ledger: effect)
+   *   check     — check deltas              (ledger: check)
+   *   finding   — computed findings         (ledger: finding)
+   *   steer     — steering + ui_control     (EVENT_KINDS: steering, ui_control)
+   *   anomaly   — hallucination + bias      (EVENT_KINDS: hallucination, bias)
+   *   heal      — self-healing              (EVENT_KINDS: self-healing)
+   * (EVENT_KINDS "error" is NOT a category hue — errors are --alarm, always.)
+   */
+  --cat-turn: oklch(0.72 0.1 250);
+  --cat-tool: oklch(0.72 0.1 210);
+  --cat-effect: oklch(0.72 0.1 160);
+  --cat-check: oklch(0.72 0.1 110);
+  --cat-finding: oklch(0.72 0.1 65);
+  --cat-steer: oklch(0.72 0.1 20);
+  --cat-anomaly: oklch(0.72 0.1 340);
+  --cat-heal: oklch(0.72 0.1 295);
+
+  /* ── §12.4 Type — engraved instrument, readable logbook ─────────────── */
+  --face-sans: "IBM Plex Sans Variable", "IBM Plex Sans", ui-sans-serif,
+    system-ui, "Segoe UI", sans-serif;
+  --face-mono: "IBM Plex Mono Variable", "IBM Plex Mono", ui-monospace,
+    "SF Mono", "Cascadia Code", monospace;
+
+  /* Scale. --f-micro is THE engraved label: 11px w560 track .08em UPPERCASE
+   * ink-3 — every instrument's name, never a bold heading. */
+  --f-micro-size: 0.8125rem;
+  --f-micro-weight: 560;
+  --f-micro-track: 0;
+  --f-nano-size: 0.75rem; /* smallest overlay note — the sweep's head résumé and
+                          activation chip, arm-menu notes */
+  --f-data-size: 0.875rem; /* mono — rows, beats' metadata */
+  --f-ui-size: 0.9375rem; /* default */
+  --f-prose-size: 1rem; /* turn prose */
+  --f-prose-lh: 1.6;
+  --f-edit-size: 1.75rem; /* the editable term in a setting */
+  --f-value-size: 22px; /* mono w620 — instrument values */
+  --f-value-weight: 620;
+
+  /* LEADING (line-height) is a scale, not a per-rule number. Three rungs:
+   *   --lh-tight (1)    — a mark or glyph that must sit on its own line
+   *                       height with no leading (an icon row, a badge).
+   *   --lh-readout (1.4) — a single data line that still needs descender
+   *                       room (the sweep head résumé, a one-line detail).
+   *   the body rungs    — prose/code/heading carry their own (--f-prose-lh,
+   *                       --f-code-lh, --f-heading-lh) beside their size.
+   * A component never writes a bare number; it reads the rung that names its
+   * intent, so two readouts cannot quietly pick 1.3 and 1.4. */
+  --lh-tight: 1;
+  --lh-readout: 1.4;
+
+  /* ── §12.5 Shape, space ─────────────────────────────────────────────── */
+  --radius-0: 0; /* data marks, sweep, cells */
+  --radius-1: calc(var(--sp-unit) * 2.5); /* shared controls and fields */
+  --radius-2: var(--sp-3); /* raised surfaces */
+  --hairline-w: 1px; /* bezels are lines, not shadows (§12.5) */
+  --menu-min-w: 140px; /* identity/verb menus — smallest legible sheet */
+
+  /* THE POINTER TARGET FLOOR (MOUSE-FIRST law, v2.1 · WCAG 2.2 SC 2.5.8).
+   * The cockpit is mouse-first on the web, and a 21px chip is an imprecise
+   * target for a mouse, not only for a finger. Every interactive control
+   * gets at least this much HIT AREA in both axes — padding counts, so the
+   * visible ink stays quiet and instrumental while the target grows to meet
+   * the hand. One owner for the number; components consume it as
+   * `min-height`/`min-width: var(--hit-min)` and never restate 24px.
+   *
+   * THE INLINE EXCEPTION, decided here. SC 2.5.8 itself exempts a target
+   * "in a sentence or constrained by the line-height of non-target text",
+   * and three cockpit controls are exactly that — an inline text-level act
+   * sitting in a dense baseline row whose height a floor-box would break:
+   *   - SweepHead's "back to now" (in the sweep's RESERVED airspace, a row
+   *     whose boxes the e2e airspace spec pins; it also duplicates the Esc
+   *     chord and the band's own return path — never the only path);
+   *   - FindingNote's "how?"/"dismiss" toggles (inline in the finding's
+   *     footer row);
+   *   - InstrumentsRoom's displacement "cancel" (inline in the confirm row).
+   * These keep a line-constrained box rather than grow the row past the
+   * reserved geometry. Every ONE of them is a SECONDARY path — the primary
+   * act is a larger surface (the finding body, the band, the cell) or a
+   * chord — so the exception never hides the only way to do a thing. A NEW
+   * inline control that is the SOLE path to its act does NOT qualify: give
+   * it the floor, or give the act a visible larger path. */
+  --hit-min: 40px;
+  --room-top: var(--horizon-h);
+  --room-right: 0px;
+  --control-mark: none;
+
+  --shadow-sheet: 0 8px 24px -8px rgba(0, 0, 0, 0.5); /* SCOPE/menus only */
+
+  /* ── THE POPOVER / SHEET LANGUAGE (shell/Popover.svelte owns the markup) ──
+   * Every raised surface in the cockpit — the arm menu, the beat menu, the
+   * SCOPE sheet — is the same instrument: carbon glass on a hairline bezel,
+   * an engraved cap, a body with room to breathe, and actions on their own
+   * rule. These are the constants that language needs; the components
+   * consume them and declare none of their own. */
+  --popover-max-w: 420px; /* a menu is a panel, never a page */
+  --picker-max-w: var(--rail); /* folder picker — an instrument, not a menu */
+  --sheet-pad: var(--sp-4); /* the one interior gutter of a raised surface */
+  --sheet-gap: var(--sp-3); /* between a sheet's stacked sections */
+
+  /* THE one spacing primitive. Every --sp-* rung is a calc of this unit
+   * so retuning the scale is one number, not eight restated px. --hit-min
+   * stays a 24px literal: WCAG 2.2 SC 2.5.8 is 24 CSS pixels, not "six
+   * spacing units", and shrinking the scale must not shrink the floor. */
+  --sp-unit: 4px;
+  --sp-0: calc(var(--sp-unit) * 0.5);
+  --sp-1: var(--sp-unit);
+  --sp-2: calc(var(--sp-unit) * 2);
+  --sp-3: calc(var(--sp-unit) * 3);
+  --sp-4: calc(var(--sp-unit) * 4);
+  --sp-5: calc(var(--sp-unit) * 6);
+  --sp-6: calc(var(--sp-unit) * 8);
+  --sp-7: calc(var(--sp-unit) * 12);
+  --gutter-beat: var(--sp-6); /* beat gutter */
+  --gutter-bleed: var(--sp-5); /* bleed gutters (var(--sp-4) <1440 — media block below) */
+
+  /* ── Chat readability (v2.2) — softer corners + breathing room ──────── */
+  /* Bubbles and cards soften the engraved-instrument radii (§12.5 keeps
+   * --radius-0/1/2 for instrument faces, inputs, sheets). These are the
+   * chat-native radii: a bubble rounds enough to read as a message but
+   * keeps the carbon terminal character (not a cartoon pill). */
+  --radius-bubble: 10px; /* chat bubble — soft but modern */
+  --radius-card: 6px; /* tool/effect cards — softer than 0, sharper than bubble */
+  --beat-pad-y: var(--sp-3); /* vertical breathing room between beats */
+  --bubble-pad-x: var(--sp-5); /* bubble internal horizontal padding */
+  --bubble-pad-y: var(--sp-4); /* bubble internal vertical padding */
+  --bubble-gap: var(--sp-3); /* gap between bubble sections (prose/footer/verbs) */
+
+  /* ── §2 Shell geometry ──────────────────────────────────────────────── */
+  --horizon-h: 3.5rem;
+  /* THE TAB STRIP (shell/WorkspaceStrip.svelte) — the row under the HORIZON
+   * that exists only when more than one workspace is open. 32px is the
+   * pointer-target floor (24px) plus the strip's own air, so a tab and its
+   * close control both clear the floor without the row growing into the
+   * flow. The strip does not fold at a breakpoint: it folds by MEASUREMENT
+   * (shell/tab-fit.ts), because what runs out is the width of the names
+   * people actually chose, not a width a breakpoint could predict. */
+  --tabstrip-h: calc(var(--hit-min) + var(--sp-4));
+  --sweep-h: 48px; /* folds to 28px <1100 — media block below */
+  /* ── §2.7 NARROW-WIDTH ARRANGEMENT, expressed as tokens ──────────────
+   * A breakpoint cannot be a custom property (a media query cannot read a
+   * var()), so the ONE place a cockpit breakpoint may be written is the
+   * width-driven block at the foot of this file — and what it changes is
+   * these tokens, never a component's own rule. A
+   * component that wants to rearrange at a width consumes the token; it
+   * never carries a pixel of its own (guard: cockpit-tokens-owner F).
+   *
+   * The HORIZON is 40px at every width, so nothing in it may wrap. Under
+   * crowding the PINNED MONITORS go first (§2.7) — they are references to a
+   * source that is still one click away — and the ROOM RAIL stays, because
+   * it is the only mouse path to four rooms and two modes, and a capability
+   * reachable by chord alone is a defect (MOUSE-FIRST law). */
+  --monitor-display: flex; /* HORIZON pinned monitors — hidden <1100 */
+  /* The ROOM RAIL and the one control it folds into: exactly one of the two
+   * is displayed at any width. Folding, not clipping — a sliced word is not
+   * an arrangement, and a room with no mouse path is a defect. */
+  --rail-display: flex;
+  --rail-fold-display: none;
+  --new-tab-word-display: inline;
+  /* (`--sweep-caption-display` was retired with the band's span caption —
+   * the head résumé states the window from measured values, so the caption
+   * was a second, weaker sentence about the same band. A token whose only
+   * consumer is gone is a dead custom property, so it went with it.) */
+  /* The HEAD LINE's detail clauses (the window on screen, and how much time
+   * it covers). They live in the band's reserved airspace, which is the same
+   * height at every width — so what runs out below the breakpoint is
+   * HORIZONTAL room, not vertical. Rather than let a timestamp be sliced in
+   * half, the detail steps out and the load-bearing clauses stay: whether
+   * this is a past view, the instant the playhead is on, and the way back —
+   * the three facts that change what the controls will do. */
+  --sweep-headline-detail: inline;
+  /* The composer row's arrangement. Wide: one row, the gauge inline at the
+   * end. Narrow: the gauge takes a line of its own UNDER the composer, so
+   * the placeholder — which is how the composer teaches its three grammars
+   * — is never truncated to make room for a readout. */
+  /* The open desk's PANEL region — everything above the composer bar.
+   * Derived here (not re-derived per component) so the desk's two columns
+   * can each scroll inside the fixed 280px instead of pushing the NEXT TURN
+   * line and the composer out of the desk. */
+  /* ── §2.1 THE TWO WIDTHS — one owner for "prose at the measure,
+   * instruments bleed". Every width decision in the FLOW is one of these
+   * two, and nothing else declares a content width of its own.
+   *
+   * --measure is RUNNING PROSE and is applied ON THE PROSE BLOCK ITSELF
+   * (render/MdBlocks: p, headings, lists, quotes). `ch` is font-relative,
+   * so applying it to an ancestor in a different font silently yields a
+   * different, narrower column — that was the bug that pinned turns to
+   * ~36% of a 1536px screen (76ch = 553px at the 13.5px UI face, 635px at
+   * the 15.5px reading face).
+   *
+   * --rail is THE FLOW'S CONTENT COLUMN and the bleed bound for everything
+   * INSTRUMENTAL — code blocks, tables, diffs, tool/effect/event/check
+   * cards. It is an ABSOLUTE length on purpose: it must resolve to the
+   * same number in every font, because the beat's own controls right-align
+   * to its edge (a `ch` rail would put the verb somewhere different on a
+   * mono row than on a prose row).
+   *
+   * The NUMBER has to clear the measure with room to spare in every font
+   * the fallback stack can land on: 76ch is ~635px on the installed Plex
+   * face and ~750px on a wide system fallback, and a rail that did not
+   * exceed BOTH would quietly narrow prose instead of letting instruments
+   * bleed. 860px holds ~115 columns of mono code plus a card's chrome and
+   * stays clear of the measure either way; the relationship is pinned in a
+   * real layout engine by tests/cockpit/e2e/flow-density-owner.spec.ts. */
+  --measure: 76ch; /* running prose — applied on the prose BLOCK (§2.1) */
+  --rail: min(860px, 100%); /* instruments bleed to here; controls edge (§2.1) */
+  /* --rail-open is --rail's ONE exception, and it is earned by a gesture: an
+   * instrument the reader deliberately OPENED may take a wider column than
+   * one sitting at rest. The user asked for exactly this ("fully expanded
+   * into multiple lines (allowed to also take a larger width)"), and it does
+   * not weaken --rail's ownership: a resting card, a code block, a diff and
+   * every beat's control edge still measure against --rail, so the column
+   * the eye scans is unchanged. Only the thing being read right now widens,
+   * and only while it is open. */
+  --rail-open: min(1180px, 100%); /* an OPENED instrument's bleed bound (§2.1) */
+  --monitor-w: 96px; /* pinned monitor, uniform */
+  --monitor-h: var(--hit-min);
+  --scope-w: min(560px, 42vw);
+  /* THE RIGHT MENU'S OVERLAY FLOOR. Docked (viewport ≥ the pane's dock
+   * point, where --scope-w is already past its 42vw leg) the column takes
+   * --scope-w and never reaches this floor. Overlaying (below the dock
+   * point) it is the same instrument the standalone harness hosts in the
+   * shared Popover, whose own legibility floor is --arm-menu-min-w — the
+   * arm rows and the run pane's fact rows were both designed inside that
+   * width, and an overlay column squeezed to 42vw of a phone (157px at
+   * 375px) could not hold one fact row's label column plus its value. The
+   * floor is the same number as the arm menu's own (one instrument, one
+   * smallest shape), restated here because --arm-menu-min-w is the
+   * §6 sweep dims' declaration and this consumer lives in the shell; the
+   * host also caps the overlay at its region (min(100%, …)) so the floor
+   * can never push the column past its own host. */
+  --right-menu-min-w: 340px;
+  --right-menu-w: clamp(var(--right-menu-min-w), 28vw, 420px);
+  --flow-min-docked: 720px; /* flow floor when SCOPE side-docks ≥1900px */
+  --run-pane-label-w: 6.5rem; /* the run pane's fact label column (progress/codebase) */
+  /* THE SIDE RAIL (the flow region's right edge) — one monitor-row wide, so
+   * the two engraved vertical words (run, arm) sit in a strip the same depth
+   * as every other row-height element in the cockpit. Derived from --monitor-h
+   * rather than restating 28px: the rail is a row turned on its side, and
+   * the day the row height changes the rail follows it. The rail is pinned
+   * at EVERY width — below the §2.7 fold it is the REPLACEMENT mouse path
+   * for the two modes the HORIZON rail gives up, so it has no fold twin. */
+  /* THE INSTRUMENT LABEL TRACK. Registration's probe lines, gate fields,
+   * and enter indent share this one column so the signed-out column is a
+   * single spine, not a stacked form beside a 12ch grid. `ch` is the unit
+   * because the track is a count of engraved characters (NAME / SESSION),
+   * the same reason --measure is 76ch. Declared once; the field recipes
+   * below consume it. A second 12ch literal is a restatement. */
+  --label-track: 12ch;
+
+  /* ── §3 FLOW dims — beat anatomy, bead, folds (flow/computer/desk) ───── */
+  --rule-w: 2px; /* chain-lit spine, focus ring interior */
+  --tick-h: 3px;
+
+  /* THE COLLAPSED-BEAT BUDGET (§3.2 fisheye: full beat → one-line ghost →
+   * tick). A ghost must cost about ONE LINE. It used to cost 88px to draw
+   * 23px of text, because the 24px hit floor of the controls column and the
+   * gutter glyph's own lead each set the row height — so the collapsed form
+   * cost nearly as much as the full beat it replaced and the fisheye bought
+   * nothing. These are the row heights the collapsed levels are HELD to;
+   * Beat.svelte takes the controls out of the height flow so that no
+   * hover-revealed control can push past them (the virtualizer must never
+   * re-measure a row because the pointer entered it, §3.8). */
+  --beat-ghost-h: 22px; /* one line of --f-data-size + its descenders */
+  --beat-tick-h: 12px; /* a tick is a mark, not a line */
+  --beat-pad-collapsed: var(--sp-0); /* a collapsed beat's own breathing room */
+  --bead-size: var(--sp-2); /* the bead — the live mark, glanceable in the gutter */
+  --caret-w: 6px; /* streaming caret (beam) */
+  --fold-max-h: 240px; /* reasoning fold */
+  --cell-max-h: 320px; /* tool input/output cells */
+  --diff-max-h: 400px; /* effect diff */
+  --menu-max-h: 160px; /* grammar menu */
+  --verbs-max-w: 320px; /* right-aligned verb column */
+  --gauge-bar-h: 3px; /* desk gauge bar */
+
+  /* ── §6 SWEEP dims — band overlays and hit targets ───────────────────── */
+  --tick-hit-w: 7px; /* beats-level DOM tick hit target on the band */
+  /* THE BAND'S RESERVED AIRSPACE. The sweep's readouts — the hover ruler
+   * chip and the planted-head line — lift ABOVE the band, which is right:
+   * they must not cover the density they are reading. But a lift out of a
+   * slot only `--sweep-h` tall is a lift into the BAND'S UPPER NEIGHBOUR,
+   * and every candidate for that job fills its own box: the FLOW fills to
+   * its last row, so the chip drew over whatever beat happened to be at the
+   * bottom of the stream (the reported overlap), and the FINDINGS ROW — now
+   * the neighbour whenever the computer has something to say — is a content-
+   * sized row with a sentence in it.
+   *
+   * So this is not "how far the chip moves", it is HOW MUCH ROOM THE SHELL
+   * KEEPS EMPTY ABOVE THE BAND, whoever the neighbour happens to be. The
+   * shell spends it (Cockpit.svelte, `.sweep-outlet` margin-top) and the
+   * risers consume it; nothing else may ever be under here. `--sweep-h`
+   * still owns the band itself — this owns only the air above it.
+   *
+   * It holds TWO stacked rows — the pointer-tracking ruler above, the
+   * standing head line below — so neither readout is ever drawn through the
+   * other. `--sweep-ruler-row-h` is the upper lane's share; the head line
+   * takes the rest, hard against the band it describes.
+   *
+   * Guard: tests/cockpit/e2e/sweep-airspace-owner.spec.ts measures the real
+   * boxes and fails if any riser reaches a beat, or leaves the strip. */
+  --sweep-ruler-rise: 2.2rem;
+  --sweep-ruler-row-h: 1.1rem;
+  --arm-menu-min-w: 340px; /* ARM predicate menu — smallest legible sheet */
+
+  /* Shared project/conversation geometry, read by SwitchRiver. */
+  --reel-w: 320px; /* preferred conversation column width; compact can use less */
+  --reel-h: 5.5rem; /* equal title/date/outcome slots scale with root text size */
+  /* Recycle / restore pictures (Lucide trash-2 / archive-restore, ISC).
+   * Stroke is #000 so the mask is alpha; the verb's `currentColor` tints
+   * the fill. The characters in verb-marks.ts are the fallback. */
+  --mark-recycle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 11v6'/%3E%3Cpath d='M14 11v6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6'/%3E%3Cpath d='M3 6h18'/%3E%3Cpath d='M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3C/svg%3E");
+  --mark-restore: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='20' height='5' x='2' y='3' rx='1'/%3E%3Cpath d='M4 8v11a2 2 0 0 0 2 2h2'/%3E%3Cpath d='M20 8v11a2 2 0 0 1-2 2h-2'/%3E%3Cpath d='m9 15 3-3 3 3'/%3E%3Cpath d='M12 12v9'/%3E%3C/svg%3E");
+  --mark-size: calc(var(--sp-unit) * 4.5);
+  --mark-disclose: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 5 7 7-7 7'/%3E%3C/svg%3E");
+  --mark-copy: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='8' y='8' width='12' height='13' rx='2'/%3E%3Cpath d='M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3'/%3E%3C/svg%3E");
+  --mark-edit: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 5 4 4M4 20l5-1L20 8a3 3 0 0 0-4-4L5 15z'/%3E%3C/svg%3E");
+  --mark-close: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 6 12 12M18 6 6 18'/%3E%3C/svg%3E");
+  --mark-commit: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5v7h15m-5-5 5 5-5 5'/%3E%3C/svg%3E");
+  --mark-ok: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 4 4L19 6'/%3E%3C/svg%3E");
+  --micro-sweep-h: var(--sp-5); /* the reel's real-density strip */
+
+  --switch-field-w: 320px; /* filter field */
+  --commit-control-w: 12rem; /* stable through draft, pending, refused and saved labels */
+  --model-field-min: 9rem; /* provider numeric fields wrap as complete labelled units */
+  --composer-summary-min: 24ch; /* preserve a readable summary before wrapping to its own line */
+
+  /* ── §7 CUSTODY dims — the board row-packs like the SWITCH river ─────── */
+  /* THE PARCELS COLUMN'S OWN WIDTH. Fixed with respect to the DIFF: it is a
+   * share of the room, never a share of "whatever is left over", so opening
+   * or closing a difference cannot move a single row of it. The floor holds
+   * one parcel measure plus the board's two gutters (560 + 2×24); the cap
+   * keeps an ultrawide screen from turning the list into a field. */
+  --custody-board-w: clamp(608px, 48%, 1280px);
+  --custody-max-w: 1960px; /* board measure — same rail as the river, so the
+                              two rooms cap ultrawide screens identically */
+  --custody-parcel-w: 560px; /* one parcel's own measure: the smallest width
+                                that still holds a file row on ONE line. The
+                                board flows parcels (and SAVED WORK) at this
+                                basis and lets them grow into the row, so a
+                                wide viewport carries several side by side
+                                instead of one column over empty space */
+  --custody-file-col: 400px; /* a file row's own measure, for the moment a
+                                parcel is wider than one row needs: its list
+                                packs into columns of this width, row-major,
+                                so the reading order is unchanged */
+
+  /* ── §8 INSTRUMENTS dims — every cell is the SAME fixed instrument (§8.2:
+   * "all exactly 280×96px", a mechanical test) ─────────────────────────── */
+  --instrument-w: 280px; /* shared preferred minimum; equal tracks fill available width */
+  --instrument-h: 96px; /* shared minimum; contents and target floors determine height */
+  --spark-w: 96px; /* the in-cell spark canvas */
+  --spark-h: 22px;
+  --spark-dot-w: 16px; /* the monitor reference's micro-spark (§8.2 spark-dot) */
+  --instruments-max-w: 1960px; /* grid measure cap — same legibility cap as
+                                  the switch river on ultrawide monitors */
+  --roll-rise: 0.8em; /* §11.4 live numerals — the digit roll's travel
+                         (paired with --t-1, its 90ms duration) */
+
+  /* ── §12.5 Motion ───────────────────────────────────────────────────── */
+  --t-unit: 30ms; /* THE one duration primitive */
+  --t-1: calc(var(--t-unit) * 3); /* press, digit roll — 90ms */
+  --t-2: calc(var(--t-unit) * 5); /* sheet, desk, fold — 150ms */
+  --t-3: calc(var(--t-unit) * 8); /* room cut — 240ms, larger surface */
+  --ease-out: cubic-bezier(0.2, 0, 0, 1); /* the one standard out-curve */
+
+  /* ── §2.7 Density — row height by data-density (24/28/34px) ─────────── */
+  --row-h: calc(var(--sp-unit) * 9); /* work: 36px */
+
+  /* ══ RENDER LAYER (src/cockpit/render/**) ════════════════════════════════
+   * "Take what a web UI can offer and mix it in" — the chrome stays quiet
+   * and instrumental, but CONTENT (prose, code, diffs, tool output) renders
+   * as well as the web can render it. These are the constants that layer
+   * needs. They are deliberately derived from the CARBON/LOGBOOK families
+   * above (ink, ok, alarm, the category wheel) so rich content still reads
+   * as the same instrument, not as a pasted-in code sandbox.
+   */
+
+  /* ── Syntax palette. ONE desaturated family off the §12.3 category wheel
+   * at the SAME lightness as --ink-2, so highlighted code has color
+   * DIFFERENTIATION without out-shouting prose. Chroma is 0.06 (vs the
+   * category wheel's 0.10): code is read in bulk, and bulk saturated text
+   * is fatiguing. `plain` is deliberately absent — unhighlighted code is
+   * --ink-1, the normal reading ink. */
+  --syn-comment: oklch(0.58 0.02 250); /* recedes — the one muted role */
+  --syn-string: oklch(0.74 0.06 160);
+  --syn-number: oklch(0.74 0.06 65);
+  --syn-keyword: oklch(0.74 0.06 300);
+  --syn-type: oklch(0.74 0.06 210);
+  --syn-func: oklch(0.74 0.06 110);
+  --syn-punct: oklch(0.68 0.01 250);
+  --syn-meta: oklch(0.74 0.06 20);
+
+  /* ── Code blocks. Code BLEEDS past the prose measure to --rail (§2.1
+   * above): source lines are longer than sentences and wrapping them costs
+   * more than the extra width does. There is no second "code measure" —
+   * the bleed bound has one owner, and it is --rail. */
+  --f-code-size: 12.5px;
+  --f-code-lh: 1.55;
+  --f-code-inline-scale: 0.92em; /* inline `code` relative to its prose */
+  --code-pad-y: var(--sp-2);
+  --code-pad-x: var(--sp-3);
+  --code-max-h: 420px; /* folds past this, with the count named */
+  --code-lineno-w: 3.5ch;
+  --code-rail-gap: var(--sp-3);
+
+  /* ── Diff. The +/- tints are alpha washes so they compose over ANY
+   * ground (bubble, card, sheet) without a second opaque surface, and the
+   * intra-line emphasis is the same hue at higher alpha — one idea, two
+   * strengths, so "this line changed" and "this WORD changed" read as the
+   * same signal at two scales. */
+  --diff-add-wash: rgba(95, 199, 142, 0.1);
+  --diff-del-wash: rgba(226, 106, 95, 0.1);
+  --diff-add-word: rgba(95, 199, 142, 0.26);
+  --diff-del-word: rgba(226, 106, 95, 0.26);
+  --diff-hunk-wash: rgba(143, 211, 255, 0.07);
+  --diff-gutter-w: 2ch; /* the +/− column */
+  --diff-num-w: 4ch; /* each line-number rail */
+  /* (the diff's own height cap is --diff-max-h, declared in the §3 FLOW
+   * dims block above — one owner, consumed by both the beat and the sheet) */
+
+  /* ── JSON tree. Indent is ch-based so nesting aligns with the mono grid. */
+  --json-indent: 1.75ch;
+  --json-twisty-w: 1.25ch;
+
+  /* ── The live-stream instrument (flow/StreamPulse.svelte). Fixed cells so
+   * the rail never resizes as tokens land — the virtualizer must not
+   * re-measure a beat because of its own activity indicator. */
+  --stream-rail-h: 16px; /* the head cell's full height — glanceable */
+  --stream-cell-h: 6px; /* an idle cell — a mark, not a hairline */
+  --stream-cell-w: 3px;
+  --stream-cell-gap: 2px;
+
+  /* ── Copy affordance inset (the bar around a hover-revealed copy verb). */
+  --copy-inset: var(--sp-1);
+
+  /* ── Prose typography. The measure lives in --measure (76ch); these are
+   * the vertical rhythm and the heading ramp. The ramp is deliberately
+   * SHALLOW (21/18/16 against 15.5px body): a chat turn is not a document,
+   * and a big h1 inside a bubble reads as shouting. Weight and the
+   * micro-rule carry the hierarchy instead of size. */
+  --prose-gap: var(--sp-3); /* between block-level prose children */
+  --prose-tight-gap: var(--sp-1); /* between list items */
+  --f-h1-size: 21px;
+  --f-h2-size: 18px;
+  --f-h3-size: 16px;
+  --f-heading-weight: 620;
+  --f-heading-lh: 1.3;
+  --prose-list-indent: 1.6em;
+  --prose-quote-inset: var(--sp-3);
+  --prose-heading-space: var(--sp-2); /* extra lead above a heading */
+
+  /* ══ EDITOR ROOM dims — folder structure left, the file right ════════════
+   * The room is FULL SCREEN, so the two panes are shares of the room rather
+   * than fixed columns: a tree pinned at one width leaves a wide display
+   * mostly empty, and a tree that took a percentage of a narrow one leaves no
+   * room to read the file. The clamp is the honest middle — a floor that
+   * still holds a nested path, a share that grows with the display, and a cap
+   * so an ultrawide monitor does not turn the tree into a field.
+   *
+   * The tree's width is FIXED WITH RESPECT TO THE FILE beside it (the same
+   * move the custody board makes): it is a share of the ROOM, never of "what
+   * is left over", so opening, closing or rendering a file cannot move a
+   * single row of the tree. */
+  --editor-tree-w: clamp(280px, 24%, 460px);
+  --editor-indent: 14px; /* one nesting step in the tree */
+  --editor-twisty-w: 16px; /* the open/close mark's own column */
+  --editor-gutter-w: 4.5ch; /* the line-number rail beside the text area */
+  --editor-name-w: 260px; /* the delete confirmation's naming field */
+  --editor-media-max-h: 70vh; /* an image's own box, so the pane never grows
+                                 past the room it is in */
+  --editor-toolbar-h: 32px; /* the pane's control row — the hit floor plus air */
+}
+
+/**
+ * REGISTERED PER-ELEMENT STAMPS. A custom property a component stamps inline
+ * (`style="--name: …"` / `style:--name={…}`) is a real declaration, but an
+ * UNREGISTERED one is invisible to the token authority and resolves to the
+ * guaranteed-invalid initial for a typed reader. Every stamp the cockpit
+ * uses is registered below — the deny-by-default door for inline stamps: a
+ * stamp whose name is not registered here reds the token owner's inline-style
+ * arm. A bare `--name: …` on `:root` would only SAY the name exists;
+ * `@property` makes the browser TYPE-CHECK the stamped value, so a malformed
+ * stamp is rejected on its own instead of poisoning the consuming `calc()`.
+ */
+
+/**
+ * THE FILE TREE'S NESTING DEPTH — a per-row value, declared here because the
+ * component that reads it is not the one that can declare it.
+ *
+ * `FileTree.svelte` stamps `style="--depth: {row.depth}"` on each row and its
+ * stylesheet multiplies it by `--editor-indent`. That inline stamp is a real
+ * declaration, but it is invisible to the token authority, so the two
+ * `var(--depth)` reads in that stylesheet resolved against nothing declared —
+ * indistinguishable, to the token guard, from a typo.
+ *
+ * Registering it is the honest declaration rather than a bare `--depth: 0` on
+ * `:root`, and it does more than satisfy the scan:
+ *
+ *   - `syntax: "<number>"` makes the browser TYPE-CHECK the stamped value. An
+ *     unregistered custom property is an arbitrary token stream, so a
+ *     malformed depth would poison the whole `calc()` at computed-value time
+ *     and collapse the row's indent silently. Registered, a bad value is
+ *     rejected on its own and the initial value stands.
+ *   - `inherits: true` is REQUIRED and is not the default: the stamp lands on
+ *     the row `<button>`, and the element that reads it is the `.indent`
+ *     `<span>` inside it.
+ *   - `initial-value: 0` is the correct floor — a row with no stamp is at the
+ *     root, and the root's indent is none.
+ */
+@property --depth {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/**
+ * THE UPDATE CHIP'S INK — set by the chip itself from the outcome axis's
+ * declared ink (`UpdateChip.svelte` binds `OUTCOME_STATES[warn].ink` onto
+ * the stamp), so the grammar owns what "warn" looks like and the chip's
+ * stylesheet reads a LOCAL name rather than reaching past the axis. The
+ * stamp and the read are on the same element; the initial is the warn ink
+ * itself, matching the only state the chip ever reports.
+ */
+@property --update-ink {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #d9a84e;
+}
+
+/* Density steps — `data-density` on :root: scan | work | deep. */
+:root[data-density="scan"] {
+  --row-h: calc(var(--sp-unit) * 8); /* scan: 32px */
+}
+:root[data-density="deep"] {
+  /* Not on the 4px grid: --f-ui-size plus pad and descenders. A scale
+   * multiple would clip the row or invent a fake 36. */
+  --row-h: calc(var(--sp-unit) * 11); /* deep: 44px */
+}
+
+/* ── Light — "logbook": warm paper, a real theme, every token re-derived. */
+:root[data-cockpit-theme="light"] {
+  --ground-0: #f6f4ef;
+  --ground-1: #fbfaf7;
+  --ground-2: #ffffff;
+  --ground-3: #efece5;
+  --line-1: #e3dfd6;
+  --line-2: #c8c2b4;
+
+  --ink-1: #191c20;
+  --ink-2: #4d545e;
+  --ink-3: #757c86;
+  --ink-4: #a9aeb6;
+
+  --beam: #0f6fa8;
+  --ok: #11663a;
+  --warn: #8a5c08;
+  --alarm: #b5352c;
+
+  --layer-hover: rgba(25, 28, 32, 0.05);
+  --layer-select: rgba(25, 28, 32, 0.08);
+  --layer-press: rgba(25, 28, 32, 0.12);
+  /* The refused/unavailable ink, re-derived for paper: on the logbook's
+   * light ramp the faintest text ink (--ink-4) is a LIGHT value, so the
+   * recessed control reads one step SOFTER than the faintest text rather
+   * than darker — the same "not quite text" half-step, direction flipped
+   * by the theme. */
+  --layer-disabled: #b7bcc4;
+
+  --shadow-sheet: 0 8px 24px -8px rgba(0, 0, 0, 0.12);
+
+  --cat-turn: oklch(0.5 0.1 250);
+  --cat-tool: oklch(0.5 0.1 210);
+  --cat-effect: oklch(0.5 0.1 160);
+  --cat-check: oklch(0.5 0.1 110);
+  --cat-finding: oklch(0.5 0.1 65);
+  --cat-steer: oklch(0.5 0.1 20);
+  --cat-anomaly: oklch(0.5 0.1 340);
+  --cat-heal: oklch(0.5 0.1 295);
+
+  /* Render layer re-derived for paper — NOT the dark values dimmed. On a
+   * warm paper ground the syntax family drops to L≈0.45 (dark ink on light
+   * stock) and holds the same hue wheel, so a code block reads as ink on
+   * the logbook page rather than as a dark terminal pasted onto paper. */
+  --syn-comment: oklch(0.6 0.02 250);
+  --syn-string: oklch(0.45 0.09 160);
+  --syn-number: oklch(0.45 0.09 65);
+  --syn-keyword: oklch(0.45 0.09 300);
+  --syn-type: oklch(0.45 0.09 210);
+  --syn-func: oklch(0.45 0.09 110);
+  --syn-punct: oklch(0.52 0.01 250);
+  --syn-meta: oklch(0.45 0.09 20);
+
+  /* The washes lift to survive on white; the hues follow the light --ok /
+   * --alarm (green 1c7a4c / red b5352c) rather than the dark ones. */
+  --diff-add-wash: rgba(28, 122, 76, 0.12);
+  --diff-del-wash: rgba(181, 53, 44, 0.1);
+  --diff-add-word: rgba(28, 122, 76, 0.28);
+  --diff-del-word: rgba(181, 53, 44, 0.24);
+  --diff-hunk-wash: rgba(15, 111, 168, 0.08);
+}
+
+/* ── §2.7 breakpoint-driven token remaps ──────────────────────────────── */
+@media (max-width: 1440px) {
+  :root {
+    --gutter-bleed: var(--sp-4);
+  }
+}
+@media (max-width: 1100px) {
+  :root {
+    --right-menu-overlay-w: 100vw;
+      --sweep-h: 28px;
+    /* TWO ROWS: the composer keeps a full line to itself and the gauge gets
+     * its own beneath it. 120px is the composer row (unchanged) plus the
+     * gauge's own three-line column plus the gutter between them — the desk
+     * grew by exactly what it had to show, and the bar the user types in is
+     * as tall as it always was. */
+    /* §2.7: the monitors hide. They are the one thing in the HORIZON with a
+     * source one click away, so losing them costs a reader nothing they
+     * cannot get back — where a clipped ROOM RAIL costs a room. */
+    --monitor-display: none;
+    /* …and the rail FOLDS. Five engraved words are wider than the column
+     * they sit in from here down, and the strip's own overflow clip would
+     * slice the first of them in half. One control, the same six grips
+     * behind it, every room still one click away. */
+    --rail-display: none;
+    --rail-fold-display: inline-flex;
+    --new-tab-word-display: none;
+    --sweep-headline-detail: none;
+  }
+}
+
+/* ── Reduced motion — first-class (§12.5): one global block sets every
+ * duration to 1ms. Event motion then blinks in place instead of traveling. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-1: 1ms;
+    --t-2: 1ms;
+    --t-3: 1ms;
+  }
+}
+
+/* ── THE SYNTAX ROLE VOCABULARY — one owner, two consumers ─────────────────
+ * `highlight()` emits token KINDS; `paintDiffLine()` emits the same kinds
+ * with a change flag. Both CodeBlock and UnifiedDiff render them, and both
+ * previously carried an identical copy of these nine rules in their own
+ * <style> blocks — duplicated CSS, and invisible to static analysis because
+ * the class is interpolated from a runtime kind (`class="syn-{tok.kind}"`).
+ *
+ * They live here instead: syntax colour is a shared visual vocabulary, which
+ * is exactly what this file owns. One definition, no duplication, and the
+ * dead-selector scanner is not asked to reason about a dynamic class name.
+ * ────────────────────────────────────────────────────────────────────────── */
+.cockpit .syn-plain {
+  color: var(--ink-1);
+}
+.cockpit .syn-comment {
+  color: var(--syn-comment);
+  font-style: italic;
+}
+.cockpit .syn-string {
+  color: var(--syn-string);
+}
+.cockpit .syn-number {
+  color: var(--syn-number);
+}
+.cockpit .syn-keyword {
+  color: var(--syn-keyword);
+}
+.cockpit .syn-type {
+  color: var(--syn-type);
+}
+.cockpit .syn-func {
+  color: var(--syn-func);
+}
+.cockpit .syn-punct {
+  color: var(--syn-punct);
+}
+.cockpit .syn-meta {
+  color: var(--syn-meta);
+}
+
+/* The intra-line change wash, composed over the row's own add/del wash:
+ * same hue, higher alpha — "this line changed" and "this WORD changed" as
+ * one idea at two strengths. */
+.cockpit .diff-add .syn-chg {
+  background: var(--diff-add-word);
+}
+.cockpit .diff-del .syn-chg {
+  background: var(--diff-del-word);
+}
+
+/* The copy affordance's reveal rule is the hover-reveal pattern at the
+ * foot of this file (`.reveal-on-hover` / `.reveal-item`). CopyButton
+ * emits `.verb.reveal-item`; hosts mark the container. */
+
+
+/* ══ THE BEAT BUBBLE SYSTEM — three orthogonal axes, one owner ════════════
+ *
+ * The user's two corrections, in order: "everything else that is not a chat
+ * (user/llm) is not very visible except when clicking on it. can it be a
+ * chat bubble that looks different depending on warning, success, error
+ * without having to click on it" — and — "what is sent by the harness
+ * (hallucination, bias, etc) should look different, so we can easily
+ * differentiate what the harness sends vs everything else."
+ *
+ * That is three questions a reader asks at a glance, so it is three axes,
+ * and they are kept ORTHOGONAL so they compose instead of colliding:
+ *
+ *   WHO    — side and alignment. Owned by flow/Beat.svelte: your words on
+ *            the right, the model's words and the model's ACTIONS on the
+ *            left.
+ *   VOICE  — `data-voice`, from flow/beat-state.ts. REGISTER only: a
+ *            conversation beat is a filled bubble; a system beat (the
+ *            harness's events, the computer's findings) drops the fill for a
+ *            rule-led register. NO new ground — a fourth ground colour would
+ *            push the palette past what the eye can sort.
+ *   STATE  — `data-state`, from flow/beat-state.ts. COLOUR, and colour lives
+ *            NOWHERE ELSE in this system. The leading edge carries it.
+ *
+ * HOW THEY COMPOSE, stated once so no component has to guess: VOICE picks
+ * the register (filled bubble vs. rule), STATE tints the leading edge. A
+ * harness-detected error and a failed tool call therefore both read as
+ * errors — same alarm edge, same word — while still reading as different
+ * voices, because one is a bubble and one is a rule.
+ *
+ * WHY THIS LIVES IN THE TOKEN FILE. `.beat-card` is a shared visual
+ * vocabulary with five consumers (tool, effect, check delta, event,
+ * finding), each of which previously carried its own identical copy of the
+ * ground + hairline + radius + padding + mono type. A child component's
+ * scoped CSS also cannot see the beat's `data-voice`/`data-state`, and the
+ * alternative to one owner here is a `:global()` escape hatch in every one
+ * of them — the same argument that already put the syntax roles and the
+ * copy-affordance rule in this file. ───────────────────────────────────── */
+
+/* The bubble every CONVERSATION beat wears — the model's actions in the same
+ * family as the prose bubbles above them (same corner language, same
+ * hairline, the mono content register instruments need). It hugs its content
+ * and bleeds to --rail when the content earns it (§2.1). */
+.cockpit .beat-card {
+  width: fit-content;
+  max-width: var(--rail);
+  min-width: 0;
+  background: var(--ground-2);
+  border: var(--hairline-w) solid var(--line-1);
+  border-left: var(--rule-w) solid var(--line-2);
+  border-radius: var(--radius-bubble);
+  padding: var(--sp-3) var(--sp-4);
+  font-family: var(--face-mono);
+  font-size: var(--f-data-size);
+}
+
+/* ── THE ARTIFACT CARD — the one instrument whose expand gesture buys
+ * HEIGHT, never width ─────────────────────────────────────────────────────
+ *
+ * The user's ruling on the run pane's artifact beats: expanding an artifact
+ * must grow the preview VERTICALLY, never wider. Every other opened card may
+ * bleed to --rail-open (the gesture-earned bound above); the artifact card
+ * instead holds the run pane's column — full width up to --rail, the SAME
+ * bound resting and open — so the expand gesture moves exactly one edge:
+ * the bottom one (the taller declared frame height, owned by
+ * render/artifact.ts beside the compact one). A card that widened on click
+ * would take the reader's eye sideways to re-find a stage that had only
+ * grown downward.
+ *
+ * WHY HERE: this is a §2.1 WIDTH policy — which bound an instrument may
+ * bleed to, in which state — and the width vocabulary (the --rail/--rail-
+ * open declarations, the .beat-card recipe) is owned by this file. A local
+ * copy in the tool beat would be the re-declaration the density guard reds
+ * on; the exception is stated once, beside the rule it excepts. */
+.cockpit .tool.artifact {
+  width: 100%;
+  max-width: var(--rail);
+}
+.cockpit .tool.open.artifact {
+  max-width: var(--rail);
+}
+
+/* THE RULE-LED REGISTER — everything that is ABOUT the conversation rather
+ * than IN it. No fill and no bubble, so it can never be mistaken for someone
+ * speaking; the leading rule and the gutter mark carry it instead. This is
+ * the register the computer's findings already speak in, which is precisely
+ * why the harness's events join it rather than inventing a fourth ground.
+ *
+ * TWO VOICES SHARE IT, and the axis still publishes them separately:
+ *
+ *   `system`   — the harness's own events and the computer's findings (`!`,
+ *                `∴`);
+ *   `operator` — YOU, changing the machine rather than talking to it (`≡`) —
+ *                pinning a memory, muting a channel, moving the trim point,
+ *                flipping a breaker. An intervention is not addressed to the
+ *                model and the model never reads it; it changes what the
+ *                model will be GIVEN. So it belongs here by meaning, not just
+ *                by budget — and the budget is real too, since a fourth
+ *                register would need either a fourth ground (the palette
+ *                spends three on depth) or a hue (committed to STATE).
+ *
+ * The MARK carries the distinction between them, and an intervention's own
+ * first word is "you". `data-voice` keeps the two values apart so a surface
+ * that later finds a register to spend can tell them apart without
+ * re-deriving it. See flow/beat-state.ts for the full argument. */
+.cockpit [data-voice="system"] .beat-card,
+.cockpit [data-voice="operator"] .beat-card {
+  background: none;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  border-radius: 0;
+  padding-top: var(--sp-1);
+  padding-bottom: var(--sp-1);
+}
+
+/* THE STATE EDGE — the ONLY place this system spends colour.
+ *
+ * SUCCESS IS GREEN. THE USER'S DIRECT DECISION, VERBATIM: "success green,
+ * error red, warning yellow." This REVERSES an earlier rule of ours which
+ * left `ok` deliberately uncoloured, on the argument that colouring every
+ * succeeded call would drown the failures. The user has decided otherwise and
+ * their call wins. Recorded here rather than quietly changed, so a future
+ * reader finds a decision and not a drift — and so nobody "restores" the old
+ * behaviour thinking they are fixing a regression.
+ *
+ * WHAT MAKES IT A SYSTEM RATHER THAN FOUR COLOURED THINGS: all four states
+ * carry their hue on the SAME element (this leading edge), at the same width
+ * (--rule-w), with the same treatment. A green success and a red error are
+ * visibly siblings, differing only in hue. The same three hues are used
+ * wherever else this beat reports its state — the gutter glyph and the
+ * collapsed status mark (flow/Beat.svelte), the status chip
+ * (flow/ToolBeat.svelte) — so the mapping is learned once.
+ *
+ * CONTRAST, MEASURED (not eyeballed), against every CARBON ground in both
+ * themes. Dark --ok #5fc78e: 9.2:1 on --ground-0, 7.9:1 on --ground-2, 7.1:1
+ * on --ground-3. Light --ok #1c7a4c on paper: 4.9:1 / 5.3:1 / 4.5:1. --warn
+ * and --alarm clear the same bar in both themes (lowest of all twelve pairs
+ * is 4.5:1). Every one passes WCAG AA for text and is far past the 3:1
+ * non-text-indicator floor, so these hues are legible as an edge AND as ink.
+ * `tests/cockpit/flow-tool-symmetry.test.ts` recomputes this from the token
+ * file rather than trusting this comment. */
+/* THE OUTCOME AXIS — one mapping, read by every surface.
+ *
+ * WHAT CHANGED AND WHY. These four rules used to paint `.beat-card`'s leading
+ * edge directly, which meant the outcome vocabulary reached exactly one
+ * element in one room. Every other surface that knows an outcome — the boot
+ * probes, the desk breakers, the switch reels, the instrument cells — either
+ * invented its own colour or showed none, so "success is green, error is red,
+ * warning is yellow" was true in the flow and nowhere else. A reader learned
+ * the scheme in the conversation and then found it absent everywhere they
+ * looked next.
+ *
+ * The mapping is now declared ONCE, as a custom property, and inherited.
+ * `--outcome-ink` is set by the state and consumed by whoever wants to wear
+ * it — so the flow's leading edge and any surface built later read the same
+ * four decisions, and a surface CANNOT hold a private opinion about what
+ * `warn` looks like without declaring a colour, which the token guard
+ * forbids. That is the difference between a scheme that is agreed and one
+ * that is derived.
+ *
+ * `neutral` deliberately sets nothing. A beat with no outcome to report is an
+ * ABSENCE and renders as one — never a green tick asserting a success nobody
+ * measured. The consumer's fallback is the structural rule, not a hue. */
+/* The four values are the outcome axis's own ids — `ok / warn / alarm /
+ * working` — declared ONCE in response/grammar.ts (`OUTCOME_STATES`) and
+ * spelled here by hand ONLY because a CSS selector cannot read a JS object.
+ * The drift contract is mechanical: the tokens-owner guard parses the
+ * grammar's declaration and fails if these four selectors and the axis's
+ * four keys are not the same set. A fifth outcome is therefore added in the
+ * grammar and dressed here, in that order — never the reverse. */
+.cockpit [data-state="ok"] {
+  --outcome-ink: var(--ok);
+}
+.cockpit [data-state="alarm"] {
+  --outcome-ink: var(--alarm);
+}
+.cockpit [data-state="warn"] {
+  --outcome-ink: var(--warn);
+}
+.cockpit [data-state="working"] {
+  --outcome-ink: var(--beam);
+}
+
+/* The flow's consumer: the leading edge. One property, so a green success and
+ * a red error differ in hue and in nothing else. */
+.cockpit [data-state] .beat-card {
+  border-left-color: var(--outcome-ink, var(--line-2));
+}
+
+/* ══ THE ANSWER AXIS — the one treatment for "no content here" ════════════
+ *
+ * Owned here for the same reason `.beat-card` is: this dresses an element
+ * rendered by `response/Answer.svelte`, and a child component's scoped CSS
+ * cannot be reached by an owner's state rules. The alternative was what the
+ * tree actually had — twenty-nine private rules in twenty-four files, four
+ * inks, two faces, italic-or-not, and three files where absence was styled
+ * identically to real content.
+ *
+ * ONE FACE, ONE SIZE, ONE SLANT; INK IS THE ONLY VARIABLE. Ink is the only
+ * compression tool in this system with real range (four rungs, and it is
+ * already used for exactly this), so it carries the distinction and nothing
+ * else does. The retired rules varied face and slant as well, which meant a
+ * reader could not tell whether a difference in appearance meant a different
+ * STATE or merely a different room.
+ *
+ * NOT ITALIC, reversing eight of the retired rules. Italic at this size on
+ * this ground costs legibility and carried no information that the ink was
+ * not already carrying — and the sentence it renders is the one sentence a
+ * user most needs to be able to read.
+ *
+ * SANS, NOT MONO, reversing six of them. These are sentences ABOUT the
+ * system, not values FROM it; the mono register in this product means "this
+ * is a measured datum" and an apology is not one. */
+.cockpit .answer {
+  font-family: var(--face-sans);
+  font-size: var(--f-data-size);
+  font-style: normal;
+  color: var(--state-absent-ink);
+}
+.cockpit .answer[data-as="inline"] {
+  display: inline;
+}
+.cockpit .answer[data-answer="pending"] {
+  color: var(--state-pending-ink);
+}
+.cockpit .answer[data-answer="absent"] {
+  color: var(--state-absent-ink);
+}
+.cockpit .answer[data-answer="refused"] {
+  color: var(--state-refused-ink);
+}
+.cockpit .answer[data-answer="failed"] {
+  color: var(--state-failed-ink);
+}
+
+/* ── MOTION — dressed here, STARTED nowhere but `motion/motion.ts` ───────
+ *
+ * §11.8: "all motion must trace a recorded event or a user gesture (the
+ * no-fake-motion law, now a guard: animation utilities accept an event/gesture
+ * handle, not a timer)."
+ *
+ * The half of that law that gets faked is the mechanism, because a
+ * `@keyframes` block looks identical whether what it moves is reporting an
+ * event or performing liveliness. So every self-starting animation in this
+ * cockpit lives HERE, keyed to `[data-motion]`, and the ONLY thing that sets
+ * that attribute is the `moves` action — which demands a `MotionCause`, and a
+ * cause cannot be obtained from a clock. A component that writes `animation:`
+ * in its own scoped block is off-grammar and the motion guard says so.
+ *
+ * `[data-motion-signal]` carries the plain words naming what the movement is
+ * bound to. It is not styling; it is the thing that makes a moving element
+ * inspectable — open the element and it tells you why it moved. A motion that
+ * could not fill that attribute is decoration, and the remedy for decoration
+ * is deletion, not a vaguer sentence.
+ *
+ * Durations are `--t-*`, which the reduced-motion block above collapses to
+ * 1ms — so every motion here lands in place under that preference with no
+ * media query of its own, and the STATE CHANGE still happens. */
+.cockpit [data-motion="sheet-in"] {
+  animation: motion-sheet-in var(--t-2) var(--ease-out);
+}
+@keyframes motion-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--sp-3));
+  }
+}
+.cockpit [data-motion="rise"] {
+  animation: motion-rise var(--t-2) var(--ease-out);
+}
+@keyframes motion-rise {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--sp-1) * -1));
+  }
+}
+.cockpit [data-motion="roll"] {
+  animation: motion-roll var(--t-1) var(--ease-out);
+}
+@keyframes motion-roll {
+  from {
+    transform: translateY(var(--roll-rise));
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.cockpit [data-motion="arrive"] {
+  animation: motion-arrive var(--t-2) var(--ease-out);
+}
+.cockpit [data-motion="spark"] {
+  animation: motion-spark var(--t-3) var(--ease-out);
+}
+@keyframes motion-spark {
+  from { opacity: 0; transform: scale(0.55) rotate(-30deg); }
+  45% { opacity: 1; transform: scale(1.2) rotate(8deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+@keyframes motion-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sp-1));
+  }
+}
+/* Top-level cut: a FADE, never a slide. Sheets already arrive from an
+ * edge (`sheet-in`); sliding a full room would steal that metaphor and
+ * imply the room was off-stage. Fluent 2's top-level rule, spent here
+ * as one MOTIONS member. */
+.cockpit [data-motion="cut"] {
+  animation: motion-cut var(--t-3) var(--ease-out);
+}
+@keyframes motion-cut {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ── The ONE global :focus-visible rule (§2.7) — zero transition. ─────── */
+.cockpit :focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  transition: none;
+}
+
+/* ── Page base — owned HERE since the cockpit became the only entry.
+ * index.html loads exactly one stylesheet (this file), so the reset every
+ * component's geometry layers on lives with the tokens: border-box sizing,
+ * zeroed default margins, the full-height non-scrolling page, the #app
+ * flex column, and form controls inheriting the page face. Removing any of
+ * these shifts real measured geometry (the e2e boot spec pins the shell's
+ * §2 pixel numbers). ───────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--ground-0);
+  color: var(--ink-1);
+  font-family: var(--face-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+button, input, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* Scrollbars on the cockpit's own palette (the UA default is a bright bar
+ * on a dark ground). */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ground-1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line-2);
+  border-radius: 4px;
+}
+
+/* ── Cockpit ground ───────────────────────────────────────────────────── */
+.cockpit {
+  background: var(--ground-0);
+  color: var(--ink-1);
+  font-family: var(--face-sans);
+  font-size: var(--f-ui-size);
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+/* ── §9 SETTINGS INDEX dims — appended (the settings surface's own owner) ──
+ *
+ * THE MAP'S WIDTH. Fixed with respect to the settings beside it: the rail is
+ * a share of the room, never "whatever is left over", so opening a setting
+ * cannot move a single category entry. The floor is the longest DECLARED
+ * category title at the UI size plus its count and the entry's two gutters.
+ * A cap tighter than those words (the old 36ch) plus nowrap plus overflow-y
+ * auto clips the first glyphs — overflow-y:auto computes overflow-x to auto
+ * (CSS Overflow L3), and there is no "scroll Y, paint X" combination. The
+ * ceiling may exist so a pathological later title cannot shove the content
+ * off; it must stay above every declared title so nowrap cannot crop a glyph.
+ *
+ * The row tracks below are MINIMA, not widths: each track is
+ * `minmax(<token>, <share>)`, so the row fills the room and the four facts
+ * (what it is · what it does · what it is now · where that value came from)
+ * grow together instead of one of them eating the others. The split fires
+ * only where the tracks at these minimums actually fit beside the rail
+ * (the settings room owns that threshold); below it the whole grid
+ * collapses to one column and these are unused, which is why none of them
+ * is remapped in the 1100px block.
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* THE LABELLED INDEX RAIL — a map beside content. Width follows the
+   * longest title + count + gutters (max-content). The floor keeps a
+   * short name from collapsing the map. The ceiling is a last-resort cap
+   * and is ratcheted by the owner test against declared category titles.
+   * Settings consumes `.index-rail`; a second labelled index uses the
+   * same recipe rather than restating a width. */
+  --index-rail-min: 16ch;
+  --index-rail-max: 56ch;
+}
+
+/* THE SETTINGS ROW — one recipe for every row in the settings room,
+ * including the provider list (not a registry row, still a setting the
+ * user adjusts). Consumers mark themselves `.setting-row`. Local layout
+ * (grid tracks) is a variant; the chrome is not. */
+.cockpit .setting-row {
+  border-bottom: var(--hairline-w) solid var(--line-1);
+  min-height: var(--row-h);
+  padding: var(--sp-2) var(--sp-1);
+}
+.cockpit .setting-row:hover {
+  background: var(--layer-hover);
+}
+
+/* ── THE LABELLED INDEX RAIL — auto-width map, title|count on one line. ─
+ * A consumer may scroll the list vertically. overflow-y:auto computes
+ * overflow-x to auto, so a max-width tighter than the nowrap row clips
+ * glyphs at the padding box. The rail is therefore sized to the longest
+ * row; the ceiling is min(100%, token) so a narrow host can shrink the
+ * map without a second recipe. Entries are a 2-column grid so every
+ * title shares one start edge and every count shares one end edge —
+ * flex + margin-left:auto collides with a max-width clip. min-width:0
+ * on the title is the wrap fight; the title's min is max-content and
+ * the rail grows instead. */
+.cockpit .index-rail {
+  width: max-content;
+  min-width: var(--index-rail-min);
+  max-width: min(100%, var(--index-rail-max));
+  flex: none;
+}
+.cockpit .index-rail .rail-entry,
+.cockpit .index-rail .rail-empty {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: var(--sp-2);
+  align-items: baseline;
+  width: 100%;
+  white-space: nowrap;
+}
+.cockpit .index-rail .rail-title {
+  white-space: nowrap;
+  min-width: max-content;
+}
+.cockpit .index-rail .rail-count {
+  white-space: nowrap;
+  justify-self: end;
+}
+
+/* Shared name/description/read-back tracks align across rows;
+ * zero intrinsic floors let long names and exact values wrap without overlap. */
+.cockpit .setting-tracks {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.cockpit .setting-tracks > .setting-row,
+.cockpit .setting-tracks .row-face {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-column: 1 / -1;
+  column-gap: var(--sp-3);
+  align-items: baseline;
+}
+.cockpit .setting-tracks .row-face { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr) auto; }
+.cockpit .setting-tracks .label {
+  overflow-wrap: break-word;
+}
+
+/* ── THE TAB FACE — one recipe for selected / rest / hover / focus.
+ * Horizon's room rail consumes it as `.room-tabs .chord-grip`.
+ * WorkspaceStrip's `.slot` is the conversation-workspace strip (a
+ * different job); it shares selected wash / rest ink, not a merged row.
+ * Focus is the global :focus-visible ring. */
+.cockpit .room-tabs .chord-grip,
+.cockpit .section-tab {
+  appearance: none;
+  background: transparent;
+  border: var(--hairline-w) solid transparent;
+  border-radius: 0;
+  color: var(--ink-2);
+  min-height: var(--hit-min);
+  min-width: var(--hit-min);
+  padding: var(--sp-2) var(--sp-3);
+  font: var(--f-ui-size) var(--face-sans);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+}
+.cockpit .room-tabs .chord-grip:hover:enabled,
+.cockpit .section-tab:hover:enabled {
+  background: var(--layer-hover);
+  color: var(--ink-1);
+}
+.cockpit .slot.active,
+.cockpit .room-tabs .chord-grip[aria-selected="true"],
+.cockpit .section-tab[aria-selected="true"] {
+  background: linear-gradient(var(--accent), var(--accent)) left bottom / 100% var(--rule-w) no-repeat;
+  border-color: transparent;
+  color: var(--ink-1);
+  font-weight: var(--f-micro-weight);
+}
+
+/* ── §3 THE FLOW — the wait instrument's reserved readout — appended ───────
+ *
+ * The rail (flow/StreamPulse.svelte) reports one of three things in one box:
+ * a send-path milestone in plain words, a measured character count, or a
+ * measured rate plus that count. All three sit in THIS width so a stage
+ * change never moves the footer they live in, and the virtualizer never
+ * re-measures a beat because its own activity indicator changed what it was
+ * saying.
+ *
+ * The floor is the longest sentence the instrument can hold — "waiting for
+ * the first characters", the absence state, at 32 characters in the mono
+ * data face — plus one character of slack. Every other sentence
+ * (wait-stage.ts WAIT_SAY) is shorter, and the rate/count pair is shorter
+ * still, so the number has one owner and one derivation.
+ *
+ * ── THE INLINE DEPTH OF A BEAT ────────────────────────────────────────────
+ *
+ * A tool beat opens IN PLACE and never into a sheet (flow/BeatDepth.svelte),
+ * so the facts the sheet used to add — when it happened, what caused it,
+ * every verb including the refusing ones, and the precise record — live under
+ * the open card. The rule is the indent, so the depth reads as belonging to
+ * the card above it rather than as a new object.
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+  --stream-say-w: 33ch;
+  --beat-depth-pad: var(--sp-2);
+}
+
+/* ── §3 THE FLOW — the artifact's third honest state — appended ────────────
+ *
+ * An artifact frame shows one of three things (render/ArtifactFrame.svelte):
+ * an honest reason it never ran, a live frame, or a live frame WITH the
+ * runtime fault it reported over its lower edge. The third state is a strip
+ * positioned inside the frame's declared box, so it can appear without moving
+ * a height the flow's virtualizer has already measured.
+ *
+ * The cap is a PERCENTAGE of that declared box on purpose: the box is a
+ * function of the artifact's kind (render/artifact.ts `frameHeight`, 300–460
+ * px), and a fixed pixel cap would swallow a sheet while leaving a game's
+ * frame mostly blank. At 45% the majority of the artifact stays visible in
+ * every kind — which is the point, since a partly-working artifact is the
+ * evidence that distinguishes "ran and broke" from "never ran".
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+  --artifact-fault-max-h: 45%;
+}
+
+/* ══ THE OWNED ROLES — one rule per recurring visual job ═══════════════════
+ *
+ * Every rule below replaces a body that was restated per component, verbatim
+ * or nearly. They live HERE, unscoped (`.cockpit .name`), for the same reason
+ * `.beat-card` and the syntax roles do: the class is a shared visual
+ * vocabulary, a child's scoped CSS cannot be dressed by its owner's state
+ * rules, and the alternative is the duplication this section deletes. A
+ * component that needs a variant adds the MARKER (`trunc`, `bare`) or a
+ * chained state (`data-state`), never a restated recipe.
+ */
+
+/* ── THE ENGRAVED LABEL — the instrument's name. 18 files used to restate
+ * the same five declarations; the overflow-carrying three add the `trunc`
+ * marker instead of re-spelling them. THE ENGRAVED LABEL IS NOT UPPERCASED
+ * BY HAND ANYWHERE ELSE: the token owner's guard rejects a literal
+ * `text-transform` in a component (the owned roles below are the only door
+ * to the treatment), and the exceptions a role genuinely needs — the quiet
+ * control, the nano note — are spelled `.engraved-ctl`/`.engraved-note`
+ * below, derived from the same register rather than re-stated per file. An
+ * engraved word carrying a FACT (warn or alarm) is not a third variant: it
+ * wears its own `data-state` and reads `--outcome-ink`, which the outcome
+ * mapping already re-points — a class for it would be a second spelling of
+ * the same fact. */
+.cockpit .engraved {
+  font-size: var(--f-micro-size);
+  font-weight: var(--f-micro-weight);
+  letter-spacing: var(--f-micro-track);
+  text-transform: none;
+  color: var(--ink-3);
+}
+
+/* The engraved register's two honest VARIANTS — the deviations the tree
+ * actually spells, owned here so no component re-states the register with
+ * one knob turned:
+ *
+ *   engraved-ctl  — the quiet CONTROL in the engraved register: one step
+ *                   smaller (nano) on purpose, the affordance carried by its
+ *                   edge, not by its weight.
+ *   engraved-note — the smallest overlay note: nano-size, same track and
+ *                   case, the quiet ink. */
+.cockpit .engraved-ctl {
+  font-size: var(--f-data-size);
+  font-weight: var(--f-micro-weight);
+  letter-spacing: var(--f-micro-track);
+  text-transform: none;
+}
+.cockpit .engraved-note {
+  font-size: var(--f-nano-size);
+  letter-spacing: var(--f-micro-track);
+  text-transform: none;
+  color: var(--ink-3);
+}
+/* The flip side of the same register: an engraved word that carries a
+ * SENTENCE rather than a name (the path to pick, the unwired reason) steps
+ * out of the uppercase and the track, because a sentence uppercased is a
+ * sentence misread. One marker, whichever engraved recipe the word wears. */
+.cockpit .plain {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* ── THE TRUNCATION RECIPE — one line, clipped with an ellipsis. ~45 rules
+ * restated `nowrap + hidden + ellipsis`; the recipe is now a marker class.
+ * It is SEPARATE from `.engraved` on purpose: truncation is an overflow
+ * behaviour, not a label role, and the two compose (`class="engraved trunc"`).
+ * The owning flex/grid parent must still grant `min-width: 0` — no CSS rule
+ * on the child can buy that back, so the recipe does not pretend to. */
+.cockpit .trunc {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── THE MICRO-TYPOGRAPHY DIMENSIONS, decided once ────────────────────────
+ * white-space, text-overflow, font-style and line-height are NOT tokenised
+ * the way colour and length are, and the guard does not arm them — here is
+ * the recorded reason for each, so a restatement is a decision a reader can
+ * find rather than a drift nobody wrote down:
+ *
+ *   white-space   — `nowrap` is the default for a data readout and is fine
+ *                   inside the owned `.trunc` recipe; restated on a one-line
+ *                   control or readout it is the SAME decision, not a
+ *                   palette leak. `pre` / `pre-wrap` are the code and diff
+ *                   registers and belong to those components. No guard: the
+ *                   value is structural, not a visual constant.
+ *   text-overflow — only ever `ellipsis`, and only meaningful beside
+ *                   `overflow: hidden` + a constrained width. The owned
+ *                   `.trunc` marker is the recipe; the seven standalone
+ *                   `overflow + ellipsis` rules are the same intent where
+ *                   the marker's `nowrap` does not apply (a wrapping cell
+ *                   that still clips). Accepted, not a restatement.
+ *   font-style    — `italic` marks the comment/quote register (a prose
+ *                   aside, a diff's context line). It is a REGISTER, not a
+ *                   scale: two values (italic/normal), both honest, and no
+ *                   token improves "this is italic". The `.answer` rule owns
+ *                   the ONE place slant was removed (absence is never
+ *                   italic). No scale to derive from; left literal.
+ *   line-height   — the ONLY one of the four that is a scale, so it IS
+ *                   tokenised above (`--lh-tight` / `--lh-readout` plus the
+ *                   per-register rungs). A bare numeric line-height in a
+ *                   component is a defect the guard reds on.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+/* ── THE STATUS CHIP — a measured state's compact badge. It reads the
+ * outcome axis (`--outcome-ink`, set by the `[data-state]` mapping above)
+ * instead of re-spelling the hue per state class — the five `.chip.state-*`
+ * / `.chip.on|.tripped|.live` hand spellings this replaces each decided the
+ * hue locally, which is how one chip said `--ok` and its sibling invented a
+ * class for the same fact. The fallback is the quiet ink: a chip with no
+ * state to report is an absence and renders as one. */
+.cockpit .chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-1);
+  font-size: var(--f-micro-size);
+  font-weight: var(--f-micro-weight);
+  letter-spacing: var(--f-micro-track);
+  text-transform: none;
+  color: var(--outcome-ink, var(--ink-3));
+  white-space: nowrap;
+}
+/* A chip may HIDE at rest and reveal with its container (the beat's status
+ * chip joins the options row's reveal). The recipe owns the pattern; the
+ * container marks itself `reveal-on-hover`. */
+.cockpit .reveal-on-hover .chip {
+  opacity: var(--opacity-off);
+  transition: opacity var(--t-2) var(--ease-out);
+}
+.cockpit .reveal-on-hover:hover .chip,
+.cockpit .reveal-on-hover:focus-within .chip {
+  opacity: var(--opacity-on);
+}
+@media (hover: none) {
+  .cockpit .reveal-on-hover .chip {
+    opacity: var(--opacity-on);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cockpit .reveal-on-hover .chip {
+    transition: none;
+  }
+}
+
+/* ── THE CAP — a section's engraved header ROW. Two words, by design:
+ * `.cap` is the ROW (flex, baseline, a quiet hairline under it when the cap
+ * closes a raised surface — the border is the section's lower edge, not
+ * decoration), `.cap-word` is the engraved WORD inside it. They were one
+ * class in some files and two in others, which is how a section header came
+ * to be styled differently depending on which room drew it. */
+.cockpit .cap {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  margin: 0;
+  padding-bottom: var(--sp-2);
+  width: 100%;
+  min-width: 0;
+}
+.cockpit .cap-word {
+  font-size: var(--f-micro-size);
+  font-weight: var(--f-micro-weight);
+  letter-spacing: var(--f-micro-track);
+  text-transform: none;
+  color: var(--ink-3);
+}
+/* Meta parks at the PAGE right of this row. A max-width ancestor is why
+ * a count used to sit mid-screen — the cap itself must span the page. */
+.cockpit .cap .cap-meta {
+  margin-left: auto;
+  flex: none;
+}
+
+/* ── THE ROW HEADER — the flex-baseline header a card or panel opens with.
+ * Eleven files carried eleven near-identical bodies; the owned recipe is
+ * the common spine, and the gap is the one `--sp-2` every variant used or
+ * approached. */
+.cockpit .head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+
+/* Conversation controls share visual styling and equal responsive tile slots. */
+.cockpit .reel {
+  background: var(--ground-2);
+  border: var(--hairline-w) solid var(--line-1);
+  border-radius: var(--radius-1);
+  cursor: pointer;
+  text-align: left;
+}
+.cockpit .reel:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.cockpit .reel.focused,
+.cockpit .reel:focus-visible {
+  border-color: var(--line-2);
+}
+.cockpit .reel.current { border-color: var(--accent); }
+.cockpit .verb.project-open { justify-content: flex-start; text-align: left; color: var(--accent); font-size: var(--f-prose-size); font-weight: var(--f-micro-weight); }
+.cockpit .verb.reel-open { display: flex; flex-direction: column; align-items: stretch; gap: var(--sp-1); width: 100%; min-width: 0; white-space: normal; padding: var(--sp-2); border: 0; background: transparent; text-align: left; color: inherit; }
+.cockpit .verb.reel-open:hover:enabled { background: transparent; }
+.cockpit .reel.quiet:hover {
+  background: var(--accent-soft);
+}
+.cockpit .reel .name {
+  font-size: var(--f-ui-size);
+  color: var(--ink-1);
+}
+.cockpit .reel.quiet .name {
+  color: var(--ink-1);
+}
+.cockpit .reel .when {
+  font-family: var(--face-mono);
+  font-size: var(--f-nano-size);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.cockpit .reel .custody {
+  font-family: var(--face-mono);
+  font-size: var(--f-nano-size);
+  font-variant-numeric: tabular-nums;
+  color: var(--warn);
+  white-space: nowrap;
+}
+.cockpit .reel .line {
+  font-family: var(--face-mono);
+  font-size: var(--f-data-size);
+  color: var(--ink-1);
+}
+
+/* ── THE VERB — the ONE control recipe. Nineteen files restated it with
+ * local variation; the owned base is the shape every variant shared (the
+ * quiet hairline control that meets the pointer floor), and the states are
+ * the state vocabulary, owned here:
+ *
+ *   hover    — the one hover treatment: `--layer-hover` and the brighter
+ *              ink, applied ONLY to a control that can act (a disabled
+ *              control that lit up on hover would be promising an affordance
+ *              it has already withdrawn).
+ *   focus    — the global `:focus-visible` ring at the foot of this file.
+ *   refused  — `:disabled` wears `--layer-disabled` and the affordance
+ *              cursor is gone (`cursor: default` — one spelling for every
+ *              disabled control in the tree; a control that cannot act never
+ *              promises an affordance, and a second spelling such as
+ *              `not-allowed` would be two answers to one question). The
+ *              reason a wired control is disabled is carried ON the control
+ *              (its title) by the component that disabled it — the recipe
+ *              carries the look, never the words.
+ *   working  — a verb whose action is in flight is `disabled` while it runs
+ *              (the flow's Verb does exactly this), so the working state of
+ *              a CONTROL rides the same refused treatment; the content-side
+ *              word for "in flight" is the answer axis's `pending`.
+ *   armed    — `data-state="armed"` spends `--armed-edge` on the edge, never
+ *              the fill: the destructive control frames itself in the alarm
+ *              hue while it is one gesture away from firing.
+ *
+ * Variants are MARKERS, not new recipes: `.verb.bare` drops the resting
+ * hairline for a control that lives inside an already-edged row;
+ * `.verb.mark` is the dense-tree glyph (a checkmark, a plus) — quiet
+ * visual, same `--hit-min` (WCAG 2.5.8: the target is the hit area, not
+ * the artwork); `.verb.ok` / `.verb.cancel` / `.verb.add` / `.verb.remove`
+ * / `.verb.recycle` / `.verb.restore` are the CONTROL marks
+ * (`shell/verb-marks.ts` owns the characters);
+ * `.verb.more` is the fold bar under a code/diff block.
+ *
+ * TWO SURFACES ARE DELIBERATELY NOT THIS RECIPE, decided here (the owner),
+ * not left as silent local restatements:
+ *
+ *   - ArtifactFrame's dotted-underline grip is a LINK, not a control chip: a
+ *     text-level inline action whose affordance is the dotted underline
+ *     (`border-bottom: dotted`), read as "this word is live" the way a
+ *     hyperlinked word is. Boxing it would make a destructive-restart word
+ *     read as a button beside the copy affordance — the wrong register for an
+ *     inline act. It keeps the pointer-target floor and the owned hover ink,
+ *     but it is not the hairline-box recipe.
+ *   - Horizon's nav row (`.rail-list`/the folded rail) is a MENU ROW, not a
+ *     control chip: text-left, the UI size, a full-width row the way a menu
+ *     entry is. The ChordGrip primitive (shell/ChordGrip.svelte) owns the
+ *     engraved room grips; the folded nav list is the menu those grips fold
+ *     into, and a menu row is not the boxed verb.
+ *
+ * A FUTURE dotted-underline grip or nav row MUST consume the same local
+ * shape these two declare rather than invent a third; if a third surface
+ * needs the role, the role graduates to a marker here (as `.bare` did). */
+.cockpit :where(.verb) {
+  appearance: none;
+  background: transparent;
+  border: var(--hairline-w) solid transparent;
+  border-radius: 0 var(--radius-1) 0 0;
+  /* Shared target floor in BOTH axes (§12.5 — the floor is one token,
+   * consumed here so every control that wears the recipe clears it). */
+  min-height: var(--hit-min);
+  min-width: var(--hit-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-2) var(--sp-3);
+  font: inherit;
+  font-size: var(--f-data-size);
+  font-family: var(--face-sans);
+  color: var(--ink-1);
+  cursor: pointer;
+  white-space: normal;
+  text-align: center;
+  gap: var(--sp-2);
+  line-height: var(--lh-readout);
+  overflow-wrap: anywhere;
+  transition: background var(--t-1) var(--ease-out), border-color var(--t-1) var(--ease-out), color var(--t-1) var(--ease-out), transform var(--t-1) var(--ease-out);
+}
+.cockpit .verb:hover:not(:disabled) {
+  color: var(--ink-1);
+  background-color: var(--layer-hover);
+}
+.cockpit .verb:active:not(:disabled) {
+  background-color: var(--layer-press);
+  border-color: var(--accent);
+}
+.cockpit .verb:disabled, .cockpit .verb[aria-disabled="true"] {
+  color: var(--layer-disabled);
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+.cockpit .verb[data-state="armed"],
+.cockpit .verb[data-state="armed"]:hover:not(:disabled) {
+  /* Hover is more specific (`:hover:not(:disabled)`). Without this twin
+   * the confirmation's alarm ink would vanish the moment the pointer
+   * stayed on the control — exactly when the second press happens. */
+  border-color: var(--armed-edge);
+  color: var(--armed-edge);
+}
+.cockpit .verb.disclose { justify-content: flex-start; text-align: left; }
+.cockpit .disclosure-mark { width: var(--mark-size); height: var(--mark-size); flex: none; color: var(--accent); background: currentColor; mask: var(--mark-disclose) center / contain no-repeat; transition: transform var(--t-1) var(--ease-out); }
+.cockpit [aria-expanded="true"] > .disclosure-mark { transform: rotate(90deg); }
+.cockpit .verb.bare {
+  border-color: transparent;
+  background: none;
+}
+/* Close is the same chip in a quieter ink — the cap already carries the
+ * edge. Send is the same chip; Desk used to restate the whole spine. */
+.cockpit .verb.close {
+  color: var(--ink-2);
+  background: transparent;
+  border-color: transparent;
+  padding: var(--sp-1);
+  flex: none;
+  width: var(--hit-min);
+  height: var(--hit-min);
+  font: var(--f-prose-size) var(--face-sans);
+}
+.cockpit .verb.close:hover:not(:disabled) {
+  color: var(--ink-1);
+}
+/* A menu row is a full-width verb: text-left, no resting hairline
+ * (the menu already edges the surface). ContextMenu used to restate
+ * the spine as `.menu-verb`. */
+.cockpit .verb.menu {
+  width: 100%;
+  justify-content: flex-start;
+  border-color: transparent;
+  text-align: left;
+}
+.cockpit .verb.menu:active:not(:disabled) {
+  background: var(--layer-press);
+}
+/* A mark is a glyph in the owned hit floor: no resting hairline, no
+ * extra pad. FolderPicker row checkmarks used to restate min-size and
+ * read as boxed chips in a dense tree. The floor stays `--hit-min`. */
+.cockpit .verb.mark {
+  border-color: transparent;
+  padding: 0;
+  color: var(--ink-3);
+}
+.cockpit .verb.mark:hover:not(:disabled) {
+  color: var(--ink-1);
+}
+
+/* ── THE LIVE WORD — a text-level action whose affordance is the dotted
+ * underline, read as "this word is live" the way a hyperlinked word is.
+ * ArtifactFrame declared this shape first as a local rule; the right
+ * menu's row heads (the run pane's turns/calls/edits) and the arm body's
+ * capture rows are the second and third surfaces, so the role graduated
+ * to the token owner by the recorded path ("if a third surface needs the
+ * role, the role graduates to a marker here, as `.bare` did"). NOT a
+ * control chip: no hairline box, quiet ink, the pointer-target floor in
+ * both axes, text-left. The consumer adds its own type register (mono,
+ * size) — this recipe owns the affordance, never the typography. */
+.cockpit .live-word {
+  appearance: none;
+  background: none;
+  border: none;
+  border-bottom: var(--hairline-w) dotted var(--line-2);
+  min-height: var(--hit-min);
+  min-width: var(--hit-min);
+  padding: 0 var(--sp-1);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.cockpit .live-word:hover {
+  /* The one live hue, spent on the one thing being pointed at — the same
+   * ink a live stream wears, so "this word goes somewhere" reads as alive
+   * without a box or a glow. */
+  color: var(--beam);
+  border-bottom-color: var(--beam);
+}
+/* Icon-only control marks: the character is the label (verb-marks.ts).
+ * Padding stays the recipe's; the mark is what they share, not a second
+ * spine. Recycle and restore hide the fallback character and paint the
+ * bin / unarchive mask — ♲ is packaging, not a bin. Armed recycle
+ * drops the mask and shows the confirmation word. */
+.cockpit .verb.ok,
+.cockpit .verb.cancel,
+.cockpit .verb.add,
+.cockpit .verb.remove,
+.cockpit .verb.recycle,
+.cockpit .verb.restore {
+  font-variant-numeric: tabular-nums;
+}
+.cockpit .verb.recycle:not([data-state="armed"]),
+.cockpit .verb.restore {
+  font-size: 0;
+  line-height: 0;
+  gap: 0;
+}
+.cockpit .verb.recycle:not([data-state="armed"])::before,
+.cockpit .verb.restore::before {
+  content: "";
+  width: var(--mark-size);
+  height: var(--mark-size);
+  background-color: currentColor;
+  -webkit-mask: var(--mark-recycle) center / contain no-repeat;
+  mask: var(--mark-recycle) center / contain no-repeat;
+}
+.cockpit .verb.restore::before {
+  -webkit-mask-image: var(--mark-restore);
+  mask-image: var(--mark-restore);
+}
+/* A more-bar is the fold footer under a code/diff block: full-width,
+ * top hairline, recessed fill. CodeBlock and UnifiedDiff used to restate
+ * the spine as `.more`. ToolOutput / JsonNode dotted "more" is the
+ * inline-grip family, not this marker. */
+.cockpit .verb.more {
+  width: 100%;
+  justify-content: flex-start;
+  border-radius: 0;
+  border-color: transparent;
+  border-top-color: var(--line-1);
+  background: var(--ground-2);
+  font-size: var(--f-micro-size);
+  letter-spacing: var(--f-micro-track);
+}
+
+/* ── THE MENU CHIP — one recipe for the small mono chips inside the stacked
+ * inspector menus. Three surfaces restated it per file (the run group's
+ * ledger filter toggles, the arm group's palette insert chips, the arm
+ * rows' storage labels), which is how a filter toggle and a static label
+ * came to differ only by accident. The recipe owns the shared body and
+ * the two states a CHIP control wears; the consumer keeps only its own
+ * register (which face it is) and its containment — a chip holding an
+ * unbreakable token wraps rather than pushing its column sideways, so
+ * the recipe carries `overflow-wrap: anywhere` and never `nowrap`.
+ *   hover    — only a chip that can act (a control) lights up: `:enabled`
+ *              keeps a static label chip (a span) at rest forever.
+ *   pressed  — the pinned aria-pressed grammar the ledger's toggles and
+ *              the trace filter use: the brighter ink + the stronger
+ *              edge, never a fill. */
+.cockpit .menu-chip {
+  appearance: none;
+  background: none;
+  border: var(--hairline-w) solid var(--line-1);
+  border-radius: var(--radius-1);
+  color: var(--ink-2);
+  cursor: pointer;
+  font: inherit;
+  font-family: var(--face-mono);
+  font-size: var(--f-nano-size);
+  min-height: var(--hit-min);
+  padding: 0 var(--sp-1);
+  overflow-wrap: anywhere;
+}
+.cockpit button.menu-chip:hover:enabled {
+  background: var(--layer-hover);
+  color: var(--ink-1);
+}
+.cockpit .menu-chip[aria-pressed="true"] {
+  color: var(--ink-1);
+  border-color: var(--ink-4);
+}
+/* A static label chip (the arm rows' "on the record" storage note) is the
+ * same body with no affordance to promise: the quiet ink, the recipe's
+ * containment, and the engraved register's small caps. */
+.cockpit .menu-chip.label-chip {
+  cursor: default;
+  color: var(--ink-3);
+  font-size: var(--f-micro-size);
+  font-weight: var(--f-micro-weight);
+  letter-spacing: var(--f-micro-track);
+  text-transform: none;
+}
+
+/* ── THE VERB ROW — a cluster of verbs sitting together. The four layouts
+ * the tree invented (flex-end pair, wrap pair, inline-flex singletons) are
+ * one recipe: a flex row of verbs with the small gap. Alignment belongs to
+ * the parent (`.mine .options` right-aligns; a sheet's actions row
+ * space-betweens), so the recipe carries only what the ROW owns. */
+.cockpit .verbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: center;
+  min-width: 0;
+}
+
+/* ── THE FIELD — a labelled input, in its two honest LAYOUTS plus the
+ * shared inset. The audit found `.field` restated in six files wearing
+ * BOTH stacked and horizontal shapes. Forcing one layout on the other is
+ * the bug this recipe used to ship: `.cockpit .field` as column won over
+ * Registration's scoped grid (Svelte 5 scopes with `:where()`, so a local
+ * `.field { display:grid }` is 0,1,0 against this 0,2,0) and stacked the
+ * gate ON the inputs. A local restatement that loses is not a choke.
+ *
+ *   COLUMN    — `.cockpit .field`: the engraved word ABOVE the input
+ *               (DeleteConfirm, editor). Default labelled recipe.
+ *   SPINE     — `.cockpit .column .field`: the engraved word LEFT of the
+ *               input on `--label-track`, sharing the Registration probe
+ *               line's grid. Higher specificity (0,3,0) so the column
+ *               recipe cannot stack the gate. Registration consumes this
+ *               by being `.column`; it does not restate `display`.
+ *   BARE      — `.field` on the `<input>` itself (picker name, custody
+ *               keep line): no label element, the input IS the field.
+ *               Still the COLUMN host (an input is not a label|control
+ *               pair); the inset rules below are the shared chrome.
+ *
+ * WHY IT STOPPED AT `.column`. Registration's host is the one `.column`
+ * that carries labelled `.field`s. DeskPanel also has `.column` strips,
+ * but none of them wrap a `.field` — a field added there would join the
+ * spine on purpose (instrument labels left of readouts), which is the
+ * same question, not a third recipe. DeleteConfirm's host is `.confirm`,
+ * so it keeps the stacked column.
+ *
+ * Bootstrap 5.3 horizontal forms (docs/5.3/forms/layout, retrieved
+ * 2026-08-26) are the same shape: a label column + a control column on
+ * one grid, submit offset onto the control track. CSS grid
+ * `grid-template-columns: var(--label-track) 1fr` is that spine without
+ * a 12-col framework. */
+.cockpit .field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-0);
+  min-width: 0;
+}
+.cockpit .column .field {
+  display: grid;
+  grid-template-columns: var(--label-track) 1fr;
+  gap: 0 var(--sp-4);
+  align-items: center;
+}
+.cockpit .column.welcome .field {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sp-2);
+}
+.cockpit .column.welcome .field input {
+  min-height: var(--horizon-h);
+  font-family: var(--face-sans);
+  font-size: var(--f-prose-size);
+}
+.cockpit .field input,
+.cockpit input.field,
+.cockpit select.field {
+  min-height: var(--hit-min);
+  min-width: var(--hit-min);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--ground-1);
+  border: var(--hairline-w) solid var(--line-2);
+  border-radius: var(--radius-1);
+  color: var(--ink-1);
+  font-family: var(--face-sans);
+  font-size: var(--f-data-size);
+}
+.cockpit .field input:disabled,
+.cockpit input.field:disabled {
+  color: var(--layer-disabled);
+}
+
+/* Open faces: one term, one action edge, one persistent result. */
+.cockpit .verb.primary { color: var(--ground-0); background: var(--accent); border-color: transparent; min-height: var(--hit-min); padding: var(--sp-2) var(--sp-4); font: var(--f-micro-weight) var(--f-ui-size) / var(--lh-readout) var(--face-sans); }
+.cockpit .verb.primary:hover:enabled:not([aria-disabled="true"]) { background: color-mix(in srgb, var(--accent) 82%, var(--ink-1)); }
+.cockpit .verb.primary:disabled, .cockpit .verb.primary[aria-disabled="true"] { color: var(--ink-2); background: var(--ground-2); border-color: var(--line-2); }
+.cockpit .verb.add:not(.primary), .cockpit .verb.ok:not(.primary):not(.mark) { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
+.cockpit .verb.commit { justify-content: space-between; gap: var(--sp-4); text-align: left; }
+.cockpit .commit-copy { display: flex; flex-direction: column; min-width: 0; gap: var(--sp-1); }
+.cockpit .commit-copy strong { font-weight: var(--f-micro-weight); }
+.cockpit .commit-copy > span { color: inherit; font-size: var(--f-data-size); }
+.cockpit .commit-mark { width: var(--mark-size); height: var(--mark-size); flex: none; background: currentColor; mask: var(--mark-commit) center / contain no-repeat; }
+.cockpit .verb.commit[data-commit-state="saved"] { color: var(--ok); background: color-mix(in srgb, var(--ok) 15%, var(--ground-1)); border-color: var(--ok); }
+.cockpit .verb.commit[data-commit-state="saved"] .commit-mark { mask-image: var(--mark-ok); }
+.cockpit .verb.commit[data-commit-state="pending"], .cockpit .verb[aria-busy="true"] { color: var(--beam); background: var(--accent-soft); border-color: var(--beam); }
+.cockpit .verb.insertion { width: fit-content; justify-content: flex-start; }
+.cockpit .verb[role="radio"][aria-checked="true"]:enabled { color: var(--accent); background: var(--accent-soft); border-color: var(--accent); }
+.cockpit .verb.state-control { min-height: var(--hit-min); min-width: var(--hit-min); width: var(--hit-min); max-width: 100%; padding: var(--sp-1); justify-content: center; gap: 0; }
+.cockpit .verb.state-control[aria-checked="true"] { color: var(--ok); background: transparent; border-color: transparent; }
+.cockpit .verb.state-control[aria-checked="false"] { color: var(--warn); background: transparent; border-color: transparent; }
+.cockpit .verb.state-control:hover:enabled:not([aria-disabled="true"]) { border-color: currentColor; }
+.cockpit .state-path { position: relative; width: var(--sp-6); height: var(--sp-3); flex: none; border: var(--hairline-w) solid currentColor; border-radius: var(--radius-1); }
+.cockpit .state-path::after { content: ""; position: absolute; top: var(--sp-0); left: var(--sp-0); width: var(--sp-2); height: var(--sp-2); background: currentColor; border-radius: var(--radius-1); }
+.cockpit [aria-checked="true"] > .state-path::after { left: auto; right: var(--sp-0); }
+.cockpit .edit-band { display: grid; grid-template-columns: minmax(0, 1fr) min(40%, var(--commit-control-w)); min-width: 0; column-gap: var(--sp-3); align-content: start; }
+.cockpit .edit-band.numeric-edit { width: min(100%, calc(var(--switch-field-w) + var(--commit-control-w))); }
+.cockpit [data-edit-state="draft"] .edit-value input { border-color: var(--accent); }
+.cockpit [data-edit-state="failed"] .edit-value input { border-color: var(--alarm); }
+.cockpit .edit-value { display: flex; flex-direction: column; gap: var(--sp-1); min-width: 0; }
+.cockpit .edit-band.direct-choice { grid-template-columns: minmax(0, 1fr); }
+.cockpit .edit-band.direct-choice .footer { display: none; }
+.cockpit .edit-band .footer { padding: 0; margin: 0; align-self: start; display: flex; }
+.cockpit .edit-band .commit { width: 100%; min-height: max(var(--hit-min), calc(var(--f-edit-size) + 2 * var(--sp-1))); border-radius: 0 var(--radius-1) 0 0; border: 0; padding: var(--sp-2) var(--sp-3); }
+.cockpit .edit-result { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-2) var(--sp-4); grid-column: 1 / -1; padding: 0; background: var(--ground-0); font-size: var(--f-data-size); color: var(--ink-2); }
+.cockpit .edit-result:has(> :not(.saved-announcement)) { padding: var(--sp-3) 0; }
+.cockpit .edit-result p { margin: 0; }
+.cockpit .edit-result .saved-line { color: var(--ok); }
+.cockpit .edit-result .effect-timing { order: 1; }
+.cockpit .edit-result .effect-timing.deferred { color: var(--warn); }
+.cockpit .edit-result .pending-draft { flex-basis: 100%; color: var(--beam); }
+.cockpit .edit-result .failure, .cockpit .edit-result .uncertain { color: var(--alarm); }
+.cockpit .input-correction { margin: var(--sp-1) 0 0; color: var(--alarm); font-size: var(--f-data-size); }
+.cockpit .refusal-details summary { min-height: var(--hit-min); display: flex; align-items: center; cursor: pointer; color: var(--alarm); }
+.cockpit .refusal-details summary::before { content: ""; width: var(--mark-size); height: var(--mark-size); background: currentColor; mask: var(--mark-disclose) center / contain no-repeat; }
+.cockpit .refusal-details[open] summary::before { transform: rotate(90deg); }
+.cockpit .setting-options { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); }
+.cockpit .setting-details { min-width: 0; }
+.cockpit .setting-details summary { cursor: pointer; min-height: var(--hit-min); display: flex; align-items: center; gap: var(--sp-2); color: var(--ink-2); }
+.cockpit .setting-details summary::before { content: ""; width: var(--mark-size); height: var(--mark-size); background: currentColor; mask: var(--mark-disclose) center / contain no-repeat; }
+.cockpit .setting-details[open] summary::before { transform: rotate(90deg); }
+.cockpit .setting-details p { margin: var(--sp-2) 0; font: var(--f-data-size) / var(--lh-readout) var(--face-sans); color: var(--ink-2); }
+.cockpit .sheet { container-type: inline-size; }
+.cockpit .setting-workspace { display: grid; gap: var(--sp-4) var(--sp-6); min-width: 0; }
+.cockpit .setting-context { min-width: 0; }
+.cockpit .setting-facts { display: grid; gap: var(--sp-2); margin: var(--sp-3) 0 0; font: var(--f-data-size) / var(--lh-readout) var(--face-sans); }
+.cockpit .setting-facts > div { display: grid; grid-template-columns: minmax(0, 6rem) minmax(0, 1fr); gap: var(--sp-3); }
+.cockpit .setting-facts dt { color: var(--ink-2); }
+.cockpit .setting-facts dd { margin: 0; min-width: 0; color: var(--ink-1); font: inherit; overflow-wrap: anywhere; }
+@container (min-width: 48rem) {
+  .cockpit .setting-workspace { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .cockpit .setting-options { grid-column: 1 / -1; }
+  .cockpit .setting-details[open] > .setting-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3) var(--sp-6); }
+}
+@container (max-width: 32rem) {
+  .cockpit .edit-band .commit { min-height: var(--hit-min); }
+  .cockpit .edit-band .commit-copy { flex-direction: row; align-items: baseline; flex-wrap: wrap; gap: var(--sp-2); }
+}
+/* The same open field edge in connection forms, with native exact entry. */
+.cockpit .connection-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--switch-field-w)), 1fr)); gap: var(--sp-5) var(--sp-4); max-width: none; min-width: 0; }
+.cockpit .connection-form .form-wide { grid-column: 1 / -1; }
+.cockpit .connection-form :is(input:not([type="checkbox"]),textarea,select), .cockpit select.field { width: 100%; min-width: 0; min-height: var(--hit-min); box-sizing: border-box; font: var(--f-data-size) / var(--lh-readout) var(--face-sans); padding: var(--sp-2) var(--sp-3); color: var(--ink-1); background: var(--ground-2); border: 0; border-bottom: var(--rule-w) solid var(--line-2); border-radius: 0 var(--radius-1) 0 0; }
+.cockpit .edit-value :is(input,textarea) { width: 100%; min-width: 0; min-height: var(--hit-min); box-sizing: border-box; color: var(--ink-1); background: transparent; border: 0; border-bottom: var(--hairline-w) solid var(--accent); border-radius: 0; padding: var(--sp-1) 0; }
+.cockpit .edit-value .numeral { width: min(100%, var(--switch-field-w)); font: var(--f-value-weight) var(--f-edit-size) var(--face-mono); }
+.cockpit .edit-value .numeral-row { align-items: baseline; gap: var(--sp-2) var(--sp-4); }
+.cockpit .connection-form :is(input,textarea,select):focus { border-color: var(--accent); }
+.cockpit .connection-form ::placeholder, .cockpit .edit-value ::placeholder { color: var(--ink-2); opacity: 1; }
+.cockpit .connection-form .f-label { font: var(--f-data-size) / var(--lh-readout) var(--face-sans); color: var(--ink-2); }
+.cockpit input[type="checkbox"], .cockpit input[type="radio"] { accent-color: var(--accent); }
+.cockpit .f-inline, .cockpit .m-check { min-height: var(--hit-min); align-items: center; }
+
+.cockpit .verb.copy, .cockpit .verb.edit, .cockpit .verb.close, .cockpit .verb.more {
+  width: var(--hit-min); height: var(--hit-min); padding: 0;
+  border-color: transparent; background: transparent; color: var(--ink-2);
+  font-size: 0; line-height: 0; flex: none; gap: 0; justify-content: center;
+}
+.cockpit .verb.copy::before, .cockpit .verb.edit::before, .cockpit .verb.close::before, .cockpit .verb.more::before {
+  content: ""; width: var(--mark-size); height: var(--mark-size); flex: none;
+  background: currentColor; mask: var(--control-mark) center / contain no-repeat;
+}
+.cockpit .verb.copy { --control-mark: var(--mark-copy); }
+.cockpit .verb.copy[data-outcome="done"] { --control-mark: var(--mark-ok); color: var(--ok); }
+.cockpit .verb.edit { --control-mark: var(--mark-edit); }
+.cockpit .verb.more { --control-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='5' cy='12' r='1.8'/%3E%3Ccircle cx='12' cy='12' r='1.8'/%3E%3Ccircle cx='19' cy='12' r='1.8'/%3E%3C/svg%3E"); }
+.cockpit .verb.close { --control-mark: var(--mark-close); }
+.cockpit .verb.copy:hover:enabled, .cockpit .verb.edit:hover:enabled, .cockpit .verb.close:hover:enabled { background: var(--layer-hover); color: var(--ink-1); }
+.cockpit .verb.quick-watch { color: var(--accent); background: var(--accent-soft); min-height: var(--row-h); font: var(--f-data-size) var(--face-sans); }
+
+/* ── THE HOVER-REVEAL AFFORDANCE. `.reveal-on-hover` marks the CONTAINER;
+ * the affordance inside it is `.reveal-item`. Copy used to be a second
+ * recipe (`.hover-reveal .copy-btn`); CopyButton now emits `.verb.reveal-item`
+ * and the hosts mark this container class. Without a container ancestor the
+ * item is visible at rest (ArtifactFrame, and the Primer copy law). THE
+ * REST-STATE FLOOR stands: where no hover exists, the affordance is visible. */
+.cockpit .reveal-on-hover .reveal-item {
+  opacity: var(--opacity-off);
+  transition: opacity var(--t-1) var(--ease-out);
+}
+.cockpit .reveal-on-hover:hover .reveal-item,
+.cockpit .reveal-on-hover:focus-within .reveal-item {
+  opacity: var(--opacity-on);
+}
+@media (hover: none) {
+  .cockpit .reveal-on-hover .reveal-item {
+    opacity: var(--opacity-on);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cockpit .reveal-item {
+    transition: none;
+  }
+}
+
+/* ── §3 THE FLOW — the rail says WHICH channel is arriving — appended ──────
+ *
+ * The token rail reports a measured rate and a character count, and during a
+ * tool call those characters are the tool's ARGUMENTS rather than any words
+ * the reader will see. Blending them into one unlabelled number would have the
+ * reader watching a count that corresponds to no text on screen, so the rail
+ * names the channel beside the count (flow/StreamPulse.svelte).
+ *
+ * Its box is RESERVED, like every other part of that footer: the channel
+ * changes several times within one turn (thinking → the reply → a tool call's
+ * input → the reply), and a word that resized the row on each change would
+ * make the flow's virtualizer re-measure the beat because of its own activity
+ * indicator. Wide enough for the longest channel word it can hold.
+ * ────────────────────────────────────────────────────────────────────────── */
+:root {
+  --stream-channel-w: 19ch;
+}
+
+/* Touch uses the same controls and geometry tokens with a larger target. */
+@media (pointer: coarse) {
+  .cockpit {
+    --hit-min: 44px;
+    --horizon-h: 4rem;
+    --row-h: 44px;
+  }
+}
+
+/* Readout rows reflow at a text-relative container boundary, including enlarged text. */
+@container context-control-row (max-width: 20rem) {
+  .cockpit .strip > .row { grid-template-columns: minmax(0, 1fr) max-content; }
+  .cockpit .strip > .row > .verbs { grid-row: 3; grid-column: 1 / -1; }
+  .cockpit .breaker-row > .row { grid-template-columns: minmax(0, 1fr); }
+  .cockpit .breaker-row .tool-label { padding-top: var(--sp-2); }
+}
+
+/* The project toolbar wraps complete controls, with sort at the trailing edge. */
+@media (max-width: 48rem) {
+  .cockpit .switch .bar { display: flex; flex-wrap: wrap; }
+  .cockpit .switch .filter { flex: 1 1 100%; order: 0; }
+  .cockpit .switch .create { flex: none; order: 1; }
+  .cockpit .switch .toolbar-options { flex: none; order: 2; }
+  .cockpit .switch .sort-control { flex: none; order: 3; margin-left: auto; }
+  .cockpit .switch .counts { flex: 1 1 100%; order: 4; }
+}
+@property --cap-columns {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 1;
+}
+@property --reel-h {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 88px;
+}

@@ -1,0 +1,299 @@
+# EVERY PATTERN SAYS WHICH OF TWO THINGS IT MEANS.
+#
+# A leading `/` names ONE place, resolved relative to this file. A leading
+# `**/` means every depth, on purpose. A pattern with neither behaves exactly
+# like `**/` and nobody said so — which is how `coverage/`, written for the
+# report directory at this root, came to swallow `src/lib/coverage/`, a live
+# source directory the component registry imports unconditionally. The working
+# tree built; every fresh clone did not.
+#
+# Anchoring is what survived the merge, and this file is the proof. It is the
+# union of the two roots that became this one: the web tree's root and the
+# harness root's. Measured at the assembly: an UNANCHORED `research/` names
+# 274 tracked files under `engine/docs/research/`, and an unanchored
+# `experiments/` names 80. Each pattern below is therefore anchored to this
+# root or marked every-depth on purpose, and each subtree that carries its own
+# rules — `engine/`, `bench/`, `tests/performance/` — keeps them, because git
+# resolves an anchored pattern relative to the `.gitignore` that declares it.
+#
+# ONE PATTERN WAS DELIBERATELY NOT CARRIED OVER AT THE ASSEMBLY: the harness
+# root's `/experiments/` named a dumping ground at THAT root; at THIS root
+# `experiments/` was a TRACKED tree, so importing the rule would have hidden
+# live content — the class of defect this header describes. (Its later life
+# as an anchored rule here ended with the merge door: see below.)
+# `scripts/harness-root/merge-round.mjs` once defaulted its experiments root
+# to `<this root>/experiments` and read nothing; it now takes
+# `--experiments-root` and has no default, so nothing reads an experiments
+# directory unless somebody names it.
+#
+# THE EXPERIMENT ARCHIVE IS TRACKED, AND NO RULE HERE NAMES IT. The
+# experiments-shape decision put the whole experiment archive here:
+# `experiments/engine/` (the engine repo's numbered rounds),
+# `experiments/web/`, `experiments/archive/` — records, versioned on this
+# branch beside the work that produced them. What ships to the product branch
+# is the promotion profile's answer (`promotion/testing-to-master.json`
+# excludes `experiments/`), never an ignore rule: the anchored rule and its
+# re-admission that used to make the archive "floor bytes" retired with the
+# merge door (PROMO-4), and so did the product branch's prophylactic copies
+# of these rules, which made local bytes expendable on a checkout
+# (merge-door-final J13).
+
+# Dependencies and build output. Every-depth on purpose: npm creates nested
+# `node_modules`, and build output lands beside whatever produced it.
+**/node_modules/
+node_modules
+**/dist/
+**/*.tsbuildinfo
+
+# Logs land wherever the thing that wrote them runs.
+**/*.log
+
+# Harness runtime state (databases, caches). Every-depth: a harness run
+# writes one wherever its project root is, including under a fixture.
+**/.bridlewise/
+# AND EVERY SUFFIXED SIBLING OF IT. State directories are sometimes renamed
+# aside with a suffix, so a single literal spelling would let the moved copy
+# through. A wildcard covers the next suffix without another hand-maintained
+# entry. The rule is deliberately not directory-only: an archive with the same
+# name is the same state in a different shape. Never commit databases, keys,
+# or state archives.
+**/.bridlewise.*
+
+# Local dev scratch and the two browser-driven report directories, all at
+# this root and all written by a tool that runs from it.
+/.dev/
+/test-results/
+/playwright-report/
+
+# Coverage report output, written at this root. The original defect, and the
+# reason every rule in this file is now explicit one way or the other.
+/coverage/
+
+# Transient merge state, written at this root by `scripts/harness-root/merge-round.mjs`.
+# Each of these is `resolve(<this root>, …)` in that file: the lock and the
+# report at its top, and the two promote temporaries at `dirname(engine)`,
+# which IS this root now that the engine is `engine/` rather than a sibling.
+#
+# `/.staging/` USED TO BE HERE AND WAS NEVER WRITTEN HERE. The staging tree is
+# `resolve(integrationDir, ".staging")` — `engine/.staging`, one directory
+# down — so the rule at this root defended a place nothing writes while the
+# place something does write was unignored, and `--no-e2e` LEAVES that tree in
+# place on purpose for inspection. The rule moved to `engine/.gitignore`,
+# which is the only file whose anchored spelling can name it.
+/.merge.lock
+/.integration-staging-tmp/
+/.integration-old-promote/
+/MERGE-ROUND-REPORT.json
+# AND THE MERGE TOOL'S INPUT, WHICH BELONGS ONE DIRECTORY DOWN, NEVER HERE.
+# `merge-round.mjs` reads `<experiments-root>/<expNNN-…>/merge-manifest.json`,
+# where the root is named on the command line — one level down from whatever
+# root it is given, never at a repository root. Five copies were sitting HERE,
+# made while somebody was reading them and then committed. Anchored on purpose:
+# the every-depth spelling would hide every manifest in the tree, including
+# the ones under `experiments/` that record closed rounds and the ones a
+# future round will be pointed at. The rule names the wrong PLACE for a file
+# whose right place is one directory deeper.
+/merge-manifest*.json
+
+# `/.bkp/` — copies kept aside during earlier surgery. It was TRACKED here
+# until the clean-root work removed it, which is why the rule could not exist
+# before: an ignore rule over a tracked path does nothing, and the moment the
+# path is untracked the rule is what stops it coming back. The directory
+# itself is still the right place to put a file before mutating it; what is
+# wrong is committing what lands there, so the rule ignores rather than
+# forbids. (Its sibling of that era, the closed merge rounds' `experiments/`,
+# is the tracked experiment archive now: see the header.)
+/.bkp/
+
+# Transient workspace-lease state, written at this root.
+/.workspace-lease/
+
+# Separate repositories / full forks that may be cloned beside the work but are
+# NOT part of it. Tracking them via `git add -A` once pulled 600+ experiment
+# repositories in as submodules and bloated the worktree. All anchored to this
+# root: each names one place, and `research/` in particular must never go
+# every-depth (see the header's measurement).
+#
+# THESE RULES ARE PROPHYLACTIC, AND MOST OF THEM NAME NOTHING TODAY. That is
+# the point: each names a place where a huge foreign tree is known to land, so
+# the rule has to be there BEFORE the tree is, not after somebody has already
+# run `git add -A`. Do not prune one for being "dead" — `/large-codebases/`
+# was raised as dead in an audit on 2026-07-31 because the corpus currently
+# lives at `engine/large-codebases` (declared by `engine/.gitignore`, which
+# resolves it relative to itself). Both rules are correct and neither is
+# redundant: they defend two different places, and either place can be the one
+# the next checkout uses.
+/candidate/
+/large-codebases/
+/mutant-tests/
+/probes/
+/research/
+/detect-secrets/
+
+# Raw evidence held in the evidence store, never in git: `harness evidence
+# materialize` writes a recorded file back at its recorded path, and the copy
+# must never be committed. The block below is GENERATED from the tracked
+# evidence manifests (harness sync; never edit it by hand).
+
+# EVERY MOVED-ASIDE SIBLING OF EVERY RULE ABOVE, AS ONE RULE ABOUT THE SHAPE.
+#
+# `**/.bridlewise.*` two blocks up fixes ONE of these. Every OTHER directory
+# rule in this repository had the identical hole: enumerated mechanically,
+# 28 of the 31 directory-style rules across the four tracked `.gitignore`
+# files did not cover their own moved-aside sibling — `node_modules`, `dist`,
+# `/coverage/`,
+# `/.staging/`, `/.workspace-lease/`, `/candidate/`, `engine/guardian/build/`,
+# `**/__pycache__/`, all of them.
+#
+# The rename is not an accident anybody could stop doing. It is PRESCRIBED:
+# §39/W-08 says preserve state by moving it aside rather than clearing it,
+# `mv <dir> <dir>.<label>-$(date +%s)`, and `scripts/testing/sweep-cache-evidence.ts`
+# exists to clean up after it. Nothing in this tree writes the label — an
+# operator types it — so the next spelling is unknowable and a second literal
+# beside the first defends exactly one more of them.
+#
+# SO THE RULE NAMES THE SHAPE, the way `bench/.gitignore` does for its own
+# root, and for the same reason: a list can only defend the names somebody has
+# already met. One rule covers all 31, and covers the 32nd the day it is
+# written, because nobody has to remember to come back here.
+#
+# WHAT MAKES A SHAPE RULE SAFE HERE IS THE EPOCH, NOT THE LABEL. A label alone
+# (`.aside`, `.bkp`) is a word, and an every-depth rule over a word is the
+# `coverage/` defect again — it would swallow a directory somebody means to
+# track. Ten or more digits at the end of a name is a timestamp, and nothing in
+# a source tree is named after one.
+#
+# A HIGHER RUNG WAS CONSIDERED AND DECLINED, AND THE REASON IS A MECHANISM.
+# If the prescribed rename targeted an ALREADY-IGNORED destination — `mv <dir>
+# .bkp/<dir>.<label>` against the `/.bkp/` rule above — no unmatched name would
+# ever be produced and this rule could be deleted: the class would be
+# unreachable by shape rather than matched. It is declined for three reasons,
+# none of which is the size of the change:
+#   1. THERE IS NO DOOR TO PUT THE ARGUMENT ON. Nothing in this repository
+#      executes the rename; an operator types it into a shell. "Unreachable by
+#      shape" needs a call site that demands the right destination, and a
+#      convention that everybody must remember is rung 6 wearing rung 3's
+#      clothes — the exact substitution the strength ladder exists to refuse.
+#   2. IT WOULD BREAK THE ONE CONSUMER THE MOVED-ASIDE NAME HAS.
+#      `scripts/testing/sweep-cache-evidence.ts` finds evidence directories by reading
+#      `node_modules/` and matching the shape BESIDE the live cache. Sitting
+#      where the original sat is what makes a moved-aside directory findable at
+#      all; relocating them under `.bkp/` moves them out of that reader's
+#      universe, which is a silently smaller scan — this file's own recurring
+#      failure.
+#   3. `/.bkp/` IS ANCHORED PER ROOT ON PURPOSE (`bench/.gitignore` records
+#      why), so the prescription would need one such rule at every root where a
+#      rename can happen. That is a list of places again, which is what the
+#      shape rule below replaced.
+#
+# THE RULE USED TO REQUIRE A LITERAL `.` BEFORE THE LABEL (`**/*.*-<epoch>*`)
+# AND THAT GAP WAS ARBITRARY, NOT PRINCIPLED. `mv .bridlewise
+# .bridlewise-1785461259` was covered — but only because the LEADING DOT of
+# the directory's own name happened to satisfy the `*.*`, which has nothing to
+# do with the rename. `mv node_modules node_modules-1785461259` and
+# `mv engine/guardian/build engine/guardian/build-1785461259` were NOT covered,
+# both driven. So the dot defended whichever names happened to contain one, and
+# the hyphenated spelling of the rename is the one an operator types when the
+# directory has no dot in it — which is most of them.
+#
+# The dot is gone. Measured at the time of the change, over the union of both
+# tracked indexes: 21,290 tracked path segments, ZERO matches. That number is
+# not the guard — `tests/prevention/tracked-source-owner.test.ts` case C reds
+# on ANY tracked path an ignore rule matches, at any depth and in every root,
+# so the day a committed file takes this shape it is a red rather than a stale
+# paragraph here.
+#
+# NO TRAILING SLASH, and that is measured rather than stylistic — the same
+# measurement `engine/.gitignore` records for `/large-codebases`. That path is
+# a SYMLINK; a trailing slash makes git match real directories only, so a
+# directory-only rule here would miss the moved-aside spelling of exactly the
+# entries that need a slashless rule in the first place. It also covers
+# `.bridlewise.archived-<epoch>.tar`, which is the same secret in a different
+# shape — the reason the `.bridlewise.*` rule above is slashless too.
+#
+# THE TRAILING `*` IS THE PRICE OF THAT, AND THE PRICE IS NOW MEASURED RATHER
+# THAN ASSERTED. It means ten digits followed by ANYTHING match — including
+# inside a FILE name, so `book.isbn-9780134685991.json`,
+# `data.export-20260731010342.csv` and `app.min-1234567890.js` are all silently
+# unaddable by `git add -A`. Zero such names exist in this index today.
+#
+# THE NARROWER SPELLING WAS TRIED, NOT DISMISSED, AND IT LOSES MORE THAN IT
+# SAVES. Dropping the `*` anchors the epoch to the end of the name and clears
+# every false positive above — and it stops covering three of the six names the
+# rename really produces: both millisecond-epoch spellings and the `.tar`
+# archive. The mechanism is `fnmatch`, which git's matcher is: it has NO
+# REPETITION OPERATOR, so "and the rest is digits" is inexpressible, `[0-9]*`
+# means "one digit then anything", and the epoch's own width is not fixed
+# (`date +%s` is ten, milliseconds are thirteen, and the sweeper's `\d+` bounds
+# it only from below).
+#
+# THIS PARAGRAPH USED TO END "there is no spelling in this language that admits
+# the six and refuses the three", AND THAT WAS FALSE — measured, not argued.
+# THREE anchored rules do it: ten digits, thirteen digits, and ten digits plus
+# `.tar`. Driven in a throwaway repository, that set covers all six names the
+# rename produces and swallows none of the three file names above. The sentence
+# was a claim about a search nobody had run, and it read like a proof.
+#
+# THE CONCLUSION SURVIVES ON A DIFFERENT MECHANISM, AND THIS FILE ALREADY
+# STATES IT TWICE. `fnmatch` has no repetition operator, so a pattern that
+# ANCHORS the epoch to the end of the name matches a FIXED number of digit
+# positions — which means any candidate that refuses the three false positives
+# can only cover the widths it spells out, one rule per width. That is a LIST,
+# and the whole reason this rule names a shape is that a list defends only the
+# names somebody has already met. It is not a theoretical objection: the
+# three-rule set above MISSES eleven-, twelve-, fourteen-, sixteen- and
+# nineteen-digit epochs, all driven, and the last two are what `date +%s%6N`
+# and `date +%s%N` print — spellings an operator can type today, in a rename
+# nothing in this tree writes. The trailing `*` covers every width there will
+# ever be, because it never had to know how many there are.
+#
+# SO THE OVER-REACH STAYS, AND IT IS BOUNDED IN TWO DIRECTIONS RATHER THAN
+# HOPED ABOUT. An EXPLICIT `git add <path>` refuses out loud, names the path and
+# offers `-f` — only `git add -A` is quiet — and anything force-added past that
+# refusal is what case C above reds on. A regression fixture for this very rule
+# would be named exactly like a moved-aside directory, which is why the guard
+# builds every such name at run time and asks a throwaway repository: it owns no
+# committed file its own subject rule would swallow.
+#
+# `tests/prevention/gitignore-anchoring.test.ts` reds if any directory rule in
+# any tracked `.gitignore` stops being covered by this one, AND it drives BOTH
+# candidates above — the narrowed single rule and the width-enumerated set —
+# each to the specific failure named here rather than to a bare "it does not
+# work". It also drives the widths at run time, so the claim that the deployed
+# rule covers every one of them is re-measured on every run instead of being
+# read. What that arm cannot do is search the language for a spelling nobody
+# has proposed; the promise is bounded to the candidates it drives, which is
+# the promise this paragraph makes and the one the previous version did not.
+**/*-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]*
+
+# OS / editor noise, which appears wherever the file being edited is.
+**/.DS_Store
+**/*.swp
+
+# Public-repository secret hygiene (added for the public snapshot)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+.npmrc
+.netrc
+**/.code-harness*
+.bridlewise/
+**/.bridlewise/
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.log
+*.tsbuildinfo
+test-results/
+playwright-report/
+coverage/
+.impeccable/
+docs/_site/
+docs/.jekyll-cache/
