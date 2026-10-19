@@ -1,0 +1,201 @@
+---
+layout: null
+title: "Run 0001 · trace the request boundary"
+description: "An illustrative, interactive Bridlewise run record. Eight causal beats, governed tools, a typed refusal, and a redaction. Synthetic data; no live model or engine connection."
+permalink: /run/
+sitemap: true
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Run 0001 · trace the request boundary">
+  <meta property="og:description" content="An illustrative Bridlewise run record: eight causal beats, a governed tool, a typed refusal, and a redaction. Synthetic; not a live engine.">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <meta property="og:image" content="https://llm-4-people.github.io/bridlewise/assets/social-preview.png">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0b0d11">
+  <meta name="description" content="An illustrative, interactive Bridlewise run record. Synthetic data, no live model, no engine connection.">
+  <title>Run 0001 · trace the request boundary · Bridlewise</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b0d11'/%3E%3Cpath d='M8 22V10h4l4 7 4-7h4v12' fill='none' stroke='%238fd3ff' stroke-width='2'/%3E%3C/svg%3E">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("bridlewise:run-demo:theme") === "light") {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      } catch (error) {
+        /* The demo still works when storage is unavailable. */
+      }
+    }());
+  </script>
+  <link rel="stylesheet" href="run-demo.css">
+</head>
+<body>
+  <a class="skip-link" href="#timeline-heading">Skip to the causal timeline</a>
+
+  <div class="frame">
+    <header class="topbar">
+      <div class="brand" aria-label="Bridlewise run record">
+        <span class="brand__mark" aria-hidden="true">BW</span>
+        <span class="brand__name">bridlewise</span>
+        <span class="brand__rule" aria-hidden="true">/</span>
+        <span class="brand__section">run record</span>
+      </div>
+      <p class="topbar__preview">Docs preview · offline</p>
+      <div class="topbar__actions">
+        <button class="control" id="shortcuts-open" type="button" aria-label="Keyboard shortcuts" aria-haspopup="dialog" aria-controls="shortcuts-dialog" title="Keyboard shortcuts (?)">
+          <span class="control__label">Shortcuts</span>
+          <kbd aria-hidden="true">?</kbd>
+        </button>
+        <button class="control" id="theme-toggle" type="button" aria-label="Switch to the logbook light theme">
+          <span class="control__dim">theme</span>
+          <span id="theme-label">logbook</span>
+        </button>
+      </div>
+    </header>
+
+    <header class="runhead">
+      <div class="runhead__eyebrow">
+        <span class="eyebrow">Recorded run / docs preview</span>
+        <span class="badge">Illustrative record</span>
+      </div>
+      <div class="runhead__layout">
+        <div class="runhead__title-block">
+          <h1 id="run-title">
+            <span class="h1__id" id="run-id-label">Run 0001</span><span class="h1__sep" aria-hidden="true">·</span><span class="h1__title" id="run-title-label">trace the request boundary</span>
+          </h1>
+          <p class="runhead__dek">A synthetic record of a governed coding run. No live model, repository, or network is attached.</p>
+        </div>
+        <div class="runhead__state" role="group" aria-label="Run status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="runhead__state-copy">
+            <span class="runhead__state-value" id="run-status">complete</span>
+            <span class="runhead__state-note" id="run-release-state">release held</span>
+          </span>
+        </div>
+      </div>
+      <dl class="run-meta" id="run-meta" aria-label="Run metadata"></dl>
+    </header>
+
+    <main class="workspace">
+      <section class="panel timeline-panel" id="timeline-panel" aria-labelledby="timeline-heading">
+        <header class="panel__head">
+          <div>
+            <p class="panel__kicker">01 / Causal timeline</p>
+            <h2 id="timeline-heading" tabindex="-1">Causal timeline <span class="heading-count" id="timeline-count">8 beats</span></h2>
+          </div>
+          <span class="panel__note">append-only</span>
+        </header>
+
+        <div class="timeline__tools">
+          <div class="filter">
+            <label class="filter__label" for="beat-filter">Filter</label>
+            <div class="filter__field">
+              <svg class="filter__icon" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.4"></circle>
+                <path d="m10.5 10.5 3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path>
+              </svg>
+              <input id="beat-filter" type="search" placeholder="type, actor, title" autocomplete="off" spellcheck="false" aria-describedby="filter-result">
+              <button class="filter__clear" id="filter-clear" type="button" aria-label="Clear the beat filter" hidden>Clear</button>
+            </div>
+          </div>
+          <p class="filter__result" id="filter-result" role="status" aria-live="polite">8 beats</p>
+        </div>
+
+        <ol class="timeline" id="beat-list" aria-label="Eight causal beats, in order"></ol>
+        <p class="timeline__empty" id="filter-empty" hidden>No beats match this filter. Clear it to return to the record.</p>
+
+        <footer class="timeline__foot">
+          <span><kbd>J</kbd><kbd>K</kbd> move</span>
+          <span><kbd>Enter</kbd> open</span>
+          <span><kbd>Esc</kbd> close</span>
+          <button class="text-button" id="shortcuts-inline" type="button" aria-haspopup="dialog" aria-controls="shortcuts-dialog">All shortcuts <kbd>?</kbd></button>
+        </footer>
+      </section>
+
+      <section class="panel inspector" id="inspector-panel" aria-labelledby="inspector-heading">
+        <header class="inspector__head">
+          <div class="inspector__title-block">
+            <p class="panel__kicker" id="inspector-kicker">02 / Inspector</p>
+            <h2 id="inspector-heading" tabindex="-1">Preparing record</h2>
+          </div>
+          <div class="inspector__actions">
+            <button class="text-button text-button--quiet" id="collapse-detail" type="button" hidden>Close details</button>
+            <button class="button button--trace" id="trace-button" type="button" aria-controls="inspector-detail" aria-pressed="false">
+              <span class="button__glyph" aria-hidden="true">→</span>
+              <span id="trace-label">Follow evidence</span>
+            </button>
+          </div>
+        </header>
+        <div class="causal-chain" id="causal-chain"></div>
+        <p class="sr-only" id="inspector-status" role="status" aria-live="polite" aria-atomic="true"></p>
+        <div class="inspector__detail" id="inspector-detail">
+          <div id="inspector-content">
+            <p class="inspector__loading">Preparing the record.</p>
+          </div>
+        </div>
+        <div class="inspector__closed" id="inspector-closed" hidden>
+          <p class="eyebrow">Details closed</p>
+          <p>The selected beat remains marked in the timeline. Reopen it to read cause, evidence, policy, and redactions.</p>
+          <button class="button button--quiet" id="reopen-detail" type="button">Open details</button>
+        </div>
+      </section>
+
+      <aside class="panel gate" id="gate-panel" aria-labelledby="gate-heading">
+        <header class="panel__head">
+          <div>
+            <p class="panel__kicker">03 / Governance</p>
+            <h2 id="gate-heading">Gate</h2>
+          </div>
+          <span class="status-chip status-chip--offline">offline</span>
+        </header>
+        <p class="gate__lede">Capabilities declared for this synthetic run. Decisions are illustrative.</p>
+        <ul class="gate__list" id="gate-list"></ul>
+        <div class="gate__counts" id="gate-counts" aria-label="Governance counters"></div>
+        <p class="gate__signal" id="gate-signal">Select a beat to read its gate note.</p>
+        <div class="gate__offline">
+          <p>This panel is not connected to the Bridlewise engine.</p>
+          <p class="gate__code">engine harnessReady: <strong>false</strong></p>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="foot">
+      <p class="foot__notice">Illustrative record for the Bridlewise docs. Not produced by the engine and not a live model run. All names and values are synthetic.</p>
+      <p class="foot__preview"><a class="foot__back" href="../">← Back to the logbook</a> · Developer preview · pre-admission · <code>harnessReady: false</code> · not for sensitive code.</p>
+      <p class="foot__schema">Schema <span>run-record/demo@1</span> · <span id="footer-beat-count">8 beats</span> · no network requests</p>
+    </footer>
+
+    <noscript>
+      <p class="noscript">This record is rendered by its local JavaScript. Enable JavaScript to read the timeline and inspector; no network requests are made.</p>
+    </noscript>
+  </div>
+
+  <dialog class="shortcuts" id="shortcuts-dialog" aria-labelledby="shortcuts-title" aria-describedby="shortcuts-note">
+    <div class="shortcuts__head">
+      <div>
+        <p class="panel__kicker">Run record / keyboard</p>
+        <h2 id="shortcuts-title">Shortcuts</h2>
+      </div>
+      <button class="icon-button" id="shortcuts-close" type="button" aria-label="Close keyboard shortcuts">×</button>
+    </div>
+    <dl class="shortcuts__list">
+      <div><dt><kbd>J</kbd> <span>or</span> <kbd>↓</kbd></dt><dd>Next beat</dd></div>
+      <div><dt><kbd>K</kbd> <span>or</span> <kbd>↑</kbd></dt><dd>Previous beat</dd></div>
+      <div><dt><kbd>Enter</kbd> <span>or</span> <kbd>Space</kbd></dt><dd>Open or close the focused beat</dd></div>
+      <div><dt><kbd>/</kbd></dt><dd>Focus the timeline filter</dd></div>
+      <div><dt><kbd>Esc</kbd></dt><dd>Close details, stop a trace, or clear the filter</dd></div>
+      <div><dt><kbd>?</kbd></dt><dd>Open this panel</dd></div>
+    </dl>
+    <p class="shortcuts__note" id="shortcuts-note">Shortcuts pause while you are typing in the filter. Escape closes this panel and returns focus to the control that opened it.</p>
+    <button class="button button--quiet shortcuts__done" id="shortcuts-done" type="button">Done</button>
+  </dialog>
+
+  <script src="run-demo.js" defer></script>
+</body>
+</html>

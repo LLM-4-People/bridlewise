@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://llm-4-people.github.io/bridlewise/sitemap.xml

@@ -20,7 +20,7 @@ Bridlewise depends on open-source npm packages. Their licenses are distributed w
 - `zod` — MIT
 - `@babel/parser` — MIT
 - `@babel/types` — MIT
-- `@xenova/transformers` — Apache-2.0
+- `@xenova/transformers` — Apache-2.0 (optional peer for semantic embeddings; not installed by default because its transitive `sharp`/`protobufjs` tree carries known advisories)
 - `web-tree-sitter` — MIT
 - `tree-sitter-wasms` — MIT
 - `undici` — MIT

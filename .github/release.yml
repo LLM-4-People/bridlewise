@@ -1,0 +1,21 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: The run record
+      labels:
+        - run-record
+    - title: Governance and security
+      labels:
+        - security
+    - title: The logbook
+      labels:
+        - documentation
+    - title: Tests, guards, and evidence
+      labels:
+        - testing
+        - needs-evidence
+    - title: Other changes
+      labels:
+        - "*"

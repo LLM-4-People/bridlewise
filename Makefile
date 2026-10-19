@@ -1,4 +1,4 @@
-.PHONY: install typecheck build test check guardian dev status stop clean
+.PHONY: install typecheck build test docs-links check guardian dev status stop clean
 
 install:
 	npm ci
@@ -16,7 +16,10 @@ build:
 test:
 	npm run test:public
 
-check: typecheck test
+docs-links:
+	npm run docs:links
+
+check: typecheck test docs-links
 	npm run check:secrets
 
 guardian:

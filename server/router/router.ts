@@ -508,7 +508,11 @@ export function createRouter(opts: RouterOptions): Router {
         message: err.message,
       };
     }
-    return { error: "internal_error", message: err instanceof Error ? err.message : String(err) };
+    // Unknown failures are logged at the catch site; the wire gets a fixed
+    // message so an arbitrary Error (which may carry a stack or a foreign
+    // provider body) cannot become a response. Typed errors above keep their
+    // contract and still pass through the egress redactor.
+    return { error: "internal_error", message: "Internal error. See the local log for details." };
   }
 
   /**

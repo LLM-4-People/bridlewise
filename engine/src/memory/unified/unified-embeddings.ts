@@ -96,7 +96,11 @@ export function createEmbeddingsProvider(options?: Partial<EmbeddingsConfig> & {
       if (!config.enabled) { unavailable = true; return; }
       loadingPromise = (async () => {
         try {
-          const transformers = await import("@xenova/transformers");
+          // Optional peer: keep TypeScript from resolving it as a required
+          // module in the default install. The loader reports unavailable when
+          // the host has not installed it.
+          const transformersSpecifier = "@xenova/transformers";
+          const transformers = await import(transformersSpecifier);
           const env = transformers.env as {
             allowLocalModels: boolean;
             allowRemoteModels: boolean;

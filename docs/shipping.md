@@ -50,7 +50,19 @@ The `release.yml` workflow repeats this gate on a `v*` tag, then publishes:
 - `bridlewise-<tag>-source.tar.gz` — the tracked source tree;
 - `bridlewise-<tag>-cockpit.tar.gz` — the built static cockpit;
 - `bridlewise-<tag>-engine-bundle.js` — the esbuild bundle;
+- `bridlewise-<tag>-sbom-web.spdx.json` — the SPDX SBOM for the root package;
+- `bridlewise-<tag>-sbom-engine.spdx.json` — the SPDX SBOM for the engine package;
 - `SHA256SUMS` — checksums for all assets.
+
+From `v0.0.2-preview`, the workflow also attests the release assets with
+`actions/attest`. The attestation is a GitHub-hosted build-provenance record,
+not an OS package signature. Verify an asset with:
+
+```bash
+gh attestation verify bridlewise-v0.0.2-preview-source.tar.gz \
+  --repo LLM-4-People/bridlewise
+sha256sum -c SHA256SUMS --ignore-missing
+```
 
 A release is not a production endorsement. The notes must repeat the developer-preview warning.
 

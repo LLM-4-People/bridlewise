@@ -1,0 +1,16 @@
+/* TEAM */
+  Organization: LLM-4-People
+  Project: Bridlewise
+  Role: A small experimental cockpit for governed AI runs
+  Contact: https://github.com/LLM-4-People
+
+/* SITE */
+  Last update: 2026-10-19
+  Language: English
+  Standards: HTML5, CSS, no CDN, no remote fonts, no tracking
+  Software: Jekyll, GitHub Pages, hand-written CSS and JavaScript
+  Assets: The cockpit screenshots are of the real preview UI; the run record
+          and policy lab are clearly labeled illustrations.
+
+/* NOTE */
+  This is a developer preview, not a product. The record is the point.

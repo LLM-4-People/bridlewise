@@ -26,6 +26,17 @@ node --version   # must be v24.18.x or later in the 24 line
 npm --version
 ```
 
+## Prefer a prepared workspace?
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/LLM-4-People/bridlewise?quickstart=1)
+
+The dev container installs both lockfiles, builds the guardian's native
+dependencies, forwards ports `5173` and `5174`, and still runs the cockpit on
+loopback. It does **not** include a model credential or the development-floor
+corpus. See [Open it in a Codespace]({{ '/codespaces/' | relative_url }}) for
+what it configures and what it deliberately leaves to you. A Codespace consumes
+your GitHub plan's included quota; it is not a free hosted deployment.
+
 ## Install
 
 From the repository root:

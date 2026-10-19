@@ -46,7 +46,10 @@ graph.
 - `src/quality/` + `src/quality-packs/` — the multi-language quality pack:
   parsers, checks, signals, scoring, and the prevention detectors.
 - `src/memory/` — the memory subsystems: the unified store, the scale store,
-  attempt history, and tool-result exposure/retrieval.
+  attempt history, and tool-result exposure/retrieval. Semantic embeddings are
+  an optional peer (`@xenova/transformers`); it is not installed by default
+  because its transitive tree carries known advisories. The retrieval paths
+  fall back to the local TF-IDF/cosine implementation.
 - `src/privacy/` — the redaction engine and PII classification.
 - `src/awareness/` — the codebase-awareness engine: language adapters and the
   signal library.

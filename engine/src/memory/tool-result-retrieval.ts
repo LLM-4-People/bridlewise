@@ -194,7 +194,9 @@ export function createEmbeddingsRetriever(options?: {
       if (extractor) return;
       if (loadingPromise) { await loadingPromise; return; }
       loadingPromise = (async () => {
-        const transformers = await import("@xenova/transformers");
+        // Optional peer, absent by default; the loader reports unavailable.
+        const transformersSpecifier = "@xenova/transformers";
+        const transformers = await import(transformersSpecifier);
         const env = transformers.env as {
           allowLocalModels: boolean;
           allowRemoteModels: boolean;

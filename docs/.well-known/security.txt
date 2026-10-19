@@ -1,0 +1,5 @@
+Contact: https://github.com/LLM-4-People/bridlewise/security/advisories/new
+Expires: 2027-10-19T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://llm-4-people.github.io/bridlewise/.well-known/security.txt
+Policy: https://github.com/LLM-4-People/bridlewise/blob/main/SECURITY.md

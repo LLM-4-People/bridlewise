@@ -1,0 +1,458 @@
+{
+  "schema": "bridlewise.run-record/demo@1",
+  "illustrative": true,
+  "notice": "Illustrative record for documentation. It was not produced by the Bridlewise engine, is not a live model run, and demonstrates no production readiness. The real engine reports harnessReady: false.",
+  "run": {
+    "id": "0001",
+    "title": "trace the request boundary",
+    "status": "complete",
+    "release": "held",
+    "recordedAt": "2026-10-19T14:02:07.412Z",
+    "duration": "00:04:18.202",
+    "model": "meridian-3-synth",
+    "provider": "offscreen mock",
+    "project": "harborlight-lab",
+    "projectScope": "synthetic fixture",
+    "harnessReady": false,
+    "preview": "developer preview, pre-admission"
+  },
+  "gate": {
+    "connected": false,
+    "note": "This panel is illustrative. The demo is not connected to the Bridlewise engine.",
+    "capabilities": [
+      {
+        "id": "model-invocation",
+        "label": "model invocation",
+        "decision": "allow",
+        "detail": "synthetic adapter only"
+      },
+      {
+        "id": "repository-mutation",
+        "label": "repository mutation",
+        "decision": "allow",
+        "detail": "workspace writes, never commits"
+      },
+      {
+        "id": "process-execution",
+        "label": "process execution",
+        "decision": "allow",
+        "detail": "sandboxed checks, no egress"
+      },
+      {
+        "id": "network-egress",
+        "label": "network egress",
+        "decision": "deny",
+        "detail": "no adapter configured"
+      }
+    ]
+  },
+  "beats": [
+    {
+      "id": "b01",
+      "seq": "01",
+      "kind": "intent",
+      "label": "Intent",
+      "timestamp": "14:02:07.412",
+      "offsetMs": 0,
+      "actor": "operator",
+      "title": "Trace the request boundary",
+      "summary": "Locate the telemetry ingress seam, pin the missing auth gate with one test, and do not commit.",
+      "narrative": "The operator opens a narrow trace-and-pin task. The only intended file effect is one regression test.",
+      "causedBy": [],
+      "causes": ["b02"],
+      "policy": {
+        "decision": "allow",
+        "code": "INGRESS.OPERATOR",
+        "label": "Operator-authored request"
+      },
+      "evidence": [
+        {
+          "id": "ev.0001.01",
+          "label": "Operator brief",
+          "detail": "Captured before dispatch · 24 words"
+        }
+      ],
+      "redactions": [],
+      "gateCapability": null,
+      "gateNote": "Beat 01 · operator intent admitted. No capability invoked.",
+      "detail": {
+        "type": "intent",
+        "quote": "Trace the request boundary around telemetry ingest. Add one regression check that proves whether the auth gate is missing. Keep the change local; do not commit.",
+        "constraints": [
+          {
+            "label": "Write scope",
+            "value": "Synthetic workspace"
+          },
+          {
+            "label": "Release",
+            "value": "No commit"
+          },
+          {
+            "label": "Failure",
+            "value": "Acceptable as evidence"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b02",
+      "seq": "02",
+      "kind": "model",
+      "label": "Model turn",
+      "timestamp": "14:02:08.226",
+      "offsetMs": 814,
+      "actor": "model",
+      "title": "Plan the read and the pin",
+      "summary": "A synthetic model proposes read, pin, check. No provider request leaves the page.",
+      "narrative": "The model names the route seam and the exact check. The turn is authored by the demo, not by a running provider.",
+      "causedBy": ["b01"],
+      "causes": ["b03"],
+      "policy": {
+        "decision": "allow",
+        "code": "MODEL.SYNTHETIC",
+        "label": "Synthetic provider only"
+      },
+      "evidence": [
+        {
+          "id": "ev.0001.02",
+          "label": "Synthetic model turn",
+          "detail": "Plan accepted · 3 steps · no provider I/O"
+        }
+      ],
+      "redactions": [],
+      "gateCapability": "model-invocation",
+      "gateNote": "Beat 02 · synthetic model invocation admitted against the offscreen adapter.",
+      "detail": {
+        "type": "model",
+        "providerNote": "offscreen mock · synthetic",
+        "plan": [
+          {
+            "title": "Read the seam",
+            "detail": "Inspect the telemetry mount order and the session gate."
+          },
+          {
+            "title": "Pin the hole",
+            "detail": "Create one focused regression test; make no source edits."
+          },
+          {
+            "title": "Run it alone",
+            "detail": "Record the failure as evidence, then stop."
+          }
+        ]
+      }
+    },
+    {
+      "id": "b03",
+      "seq": "03",
+      "kind": "tool",
+      "label": "Tool call",
+      "timestamp": "14:02:09.771",
+      "offsetMs": 2359,
+      "actor": "tool executor",
+      "title": "Search the route seam",
+      "summary": "Read-only search finds the route seam and one credential-shaped fixture value.",
+      "narrative": "The search returns the ingest handler, its mount point, and a fixture line that looks like a credential. The fixture value is masked before this record renders it.",
+      "causedBy": ["b02"],
+      "causes": ["b04"],
+      "policy": {
+        "decision": "allow",
+        "code": "TOOL.READ",
+        "label": "Read-only repository search"
+      },
+      "evidence": [
+        {
+          "id": "ev.0001.03a",
+          "label": "Tool receipt",
+          "detail": "search_code · 412 ms · 3 matches"
+        },
+        {
+          "id": "ev.0001.03b",
+          "label": "Redaction receipt",
+          "detail": "SEC-01 · 1 value masked before display"
+        }
+      ],
+      "redactions": [
+        {
+          "rule": "SEC-01",
+          "surface": "tool output · probe.http:3",
+          "masked": "authorization: Bearer ••••••••••••",
+          "explanation": "A credential-shaped value in the synthetic fixture was masked before this record rendered it. It was never a real secret and never reached a model."
+        }
+      ],
+      "gateCapability": null,
+      "gateNote": "Beat 03 · read-only repository access. No model call, process, or egress.",
+      "detail": {
+        "type": "tool",
+        "tool": {
+          "name": "search_code",
+          "mode": "read-only",
+          "latencyMs": 412,
+          "receipt": "tool-0001-03",
+          "input": {
+            "query": "telemetry ingest",
+            "path": "src/server",
+            "limit": 6
+          },
+          "output": {
+            "matches": [
+              {
+                "path": "src/server/routes/telemetry.ts",
+                "line": 38,
+                "text": "router.post(\"/ingest\", ingest)"
+              },
+              {
+                "path": "src/server/app.ts",
+                "line": 71,
+                "text": "app.use(\"/telemetry\", telemetry)"
+              },
+              {
+                "path": "src/server/routes/__fixtures__/probe.http",
+                "line": 3,
+                "text": "authorization: Bearer ••••••••••••"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "b04",
+      "seq": "04",
+      "kind": "effect",
+      "label": "File effect",
+      "timestamp": "14:03:14.908",
+      "offsetMs": 67496,
+      "actor": "workspace",
+      "title": "Pin the missing gate with one test",
+      "summary": "Creates one test file. Source stays untouched; nothing is committed.",
+      "narrative": "This is the only file effect in the run: a new test under the synthetic workspace. The source route remains unchanged.",
+      "causedBy": ["b03"],
+      "causes": ["b05"],
+      "policy": {
+        "decision": "allow",
+        "code": "WORKSPACE.WRITE",
+        "label": "Workspace effect admitted"
+      },
+      "evidence": [
+        {
+          "id": "ev.0001.04",
+          "label": "Effect receipt",
+          "detail": "eff-0001-a · 1 file created · +14 -0"
+        }
+      ],
+      "redactions": [],
+      "gateCapability": "repository-mutation",
+      "gateNote": "Beat 04 · workspace write admitted. Release actions remain operator-only.",
+      "detail": {
+        "type": "effect",
+        "effect": {
+          "id": "eff-0001-a",
+          "file": "test/telemetry.ingest.test.ts",
+          "change": "created",
+          "additions": 14,
+          "deletions": 0,
+          "digest": "demo:4d1c",
+          "patch": "@@ -0,0 +1,14 @@\n+import { test } from \"node:test\";\n+import assert from \"node:assert/strict\";\n+import { createApp } from \"../src/server/app.js\";\n+\n+test(\"telemetry ingest refuses an unauthenticated request\", async () => {\n+  const app = createApp({ auth: \"strict\" });\n+  const response = await app.request(\"/telemetry/ingest\", {\n+    method: \"POST\",\n+    headers: { \"content-type\": \"application/json\" },\n+    body: JSON.stringify({ event: \"boundary-probe\" }),\n+  });\n+\n+  assert.equal(response.status, 401);\n+});"
+        }
+      }
+    },
+    {
+      "id": "b05",
+      "seq": "05",
+      "kind": "check",
+      "label": "Check",
+      "timestamp": "14:03:48.119",
+      "offsetMs": 100707,
+      "actor": "check runner",
+      "title": "The targeted check fails",
+      "summary": "The targeted check exits 1: expected 401, received 200.",
+      "narrative": "The check is meant to fail until the gate exists. It confirms the missing boundary; it does not prove a fix.",
+      "causedBy": ["b04"],
+      "causes": ["b06"],
+      "policy": {
+        "decision": "allow",
+        "code": "PROCESS.CHECK",
+        "label": "Sandboxed process, no egress"
+      },
+      "evidence": [
+        {
+          "id": "ev.0001.05",
+          "label": "Check transcript",
+          "detail": "exit 1 · 1 failed · 284 ms"
+        }
+      ],
+      "redactions": [],
+      "gateCapability": "process-execution",
+      "gateNote": "Beat 05 · sandboxed check admitted. No network egress was attempted.",
+      "detail": {
+        "type": "check",
+        "check": {
+          "command": "node --test test/telemetry.ingest.test.ts",
+          "status": "failed",
+          "exitCode": 1,
+          "duration": "00:00.284",
+          "summary": "1 failed, 0 passed, 0 skipped",
+          "transcript": [
+            {
+              "tone": "muted",
+              "text": "[ RUN  ] telemetry ingest refuses an unauthenticated request"
+            },
+            {
+              "tone": "alarm",
+              "text": "[ FAIL ] expected 401, received 200"
+            },
+            {
+              "tone": "muted",
+              "text": "         at test/telemetry.ingest.test.ts:13"
+            },
+            {
+              "tone": "muted",
+              "text": "         duration 18.42 ms"
+            },
+            {
+              "tone": "alarm",
+              "text": "1 failed · 0 passed · 0 skipped"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "b06",
+      "seq": "06",
+      "kind": "finding",
+      "label": "Finding",
+      "timestamp": "14:04:00.365",
+      "offsetMs": 112953,
+      "actor": "analysis",
+      "title": "Telemetry ingress bypasses the auth gate",
+      "summary": "The route accepts unauthenticated ingest. The failed test and mount order are the proof.",
+      "narrative": "The failed check is recorded as a high-severity finding. It is a fact with evidence, not a guessed vulnerability.",
+      "causedBy": ["b05"],
+      "causes": ["b07"],
+      "policy": {
+        "decision": "record",
+        "code": "FINDING.RECORDED",
+        "label": "Recorded for operator review"
+      },
+      "evidence": [
+        {
+          "id": "ev.0001.06a",
+          "label": "Source pointer",
+          "detail": "src/server/app.ts:71 · mount order"
+        },
+        {
+          "id": "ev.0001.06b",
+          "label": "Check pointer",
+          "detail": "test/telemetry.ingest.test.ts:13 · failed assertion"
+        }
+      ],
+      "redactions": [],
+      "gateCapability": null,
+      "gateNote": "Beat 06 · finding is advisory. No remediation was auto-dispatched.",
+      "detail": {
+        "type": "finding",
+        "finding": {
+          "severity": "high",
+          "status": "open",
+          "scope": "POST /telemetry/ingest",
+          "claim": "The telemetry router is mounted before the session gate, so an unauthenticated payload receives a 200.",
+          "evidence": [
+            "src/server/app.ts:71 mounts telemetry before requireSession",
+            "test/telemetry.ingest.test.ts:13 expected 401, received 200"
+          ],
+          "remedy": "Mount the telemetry router behind requireSession, then re-run the check. The fix is not applied in this run."
+        }
+      }
+    },
+    {
+      "id": "b07",
+      "seq": "07",
+      "kind": "refusal",
+      "label": "Governance refusal",
+      "timestamp": "14:04:22.006",
+      "offsetMs": 134594,
+      "actor": "governance",
+      "title": "Commit refused at the release gate",
+      "summary": "git_commit is refused by the release gate. The workspace remains uncommitted.",
+      "narrative": "The model asks to commit the test as a checkpoint. git_commit is a release action, not a workspace write. Governance returns a typed refusal and no retry path.",
+      "causedBy": ["b06"],
+      "causes": ["b08"],
+      "policy": {
+        "decision": "deny",
+        "code": "GOV-04",
+        "label": "Release actions require an operator"
+      },
+      "evidence": [
+        {
+          "id": "ev.0001.07",
+          "label": "Refusal receipt",
+          "detail": "ref-0001-07 · typed denial · no retry"
+        }
+      ],
+      "redactions": [],
+      "gateCapability": "repository-mutation",
+      "gateNote": "Beat 07 · release action denied. Workspace write admitted; commit stayed closed.",
+      "detail": {
+        "type": "refusal",
+        "refusal": {
+          "receipt": "ref-0001-07",
+          "type": "GOVERNANCE_REFUSAL",
+          "code": "RELEASE_AUTO_COMMIT_DENIED",
+          "action": "git_commit",
+          "capability": "repository_mutation.release",
+          "decision": "deny",
+          "rule": "GOV-04 · release actions are operator-only",
+          "attempt": {
+            "message": "test: pin telemetry auth boundary",
+            "paths": [
+              "test/telemetry.ingest.test.ts"
+            ]
+          },
+          "remedy": "Review the diff and commit outside the run. Do not retry the tool call; ask the operator to release it.",
+          "retry": "not permitted"
+        }
+      }
+    },
+    {
+      "id": "b08",
+      "seq": "08",
+      "kind": "release",
+      "label": "Release / decision",
+      "timestamp": "14:06:25.614",
+      "offsetMs": 258202,
+      "actor": "operator gate",
+      "title": "Hold for operator review",
+      "summary": "The record closes in a held state. No merge, commit, or egress occurred.",
+      "narrative": "The record seals with a failing check, an open finding, and a refused commit. Release belongs to the operator.",
+      "causedBy": ["b07"],
+      "causes": [],
+      "policy": {
+        "decision": "hold",
+        "code": "RELEASE.HELD",
+        "label": "Release deferred to operator"
+      },
+      "evidence": [
+        {
+          "id": "ev.0001.08",
+          "label": "Seal receipt",
+          "detail": "8/8 beats · 1 refusal · 1 redaction · release held"
+        }
+      ],
+      "redactions": [],
+      "gateCapability": null,
+      "gateNote": "Beat 08 · operator handoff. No release action executed.",
+      "detail": {
+        "type": "decision",
+        "decision": {
+          "verdict": "held",
+          "release": "not released",
+          "owner": "operator",
+          "reason": "A high-severity auth finding is open and the commit was refused.",
+          "nextAction": "Review the diff, mount telemetry behind the session gate, re-run the check, then decide on release.",
+          "seal": "8/8 beats sealed"
+        }
+      }
+    }
+  ]
+}

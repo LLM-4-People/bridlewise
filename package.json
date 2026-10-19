@@ -1,6 +1,6 @@
 {
   "name": "bridlewise-web",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "type": "module",
   "description": "Bridlewise cockpit: a local-first, inspectable coding harness (developer preview).",
@@ -23,7 +23,8 @@
     "verify": "npm run typecheck && npm run check:secrets && npm run test:public && npm run build",
     "bridlewise": "node bin/bridlewise.mjs",
     "preflight": "node bin/bridlewise.mjs preflight",
-    "test:public": "node --test tests/public/*.test.mjs"
+    "test:public": "node --test tests/public/*.test.mjs",
+    "docs:links": "node scripts/check-docs-links.mjs"
   },
   "dependencies": {
     "nanostores": "^1.4.1",

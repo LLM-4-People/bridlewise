@@ -750,10 +750,10 @@ function tryParseScript(text: string): Readonly<{ ast?: AstNode; message?: strin
  */
 function scriptElementBodies(source: string): readonly Readonly<{ text: string; offset: number }>[] {
   const out: { text: string; offset: number }[] = [];
-  const openTag = /<script\b[^>]*>/g;
+  const openTag = /<script\b[^>]*>/gi;
   for (const m of source.matchAll(openTag)) {
     const start = m.index + m[0].length;
-    const end = source.indexOf("</script", start);
+    const end = source.toLowerCase().indexOf("</script", start);
     if (end < 0) continue;
     out.push({ text: source.slice(start, end), offset: start });
   }

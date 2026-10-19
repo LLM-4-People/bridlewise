@@ -1,0 +1,32 @@
+{
+  "name": "Bridlewise (developer preview)",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": false
+    }
+  },
+  "postCreateCommand": "npm ci && npm --prefix engine ci && chmod 600 engine/bridlewise.config.json",
+  "forwardPorts": [5173, 5174],
+  "portsAttributes": {
+    "5173": { "label": "Cockpit", "onAutoForward": "openPreview" },
+    "5174": { "label": "Loopback API", "onAutoForward": "silent" }
+  },
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "4gb",
+    "storage": "32gb"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "svelte.svelte-vscode",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "remoteUser": "node"
+}

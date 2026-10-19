@@ -1,0 +1,590 @@
+---
+layout: null
+title: "Policy lab: the gate before the engine"
+description: "An illustrative, interactive model of Bridlewise's pre-admission governance gate. Toggle capabilities, try an action, and read the typed refusal. Not connected to the engine."
+permalink: /policy-lab/
+sitemap: true
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Policy lab: the gate before the engine">
+  <meta property="og:description" content="An illustrative governance console for Bridlewise. Toggle capabilities, try an action, and read the typed refusal. Not connected to the engine.">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <meta property="og:image" content="https://llm-4-people.github.io/bridlewise/assets/social-preview.png">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0b0d11">
+  <title>Governance Lab — Bridlewise</title>
+  <meta name="description" content="An illustrative, interactive model of Bridlewise's pre-admission governance gate. It is not connected to the engine.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%230b0d11'/%3E%3Cpath d='M5 21V3M19 21V3M5 8h14' stroke='%238fd3ff' stroke-width='1.5' fill='none'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="policy-lab.css">
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to the lab</a>
+
+  <div class="page">
+    <header class="masthead">
+      <div class="masthead-inner">
+        <a class="brand" href="#top" aria-label="Bridlewise Governance Lab, back to top">
+          <svg class="brand-mark" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+            <path d="M5 21V3M19 21V3M5 8h14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+          </svg>
+          <span class="brand-name">bridlewise</span>
+          <span class="brand-slash" aria-hidden="true">/</span>
+          <span class="brand-page">Governance Lab</span>
+        </a>
+
+        <nav class="nav" aria-label="Lab sections">
+          <a href="#gates">Gates</a>
+          <a href="#actions">Actions</a>
+          <a href="#floor">Safety floor</a>
+          <a href="#scope">Scope</a>
+        </nav>
+
+        <p class="badge">
+          <span class="badge-dot" aria-hidden="true"></span>
+          Illustrative · no engine connection
+        </p>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section class="hero wrap" aria-labelledby="lab-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Developer preview <span aria-hidden="true">/</span> policy surface</p>
+          <h1 id="lab-title">The gate before the engine<span class="h1-dot">.</span></h1>
+          <p class="lede">
+            Bridlewise does not run a capability because it exists. It runs only after the capability is
+            admitted, its dependencies hold, and the immutable safety floor still passes. This console is a
+            hands-on model of that order. It is explicitly illustrative, and it is never connected to the engine.
+          </p>
+          <ul class="posture-list" aria-label="Posture at a glance">
+            <li>Deny by default</li>
+            <li>Six required gates</li>
+            <li>Five-floor invariants</li>
+          </ul>
+        </div>
+
+        <aside class="readout" aria-labelledby="readout-title">
+          <div class="readout-head">
+            <p class="micro" id="readout-title">Shipped engine · static</p>
+            <span class="readout-tag">read-only</span>
+          </div>
+          <dl class="readout-list">
+            <div>
+              <dt>posture</dt>
+              <dd>pre-admission</dd>
+            </div>
+            <div>
+              <dt>harnessReady</dt>
+              <dd class="readout-false">false</dd>
+            </div>
+            <div>
+              <dt>stage</dt>
+              <dd>s1-preflight-only</dd>
+            </div>
+            <div>
+              <dt>lab coupling</dt>
+              <dd>none</dd>
+            </div>
+          </dl>
+          <p class="readout-note">Documented engine posture. The receipt below is a separate model.</p>
+        </aside>
+      </section>
+
+      <section class="section wrap" id="gates" aria-labelledby="gates-title">
+        <header class="section-head">
+          <div class="section-heading">
+            <p class="kicker"><span class="kicker-index">01</span> Admission</p>
+            <h2 id="gates-title">Six gates, one floor.</h2>
+            <p class="section-intro">
+              The ledger shows effective decisions, not intentions. Preflight is the root. Durable audit must be
+              admitted before any effect gate, because an unrecorded effect is a silent fallback. Every refusal is
+              typed and visible.
+            </p>
+          </div>
+          <button class="text-btn" id="reset-lab" type="button">
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+              <path d="M13 8a5 5 0 1 1-1.5-3.6M13 2v3.5H9.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/>
+            </svg>
+            Reset lab
+          </button>
+        </header>
+
+        <div class="signal" aria-hidden="true">
+          <span class="signal-item" data-signal="preflight">
+            <span class="signal-dot"></span>preflight <code>allow</code>
+          </span>
+          <span class="signal-arrow"></span>
+          <span class="signal-item" data-signal="audit">
+            <span class="signal-dot"></span>audit <code>deny</code>
+          </span>
+          <span class="signal-arrow"></span>
+          <span class="signal-item" data-signal="effects">
+            <span class="signal-dot"></span>effects <code>0/4</code>
+          </span>
+          <span class="signal-arrow"></span>
+          <span class="signal-item" data-signal="floor">
+            <span class="signal-dot"></span>floor <code>intact</code>
+          </span>
+          <span class="signal-arrow"></span>
+          <span class="signal-item" data-signal="receipt">
+            <span class="signal-dot"></span>receipt <code>live</code>
+          </span>
+        </div>
+
+        <div class="console-grid">
+          <div class="ledger">
+            <div class="ledger-head" aria-hidden="true">
+              <span>Capability</span>
+              <span>Decision</span>
+            </div>
+
+            <ul class="cap-list">
+              <li class="cap-row" data-cap="preflight" data-decision="allow">
+                <span class="cap-index" aria-hidden="true">01</span>
+                <div class="cap-body">
+                  <div class="cap-title">
+                    <h3 id="name-preflight">Preflight</h3>
+                    <span class="cap-scope">root gate</span>
+                  </div>
+                  <p class="cap-consequence" id="consequence-preflight">
+                    Verifies the pinned root, principal, config, and immutable policy before any capability can act.
+                  </p>
+                  <p class="cap-code"><span>refusal code</span> <code>preflight_required</code></p>
+                  <p class="cap-guard"><span>floor guard</span> <span>root of every gate</span></p>
+                  <p class="cap-refusal" id="refusal-preflight" hidden></p>
+                </div>
+                <div class="cap-side">
+                  <span class="decision" id="decision-preflight">allow</span>
+                  <button class="switch" type="button" role="switch" aria-checked="true"
+                    aria-label="Preflight capability"
+                    aria-describedby="consequence-preflight refusal-preflight">
+                    <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                  </button>
+                </div>
+              </li>
+
+              <li class="cap-row" data-cap="modelInvocation" data-decision="deny">
+                <span class="cap-index" aria-hidden="true">02</span>
+                <div class="cap-body">
+                  <div class="cap-title">
+                    <h3 id="name-modelInvocation">Model invocation</h3>
+                    <span class="cap-scope">provider call</span>
+                  </div>
+                  <p class="cap-consequence" id="consequence-modelInvocation">
+                    Allows a provider call to produce output. In this lab, no request leaves the page.
+                  </p>
+                  <p class="cap-code"><span>refusal code</span> <code>model_invocation_unadmitted</code></p>
+                  <p class="cap-guard"><span>floor guard</span> <span>SF-04 no silent fallback</span></p>
+                  <p class="cap-refusal" id="refusal-modelInvocation" hidden></p>
+                </div>
+                <div class="cap-side">
+                  <span class="decision" id="decision-modelInvocation">deny</span>
+                  <button class="switch" type="button" role="switch" aria-checked="false"
+                    aria-label="Model invocation capability"
+                    aria-describedby="consequence-modelInvocation refusal-modelInvocation">
+                    <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                  </button>
+                </div>
+              </li>
+
+              <li class="cap-row" data-cap="repositoryMutation" data-decision="deny">
+                <span class="cap-index" aria-hidden="true">03</span>
+                <div class="cap-body">
+                  <div class="cap-title">
+                    <h3 id="name-repositoryMutation">Repository mutation</h3>
+                    <span class="cap-scope">bounded write</span>
+                  </div>
+                  <p class="cap-consequence" id="consequence-repositoryMutation">
+                    Allows a write inside the bound project root. Never outside it, and never a commit.
+                  </p>
+                  <p class="cap-code"><span>refusal code</span> <code>repository_mutation_unadmitted</code></p>
+                  <p class="cap-guard"><span>floor guard</span> <span>SF-01 writes · SF-04 audit · SF-05 commit</span></p>
+                  <p class="cap-refusal" id="refusal-repositoryMutation" hidden></p>
+                </div>
+                <div class="cap-side">
+                  <span class="decision" id="decision-repositoryMutation">deny</span>
+                  <button class="switch" type="button" role="switch" aria-checked="false"
+                    aria-label="Repository mutation capability"
+                    aria-describedby="consequence-repositoryMutation refusal-repositoryMutation">
+                    <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                  </button>
+                </div>
+              </li>
+
+              <li class="cap-row" data-cap="processExecution" data-decision="deny">
+                <span class="cap-index" aria-hidden="true">04</span>
+                <div class="cap-body">
+                  <div class="cap-title">
+                    <h3 id="name-processExecution">Process execution</h3>
+                    <span class="cap-scope">bounded child</span>
+                  </div>
+                  <p class="cap-consequence" id="consequence-processExecution">
+                    Allows a bounded child process to run and have its output observed. No ambient shell.
+                  </p>
+                  <p class="cap-code"><span>refusal code</span> <code>process_execution_unadmitted</code></p>
+                  <p class="cap-guard"><span>floor guard</span> <span>SF-04 no silent fallback</span></p>
+                  <p class="cap-refusal" id="refusal-processExecution" hidden></p>
+                </div>
+                <div class="cap-side">
+                  <span class="decision" id="decision-processExecution">deny</span>
+                  <button class="switch" type="button" role="switch" aria-checked="false"
+                    aria-label="Process execution capability"
+                    aria-describedby="consequence-processExecution refusal-processExecution">
+                    <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                  </button>
+                </div>
+              </li>
+
+              <li class="cap-row" data-cap="networkEgress" data-decision="deny">
+                <span class="cap-index" aria-hidden="true">05</span>
+                <div class="cap-body">
+                  <div class="cap-title">
+                    <h3 id="name-networkEgress">Network egress</h3>
+                    <span class="cap-scope">declared destination</span>
+                  </div>
+                  <p class="cap-consequence" id="consequence-networkEgress">
+                    Allows one declared destination through the egress gate. Credentials and regulated data stay denied.
+                  </p>
+                  <p class="cap-code"><span>refusal code</span> <code>network_egress_unadmitted</code></p>
+                  <p class="cap-guard"><span>floor guard</span> <span>SF-02 records · SF-03 display · SF-04 fallback</span></p>
+                  <p class="cap-refusal" id="refusal-networkEgress" hidden></p>
+                </div>
+                <div class="cap-side">
+                  <span class="decision" id="decision-networkEgress">deny</span>
+                  <button class="switch" type="button" role="switch" aria-checked="false"
+                    aria-label="Network egress capability"
+                    aria-describedby="consequence-networkEgress refusal-networkEgress">
+                    <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                  </button>
+                </div>
+              </li>
+
+              <li class="cap-row" data-cap="durableAudit" data-decision="deny">
+                <span class="cap-index" aria-hidden="true">06</span>
+                <div class="cap-body">
+                  <div class="cap-title">
+                    <h3 id="name-durableAudit">Durable audit</h3>
+                    <span class="cap-scope">append-only record</span>
+                  </div>
+                  <p class="cap-consequence" id="consequence-durableAudit">
+                    Records every admitted effect as an append-only beat. Admit this before any effect gate.
+                  </p>
+                  <p class="cap-code"><span>refusal code</span> <code>durable_audit_unadmitted</code></p>
+                  <p class="cap-guard"><span>floor guard</span> <span>SF-02 records · SF-03 display · SF-04 fallback</span></p>
+                  <p class="cap-refusal" id="refusal-durableAudit" hidden></p>
+                </div>
+                <div class="cap-side">
+                  <span class="decision" id="decision-durableAudit">deny</span>
+                  <button class="switch" type="button" role="switch" aria-checked="false"
+                    aria-label="Durable audit capability"
+                    aria-describedby="consequence-durableAudit refusal-durableAudit">
+                    <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+                  </button>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <aside class="receipt" aria-labelledby="receipt-title">
+            <div class="receipt-head">
+              <div>
+                <p class="micro">Modeled preflight · live</p>
+                <h3 id="receipt-title">Receipt</h3>
+              </div>
+              <button class="copy" id="copy-receipt" type="button" aria-describedby="copy-hint">
+                <span class="copy-label">Copy receipt</span>
+                <svg class="copy-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+                  <path d="M5.5 5.5V3h7.5v7.5h-2.5M3 5.5h7.5V13H3z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="miter"/>
+                </svg>
+              </button>
+              <p class="sr-only" id="copy-hint">Copies the current modeled receipt as JSON to the clipboard.</p>
+              <p class="sr-only" id="copy-status" role="status" aria-live="polite" aria-atomic="true"></p>
+            </div>
+
+            <p class="receipt-live" id="receipt-live" role="status" aria-live="polite" aria-atomic="true">
+              Modeled receipt: harnessReady false; 1 admitted, 5 denied; stage s1-preflight-only.
+            </p>
+
+            <dl class="receipt-stats">
+              <div class="stat stat-ready">
+                <dt>harnessReady</dt>
+                <dd id="receipt-ready" data-state="deny">false</dd>
+              </div>
+              <div class="stat stat-stage">
+                <dt>stage</dt>
+                <dd><code id="receipt-stage">s1-preflight-only</code></dd>
+              </div>
+              <div class="stat">
+                <dt>allowed</dt>
+                <dd id="receipt-allowed">1</dd>
+              </div>
+              <div class="stat">
+                <dt>denied</dt>
+                <dd id="receipt-denied">5</dd>
+              </div>
+            </dl>
+
+            <div class="diff" aria-labelledby="diff-title">
+              <div class="diff-head">
+                <span id="diff-title">Receipt diff</span>
+                <span class="diff-count" id="diff-count">no change</span>
+              </div>
+              <div class="diff-body" id="diff-body">
+                <p class="diff-empty">Flip a capability to see exactly which receipt lines changed.</p>
+              </div>
+            </div>
+
+            <div class="code-head">
+              <span class="micro">receipt.json</span>
+              <span class="code-hint">scroll ↕</span>
+            </div>
+            <div class="receipt-code-wrap" role="region" aria-labelledby="receipt-code-label" tabindex="0">
+              <p class="sr-only" id="receipt-code-label">Canonical-style JSON receipt, one line per entry</p>
+              <ol class="receipt-code" id="receipt-code" aria-label="Receipt JSON"></ol>
+              <noscript>
+                <p class="noscript-note">The interactive receipt needs JavaScript. Initial posture: preflight allow; all five downstream capabilities deny; harnessReady false.</p>
+              </noscript>
+            </div>
+
+            <div class="receipt-foot">
+              <p><span class="micro">digest</span> <code id="receipt-digest">fnv1a64:0000000000000000</code></p>
+              <p class="receipt-caveat">
+                <strong>Modeled, not engine.</strong> <code>effectAuthorized</code> stays false for every capability.
+                The shipped engine still reports <code>harnessReady: false</code> at <code>s1-preflight-only</code>.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section wrap" id="actions" aria-labelledby="actions-title">
+        <header class="section-head">
+          <div class="section-heading">
+            <p class="kicker"><span class="kicker-index">02</span> Effect gate</p>
+            <h2 id="actions-title">Try to pass the gate.</h2>
+            <p class="section-intro">
+              Each attempt is evaluated against the modeled decisions, not against a running engine. A success
+              records a session beat only; a refusal names the gate that stopped it. Commit is intentionally
+              unreachable.
+            </p>
+          </div>
+        </header>
+
+        <div class="action-grid" role="group" aria-label="Simulated actions">
+          <button class="action" type="button" data-action="read_file" data-gate="preflight">
+            <span class="action-index" aria-hidden="true">A1</span>
+            <span class="sr-only">Simulate </span><span class="action-code">read_file</span>
+            <span class="action-desc">Read a project file</span>
+            <span class="action-gate"><span class="gate-dot" aria-hidden="true"></span><span data-gate-label>preflight admitted</span></span>
+          </button>
+          <button class="action" type="button" data-action="edit_file" data-gate="repositoryMutation">
+            <span class="action-index" aria-hidden="true">A2</span>
+            <span class="sr-only">Simulate </span><span class="action-code">edit_file</span>
+            <span class="action-desc">Write inside the project</span>
+            <span class="action-gate"><span class="gate-dot" aria-hidden="true"></span><span data-gate-label>repository mutation denied</span></span>
+          </button>
+          <button class="action" type="button" data-action="run_command" data-gate="processExecution">
+            <span class="action-index" aria-hidden="true">A3</span>
+            <span class="sr-only">Simulate </span><span class="action-code">run_command</span>
+            <span class="action-desc">Launch a bounded process</span>
+            <span class="action-gate"><span class="gate-dot" aria-hidden="true"></span><span data-gate-label>process execution denied</span></span>
+          </button>
+          <button class="action" type="button" data-action="fetch_url" data-gate="networkEgress">
+            <span class="action-index" aria-hidden="true">A4</span>
+            <span class="sr-only">Simulate </span><span class="action-code">fetch_url</span>
+            <span class="action-desc">Request a declared destination</span>
+            <span class="action-gate"><span class="gate-dot" aria-hidden="true"></span><span data-gate-label>network egress denied</span></span>
+          </button>
+          <button class="action" type="button" data-action="git_commit" data-gate="human">
+            <span class="action-index" aria-hidden="true">A5</span>
+            <span class="sr-only">Simulate </span><span class="action-code">git_commit</span>
+            <span class="action-desc">Commit the working tree</span>
+            <span class="action-gate"><span class="gate-dot" aria-hidden="true"></span><span data-gate-label>human approval only</span></span>
+          </button>
+          <button class="action" type="button" data-action="model_call" data-gate="modelInvocation">
+            <span class="action-index" aria-hidden="true">A6</span>
+            <span class="sr-only">Simulate </span><span class="action-code">model_call</span>
+            <span class="action-desc">Invoke the configured model</span>
+            <span class="action-gate"><span class="gate-dot" aria-hidden="true"></span><span data-gate-label>model invocation denied</span></span>
+          </button>
+        </div>
+        <p class="action-note">
+          Nothing is read, written, spawned, fetched, or committed. Every outcome is a local page calculation.
+        </p>
+
+        <div class="feedback-grid">
+          <div class="outcome" id="outcome" data-state="idle" aria-live="polite" aria-atomic="true" aria-labelledby="outcome-title">
+            <div class="outcome-top">
+              <span class="micro" id="outcome-title">Last evaluation</span>
+              <span class="outcome-target" id="outcome-target">awaiting action</span>
+            </div>
+            <div class="outcome-main">
+              <p class="outcome-decision" id="outcome-decision">idle</p>
+              <code class="outcome-code" id="outcome-code">—</code>
+            </div>
+            <p class="outcome-reason" id="outcome-reason">
+              Choose an action above. The gate will return either a typed refusal or a simulated success with a
+              recorded beat.
+            </p>
+            <p class="outcome-meta" id="outcome-meta">No beat recorded.</p>
+          </div>
+
+          <div class="trace" aria-labelledby="trace-title">
+            <div class="trace-head">
+              <h3 id="trace-title">Session beats</h3>
+              <span class="micro"><span id="beat-count">0</span> beats · in-memory</span>
+            </div>
+            <p class="trace-note">Latest eight attempts. Reload clears the ledger.</p>
+            <ol class="beat-list" id="beat-list">
+              <li class="beat-empty">No beats recorded. Try an action or a gate.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="floor-section" id="floor" aria-labelledby="floor-title">
+        <div class="wrap floor-inner">
+          <header class="section-head">
+            <div class="section-heading">
+              <p class="kicker"><span class="kicker-index">03</span> Safety floor</p>
+              <h2 id="floor-title">The floor does not move.</h2>
+              <p class="section-intro">
+                Five root-of-trust invariants. They are not toggles, not configuration, and not subject to
+                admission. When an attempt would leave an effect unrecorded or expose a secret, the floor refuses
+                it before the gate can open.
+              </p>
+            </div>
+          </header>
+
+          <div class="floor-status" id="floor-status" data-state="intact">
+            <span class="floor-status-dot" aria-hidden="true"></span>
+            <span class="floor-status-text" id="floor-status-text">5 / 5 rules intact · no floor refusals this session</span>
+            <span class="floor-status-tag">immutable</span>
+          </div>
+
+          <ol class="floor-list">
+            <li class="floor-rule" data-rule="no_writes_outside_project">
+              <div class="floor-rule-top">
+                <span class="floor-id">SF-01</span>
+                <span class="floor-lock">locked</span>
+              </div>
+              <h3>No writes outside project</h3>
+              <p>A write is bounded by the project root's device, inode, and canonical path. Traversal, symlinks, and foreign mounts are refused.</p>
+              <p class="floor-code"><span>refuses</span> <code>floor_write_boundary</code></p>
+            </li>
+            <li class="floor-rule" data-rule="no_credentials_in_records">
+              <div class="floor-rule-top">
+                <span class="floor-id">SF-02</span>
+                <span class="floor-lock">locked</span>
+              </div>
+              <h3>No credentials in records</h3>
+              <p>Receipts and logs carry opaque handles, never secret values. Redaction happens before a record is written.</p>
+              <p class="floor-code"><span>refuses</span> <code>floor_credential_redaction</code></p>
+            </li>
+            <li class="floor-rule" data-rule="no_raw_secret_display">
+              <div class="floor-rule-top">
+                <span class="floor-id">SF-03</span>
+                <span class="floor-lock">locked</span>
+              </div>
+              <h3>No raw secret display</h3>
+              <p>The console may say a credential exists. It never reveals the raw value in any surface.</p>
+              <p class="floor-code"><span>refuses</span> <code>floor_secret_display</code></p>
+            </li>
+            <li class="floor-rule" data-rule="no_silent_fallback">
+              <div class="floor-rule-top">
+                <span class="floor-id">SF-04</span>
+                <span class="floor-lock">locked</span>
+              </div>
+              <h3>No silent fallback</h3>
+              <p>No provider, gate, or record means a typed refusal. The system never substitutes a default and calls it success.</p>
+              <p class="floor-code"><span>refuses</span> <code>floor_effect_requires_audit</code></p>
+            </li>
+            <li class="floor-rule" data-rule="no_auto_commit">
+              <div class="floor-rule-top">
+                <span class="floor-id">SF-05</span>
+                <span class="floor-lock">locked</span>
+              </div>
+              <h3>No auto-commit</h3>
+              <p>Commit is reserved to an explicit human decision. No capability, retry, or scheduler can author it.</p>
+              <p class="floor-code"><span>refuses</span> <code>human_commit_approval_required</code></p>
+            </li>
+          </ol>
+
+          <div class="floor-probe">
+            <p class="micro">Floor probe</p>
+            <p>
+              Leave durable audit denied and try to admit repository mutation. The switch refuses before admission,
+              and SF-04 is marked. The floor is the reason, not a bug in the switch.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section wrap proof-section" id="scope" aria-labelledby="proof-title">
+        <header class="section-head">
+          <div class="section-heading">
+            <p class="kicker"><span class="kicker-index">04</span> Scope</p>
+            <h2 id="proof-title">What this proves. What it does not.</h2>
+            <p class="section-intro">
+              A model is useful only when its boundary is as clear as its mechanism. This lab is a teaching
+              instrument, not an admission authority.
+            </p>
+          </div>
+        </header>
+
+        <div class="proof-grid">
+          <div class="proof-col proof-proves">
+            <h3>What this proves</h3>
+            <ul>
+              <li>Ordering is part of policy. Durability is admitted before the effects it records.</li>
+              <li>Refusals are typed. Each closed gate returns a specific code instead of a generic failure.</li>
+              <li>The safety floor can refuse a switch, not only an action.</li>
+              <li>A readiness receipt can be derived from the same state the console renders.</li>
+              <li>Human authority can sit outside the capability model. <code>git_commit</code> stays unreachable.</li>
+            </ul>
+          </div>
+          <div class="proof-col proof-not">
+            <h3>What it does not</h3>
+            <ul>
+              <li>Connect to the Bridlewise engine, its filesystem, or its ledger. No request leaves this page.</li>
+              <li>Admit a real capability. In the engine, policy is pinned code and evidence, not UI state.</li>
+              <li>Prove identity, path containment, cryptographic integrity, or durable audit.</li>
+              <li>Match the engine's refusal vocabulary exactly. The codes here are illustrative.</li>
+              <li>Make the shipped engine ready. It still reports <code>harnessReady: false</code> at <code>s1-preflight-only</code>.</li>
+              <li>Persist anything. Reload resets the lab; Copy writes only to your clipboard.</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="closing">
+          <span class="closing-mark" aria-hidden="true"></span>
+          The real gate is code. This is the instrument that helps you read it.
+        </p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap footer-inner">
+        <div>
+          <p class="footer-brand">bridlewise <span aria-hidden="true">/</span> governance lab</p>
+          <p class="footer-copy">An illustrative teaching instrument. Not connected to the engine.</p>
+        </div>
+        <div class="footer-meta">
+          <p>Developer preview · not production-ready · not for sensitive code.</p>
+          <a href="../">Back to the logbook <span aria-hidden="true">←</span></a>
+          <a href="#top">Back to top <span aria-hidden="true">↑</span></a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="policy-lab.js" defer></script>
+</body>
+</html>

@@ -76,9 +76,12 @@ export function getEmbeddingsProvider(config: EmbeddingsConfigLike = {}): Embedd
       if (extractor) return;
       if (loadingPromise) { await loadingPromise; return; }
       loadingPromise = (async () => {
-        let transformers: typeof import("@xenova/transformers");
+        // Optional peer, absent by default. The variable specifier avoids a
+        // compile-time hard dependency; the catch path reports unavailable.
+        const transformersSpecifier = "@xenova/transformers";
+        let transformers: any;
         try {
-          transformers = await import("@xenova/transformers");
+          transformers = await import(transformersSpecifier);
         } catch (importErr) {
           // The optional embeddings dependency is not installed — the
           // provider reports unavailable via isAvailable. Route through
