@@ -1,0 +1,73 @@
+name: Bug report
+description: Report a reproducible problem in the developer preview.
+title: "bug: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > [!WARNING]
+        > Bridlewise is an experimental developer preview. Do not paste credentials, private source, personal data, absolute home paths, or database contents. Redact logs before attaching them.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: One paragraph describing the failure.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Exact steps, commands, and a minimal disposable project if one is needed.
+      placeholder: |
+        1. npm ci
+        2. node scripts/sd.mjs start
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include the typed error or refusal text, not a screenshot of a stack trace.
+    validations:
+      required: true
+  - type: input
+    id: revision
+    attributes:
+      label: Revision
+      description: Commit SHA or tag.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, kernel, Node version, npm version, browser.
+      placeholder: "Ubuntu 24.04, kernel 6.8, Node 24.20.0, npm 11.19.0, Chromium 140"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Redacted logs
+      description: Remove secrets, tokens, private paths, and personal data first.
+      render: shell
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I searched existing issues and discussions.
+          required: true
+        - label: This report does not contain credentials, private source, or personal data.
+          required: true
+        - label: I understand this is a developer preview with no support SLA.
+          required: true

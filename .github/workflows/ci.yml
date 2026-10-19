@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Set up Node 24
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24.20.0
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            engine/package-lock.json
+
+      - name: Install web dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install engine dependencies
+        run: npm --prefix engine ci --no-audit --no-fund
+
+      - name: Enforce the self-protection config mode
+        run: chmod 600 engine/bridlewise.config.json
+
+      - name: Typecheck web and server
+        run: npm run typecheck
+
+      - name: Typecheck engine
+        run: npm --prefix engine run typecheck
+
+      - name: Scan for secrets and private paths
+        run: npm run check:secrets
+
+      - name: Public smoke tests
+        run: npm run test:public
+
+      - name: Build cockpit
+        run: npm run build
+
+      - name: Build engine bundle
+        run: npm --prefix engine run build:bundle
+
+      - name: Build guardian
+        run: make -C engine/guardian all
+
+      - name: Test guardian
+        run: make -C engine/guardian test
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: bridlewise-preview-${{ github.sha }}
+          path: |
+            dist/client
+            engine/dist/bundle.js
+          if-no-files-found: error
+          retention-days: 7

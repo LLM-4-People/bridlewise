@@ -1,0 +1,13 @@
+# Default owners for the public preview.
+* @amberflag48
+
+# Security-sensitive surfaces.
+/server/auth/ @amberflag48
+/server/safety/ @amberflag48
+/server/llm/ @amberflag48
+/engine/src/privacy/ @amberflag48
+/engine/src/safety/ @amberflag48
+/engine/guardian/ @amberflag48
+/.github/ @amberflag48
+/SECURITY.md @amberflag48
+/LICENSE @amberflag48

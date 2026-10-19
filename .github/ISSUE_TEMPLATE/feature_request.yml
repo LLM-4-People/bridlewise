@@ -1,0 +1,53 @@
+name: Feature request
+description: Propose a capability, design change, or documentation improvement.
+title: "feat: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Bridlewise is a pre-1.0 developer preview. Proposals that make the system more inspectable, more honest, or easier to verify are especially welcome. Do not include private code or data.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What can a user not do or not understand today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should change? Describe behavior and invariants, not only implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Cockpit
+        - Server / API
+        - Engine
+        - Guardian / confinement
+        - Code intelligence
+        - Memory / timeline
+        - Providers / MCP
+        - Documentation
+        - Build / CI / tooling
+        - Other
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I searched existing issues and discussions.
+          required: true
+        - label: I understand this is a developer preview and not a production commitment.
+          required: true
