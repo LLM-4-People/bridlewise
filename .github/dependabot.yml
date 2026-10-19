@@ -1,3 +1,5 @@
+# Security updates are enabled in repository settings. Version-update PRs are
+# paused while the developer preview stabilizes; raise a limit to re-enable.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -7,7 +9,7 @@ updates:
       day: monday
       time: "06:00"
       timezone: Etc/UTC
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 0
     groups:
       web-minor-patch:
         applies-to: version-updates
@@ -20,7 +22,7 @@ updates:
       day: monday
       time: "06:15"
       timezone: Etc/UTC
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 0
     groups:
       engine-minor-patch:
         applies-to: version-updates
@@ -33,7 +35,7 @@ updates:
       day: monday
       time: "06:30"
       timezone: Etc/UTC
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 0
     groups:
       actions:
         patterns: ["*"]
