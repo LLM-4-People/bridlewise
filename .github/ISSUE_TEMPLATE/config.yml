@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://github.com/LLM-4-People/bridlewise/security/advisories/new
+    about: Report a vulnerability privately. Do not open a public issue with exploit details.
+  - name: Questions and ideas
+    url: https://github.com/LLM-4-People/bridlewise/discussions
+    about: Ask a question or discuss a direction.
+  - name: Documentation
+    url: https://llm-4-people.github.io/bridlewise/
+    about: Read the quickstart, architecture, security model, and roadmap.
