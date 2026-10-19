@@ -75,8 +75,8 @@ Two details are easy to miss:
 The [Security tab](https://github.com/LLM-4-People/bridlewise/security) is where the repository keeps its custody surfaces:
 
 - [Private vulnerability reporting](https://github.com/LLM-4-People/bridlewise/security/advisories/new) is enabled. There is no public exploit channel, no bug bounty, and no response SLA.
-- [Code scanning](https://github.com/LLM-4-People/bridlewise/security) carries CodeQL results and OpenSSF Scorecard checks. At the 2026-10-19 snapshot, the product repository had open alerts in both classes; they were not all triaged to closure.
-- [Dependabot](https://github.com/LLM-4-People/bridlewise/security) is enabled, and dependency review fails pull requests on high-severity changes. The alert queue is not empty.
+- [Code scanning](https://github.com/LLM-4-People/bridlewise/security) carries CodeQL results and OpenSSF Scorecard checks. At publication, the product repository's Dependabot queue is at **0 open alerts** and the security-query queue was triaged to zero open findings; test-only and false positives are dismissed with reasons, not silently closed.
+- [Dependabot](https://github.com/LLM-4-People/bridlewise/security) is enabled, and dependency review fails pull requests on high-severity changes. The product and testing queues currently report **0 open alerts**; new advisories can reopen them.
 
 Direct code-scanning and Dependabot views can require repository access. The Security tab is the stable public entry point; the alert queues are also inspectable through the authenticated `gh api` commands on the [evidence page]({{ '/evidence/' | relative_url }}#4-the-security-surfaces).
 

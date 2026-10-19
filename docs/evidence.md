@@ -21,7 +21,7 @@ All observations below are from the **2026-10-19** public snapshot. Counts and a
 | Development-floor smoke tests pass | `npm run test:public` in `bridlewise-testing` | Verified: 13/13 |
 | Guardian checks pass | `make -C engine/guardian all test` | Verified: 40/40 in CI; 44/44 where the mount-namespace checks run |
 | CodeQL analysis runs | [CodeQL workflow](https://github.com/LLM-4-People/bridlewise/actions/workflows/codeql.yml) | Verified: latest run `success` |
-| CodeQL is clean | [Security tab](https://github.com/LLM-4-People/bridlewise/security) | **Not claimed**: triage in progress; test-only findings dismissed, code fixes pending re-analysis |
+| CodeQL is clean | [Security tab](https://github.com/LLM-4-People/bridlewise/security) | **Not claimed**: 0 open security-query alerts; test-only and false positives are dismissed with reasons, and a dismissal is not a fix |
 | The secret scanner passes | `npm run check:secrets` | Verified: `secret scan: clean` |
 | The audited dependency trees are clean | `npm audit` in the root and engine | Verified: 0 vulnerabilities at the lockfile snapshot |
 | Scorecard runs | [Scorecard](https://github.com/LLM-4-People/bridlewise/actions/workflows/scorecard.yml) | Verified: score 4.4; heuristic, with a failed branch-protection check |
@@ -166,7 +166,7 @@ gh api \
   --jq '[.[] | select(.rule.id | test("ID$") | not)] | length'
 ```
 
-At the snapshot this returned **15** CodeQL security-query alerts. The queue was then triaged: test-only, benchmark, and documented-limitation findings were dismissed with path-specific reasons; unknown server errors were changed to a fixed message, and HTML script-tag parsing was made case-insensitive. A fresh analysis is the next receipt. Some findings are false positives, but a dismissal is not a fix unless its comment says so. The queue also holds OpenSSF Scorecard checks, which are not CodeQL findings.
+At the snapshot this returned **15** CodeQL security-query alerts. The queue was then triaged: test-only, benchmark, and documented-limitation findings were dismissed with path-specific reasons; unknown server errors were changed to a fixed message, HTML script-tag parsing was made case-insensitive, and action references were pinned. The current queue reports **0 open security-query alerts**. A dismissal is not a fix unless its comment says so, and a new commit can introduce a new finding. The queue also holds OpenSSF Scorecard checks, which are not CodeQL findings.
 
 This command requires an authenticated `gh` session with access to code scanning. Without it, use the [Security tab](https://github.com/LLM-4-People/bridlewise/security).
 
@@ -178,7 +178,7 @@ gh api \
   --jq 'length'
 ```
 
-At the snapshot this returned **21** open alerts on the product repository, mostly transitive or development dependencies. The lockfiles were then updated: `npm audit` reports zero vulnerabilities in the root and engine trees, and the former `@xenova/transformers` tree was moved to an optional peer so its vulnerable `sharp`/`protobufjs` chain is not installed by default. Dependabot's queue may lag until its next scan; re-run the command for the current count. An alert is not proof of an exploitable path, and a clean audit is not proof that none exists.
+At the snapshot this returned **21** open alerts on the product repository, mostly transitive or development dependencies. The lockfiles were then updated: `npm audit` reports zero vulnerabilities in the root and engine trees, and the former `@xenova/transformers` tree was moved to an optional peer so its vulnerable `sharp`/`protobufjs` chain is not installed by default. The product repository now reports **0 open Dependabot alerts**; the testing floor also reports 0. Re-run the command for the current count. An alert is not proof of an exploitable path, and a clean audit is not proof that none exists.
 
 ### Dependencies
 

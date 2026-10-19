@@ -16,8 +16,8 @@ This is a gap register, not a roadmap promise. Every item below is known, stated
 | [Pre-admission](#1-pre-admission) | The readiness receipt says no; interactive capabilities are denied by the root policy | Open, by design for the preview |
 | [No security audit](#2-no-security-audit) | No independent assurance; unknown vulnerabilities may remain | Open |
 | [Full corpus not published](#3-full-corpus-not-published) | The complete engine suite is not reproducible from a fresh clone | By design for now |
-| [Dependency alerts not fully triaged](#4-dependency-alerts-not-fully-triaged) | The queue can lag behind lockfile fixes; dev-only advisories may remain | Triage in progress |
-| [CodeQL findings](#5-codeql-findings) | Static-analysis findings need review; test-only and false positives must not hide a real one | Triage in progress |
+| [Dependency alerts not fully triaged](#4-dependency-alerts-not-fully-triaged) | The queue can lag behind lockfile fixes; future advisories will reappear | Closed for the current lockfiles |
+| [CodeQL findings](#5-codeql-findings) | Static-analysis findings need review; test-only and false positives must not hide a real one | Closed for the current analysis |
 | [Linux-only confinement](#6-linux-only-confinement) | No OS-level filesystem boundary on macOS or Windows | By design |
 | [Provider coverage](#7-provider-coverage) | Only OpenAI-style protocols are verified; native Anthropic and Gemini adapters are not | Partial |
 | [No signed releases](#8-no-signed-releases) | Checksums and provenance help, but no OS-signed installer or independent audit | Partial |
@@ -68,7 +68,7 @@ Read the capability decisions, not just the boolean. Use a disposable copy. Trea
 
 **Mitigation.** Re-run `npm audit` and `npm --prefix engine audit` after installing. Inspect the [Dependabot queue](https://github.com/LLM-4-People/bridlewise/security). Do not deploy the preview. If you build on it, update and test the dependency yourself, and record what you changed.
 
-**Status:** Triage in progress. The audited trees are clean as of the lockfile update; the GitHub queue is being refreshed.
+**Status:** Closed for the current lockfiles. The product repository's Dependabot queue reports **0 open alerts**, and every audit tree reports 0 vulnerabilities. New advisories can reopen the queue; this is not a permanent clean bill.
 
 ## 5. CodeQL findings
 
@@ -78,7 +78,7 @@ Read the capability decisions, not just the boolean. Use a disposable copy. Trea
 
 **Mitigation.** Use the [Security tab](https://github.com/LLM-4-People/bridlewise/security), sort by severity, and read the path and query. Treat the queue as a finding list, not a score. The [evidence page]({{ '/evidence/' | relative_url }}#codeql) gives the inspection command.
 
-**Status:** Triage in progress. Re-run the analysis after the next push and read the remaining alerts.
+**Status:** Closed for the current analysis. The security-query queue reports **0 open alerts**; test-only, benchmark, and false-positive findings are dismissed with path-specific reasons. Re-run CodeQL for a fresh receipt; a dismissal is not a fix, and a new commit can introduce a new finding.
 
 ## 6. Linux-only confinement
 
