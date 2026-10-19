@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "noEmit": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "erasableSyntaxOnly": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "isolatedModules": true,
+    "useDefineForClassFields": true,
+    "checkJs": false,
+    "allowJs": false,
+    "paths": {
+      "@harness/contracts": ["./engine/src/kernel/contracts.ts"],
+      "@harness/timeline-types": ["./engine/src/timeline/timeline-types.ts"],
+      "@harness/agent-state": ["./engine/src/agents/agent-state.ts"],
+      "@harness/metrics-collector": ["./engine/src/performance/metrics-collector.ts"],
+      "@harness/tool-manifest": ["./engine/src/tools/tool-manifest.ts"],
+      "@harness/config": ["./engine/src/kernel/config.ts"],
+      "@harness/forensic-contracts": ["./engine/src/forensics/forensic-contracts.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "shared/**/*.ts"],
+  "exclude": ["node_modules", "server", "tests/e2e"]
+}

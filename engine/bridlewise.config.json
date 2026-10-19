@@ -1,0 +1,1269 @@
+{
+  "schemaVersion": 3,
+  "project": {
+    "id": "bridlewise",
+    "root": "."
+  },
+  "data": {
+    "defaultClassification": "project-private"
+  },
+  "state": {
+    "root": ".bridlewise/state",
+    "receipts": {
+      "executionEvidence": "evidence/executions"
+    }
+  },
+  "alignmentCheckpoint": {
+    "cadence": {
+      "maximumEventsBetweenCheckpoints": 50,
+      "maximumActionsBetweenCheckpoints": 20,
+      "maximumProviderInputTokensBetweenCheckpoints": 16384,
+      "maximumWallClockSecondsBetweenSafeBoundaryChecks": 900
+    },
+    "budgets": {
+      "maximumProjectionBytes": 65536,
+      "maximumObserverInputTokens": 8192
+    },
+    "observerProfile": "deterministic-only"
+  },
+  "repositoryPaths": {
+    "schemaVersion": "bridlewise-repository-path-settings/v1",
+    "profile": "cross-platform-strict/v1",
+    "limits": {
+      "maximumPathUtf8Bytes": 4096,
+      "maximumSegmentUtf8Bytes": 255,
+      "maximumSegmentUtf16CodeUnits": 255,
+      "maximumSegments": 256,
+      "maximumPathsPerSet": 100000
+    }
+  },
+  "repositoryRootCapability": {
+    "schemaVersion": "bridlewise-repository-root-capability-budget/v1",
+    "maximumConcurrentBorrowsPerCapability": 1,
+    "maximumOperationsPerBorrow": 1,
+    "maximumBorrowOperationsPerCapability": 8192,
+    "maximumBorrowOperationsPerTask": 8192,
+    "maximumCapabilityRotationsPerTask": 2,
+    "maximumBorrowedPathBytes": 4096,
+    "maximumBorrowedPathSegments": 128
+  },
+  "contracts": {
+    "preferredModelProtocol": "openai-responses",
+    "enabledProtocols": [
+      "openai-responses",
+      "openai-chat-completions",
+      "mcp-2025-11-25"
+    ],
+    "schemaDialect": "https://json-schema.org/draft/2020-12/schema",
+    "endpoints": {
+      "chatCompletions": "/v1/chat/completions",
+      "responses": "/v1/responses"
+    },
+    "mcpProtocolVersion": "2025-11-25",
+    "chatStreamDoneSentinel": "[DONE]",
+    "responsesStore": false,
+    "unknownMetadataClassification": "regulated-restricted",
+    "limits": {
+      "maximumIdentifierCharacters": 256,
+      "maximumTextCharacters": 262144,
+      "maximumTools": 64,
+      "maximumMessages": 2048,
+      "maximumEvents": 50000,
+      "maximumToolSchemaDepth": 24,
+      "maximumToolSchemaProperties": 2048,
+      "maximumLosses": 128
+    }
+  },
+  "runtime": {
+    "defaultToolChoice": "auto",
+    "systemPrompt": "You are a helpful coding assistant integrated into Bridlewise, a local-first coding cockpit. Provide concise, accurate, and actionable responses.",
+    "limits": {
+      "maximumToolIterations": 10,
+      "sseLimits": {
+        "maxEventBytes": 1048576,
+        "maxLineBytes": 65536
+      }
+    },
+    "providers": [],
+    "userPreferences": {
+      "tone": "concise",
+      "emoji": false,
+      "icons": true,
+      "sentenceCase": "normal"
+    },
+    "responses": {
+      "maximumRequestBytes": 16777216,
+      "maximumResponseHeaderBytes": 65536,
+      "maximumResponseBytes": 16777216,
+      "maximumDepth": 48,
+      "maximumNodes": 50000,
+      "operationTimeoutMs": 600000,
+      "maximumResumeAttempts": 2,
+      "capturedResponseHeaders": [
+        "x-request-id",
+        "date",
+        "x-ratelimit-limit-requests",
+        "x-ratelimit-remaining-requests",
+        "x-ratelimit-reset-requests",
+        "x-ratelimit-limit-tokens",
+        "x-ratelimit-remaining-tokens",
+        "x-ratelimit-reset-tokens",
+        "x-model-id",
+        "x-deployment-id",
+        "x-organization"
+      ],
+      "maximumTrackedResponses": 4096,
+      "maximumErrorMessageCharacters": 1024,
+      "cleanupTimeoutMs": 1000
+    }
+  },
+  "agents": {
+    "maximumConcurrentAgents": 3,
+    "profiles": [],
+    "orchestration": {
+      "alignmentMonitorIntervalMs": 30000,
+      "conflictDetectionEnabled": true
+    }
+  },
+  "tools": {
+    "defaultBounds": {
+      "timeoutMs": 30000,
+      "maxOutputBytes": 1048576,
+      "maxMemoryBytes": 268435456
+    },
+    "enabled": [
+      "execute_command",
+      "search_web",
+      "fetch_page",
+      "read_docs",
+      "repo_question",
+      "list_files",
+      "edit",
+      "search_code",
+      "search_symbols",
+      "quick_view",
+      "slice",
+      "viewport",
+      "skeleton",
+      "get_repository_map",
+      "find_reuse",
+      "get_dependency_graph",
+      "retrieve_relevant_files",
+      "run_quality_check",
+      "score_quality",
+      "fetch_memory",
+      "retrieve_tool_result",
+      "create_artifact",
+      "control_interface",
+      "list_extensions",
+      "git_status",
+      "git_diff",
+      "git_log",
+      "git_branch",
+      "list_agents",
+      "delegate_to_agent",
+      "get_agent_state",
+      "delegate_to_orchestrator",
+      "git_commit",
+      "read_file"
+    ],
+    "allowedCommands": [
+      "node",
+      "npm",
+      "npx",
+      "git",
+      "ls",
+      "cat",
+      "echo",
+      "pwd",
+      "wc",
+      "head",
+      "tail",
+      "grep",
+      "find",
+      "rg",
+      "fd",
+      "sort",
+      "uniq",
+      "diff",
+      "tsc",
+      "eslint",
+      "prettier",
+      "python3",
+      "python",
+      "pip",
+      "pip3",
+      "cargo",
+      "go",
+      "rustc",
+      "gcc",
+      "make",
+      "cmake",
+      "jq",
+      "sha256sum",
+      "md5sum",
+      "stat",
+      "file",
+      "basename",
+      "dirname",
+      "tr",
+      "cut",
+      "test"
+    ],
+    "mcpServers": [
+      {
+        "id": "github",
+        "transport": "http",
+        "url": "https://api.githubcopilot.com/mcp/",
+        "protocolVersion": "2025-11-25",
+        "enabled": false,
+        "auth": {
+          "type": "bearer",
+          "token": "${GITHUB_TOKEN}",
+          "envName": "GITHUB_TOKEN"
+        }
+      },
+      {
+        "id": "context7",
+        "transport": "http",
+        "url": "https://mcp.context7.com/mcp",
+        "protocolVersion": "2025-11-25",
+        "enabled": true
+      },
+      {
+        "id": "deepwiki",
+        "transport": "http",
+        "url": "https://mcp.deepwiki.com/mcp",
+        "protocolVersion": "2025-11-25",
+        "enabled": true
+      }
+    ],
+    "limits": {
+      "maxReadBytes": 1048576,
+      "maxListEntries": 10000
+    },
+    "autoCheck": {
+      "maxCaptureBytes": 262144
+    },
+    "searchMaxDepth": 5,
+    "searchMaxResults": 50,
+    "searchMaxScannedMatches": 5000,
+    "searchTimeoutMs": 15000,
+    "searchLinePreviewMaxChars": 200,
+    "dependencyGraphMaxCycles": 10,
+    "longTaskRunner": {
+      "defaultHeartbeatMs": 10000,
+      "probeTimeoutMs": 5000,
+      "spawnTimeoutMs": 15000,
+      "killTimeoutMs": 10000,
+      "listTimeoutMs": 5000
+    },
+    "dispatcher": {
+      "minContentChars": 100,
+      "truncationOverheadChars": 20
+    },
+    "maxConcurrent": 5,
+    "dispatchTimeoutMs": 30000,
+    "retryLimit": 2,
+    "retryBackoff": "exponential",
+    "failClosed": true,
+    "propagateErrors": true,
+    "recordInputs": false,
+    "recordOutputs": false,
+    "mcp": {
+      "retryCount": 3,
+      "retryBackoffMs": 1000,
+      "timeoutMs": 30000,
+      "closeGraceMs": 2000,
+      "credentialEnv": []
+    }
+  },
+  "qualityPacks": {
+    "enabled": [
+      "typescript-pack"
+    ]
+  },
+  "workspaceGit": {
+    "remoteRoles": {
+      "fetch": {
+        "name": "origin",
+        "urlIdentity": "file:///dev/null",
+        "refspecs": [
+          "+refs/heads/*:refs/remotes/origin/*"
+        ]
+      }
+    },
+    "allowedTransports": [
+      "file",
+      "ssh",
+      "https"
+    ],
+    "allowedHosts": [],
+    "defaultBranch": "main",
+    "clone": {
+      "rejectShallow": true,
+      "checkoutPolicy": "checkout",
+      "submoduleMode": "none",
+      "lfsMode": "none"
+    },
+    "reconciliation": {
+      "mode": "fast-forward-only",
+      "unrelatedHistory": "reject"
+    },
+    "push": {
+      "refspecs": [
+        "refs/heads/main:refs/heads/main"
+      ],
+      "atomic": true,
+      "signed": false,
+      "force": false,
+      "protectedRefs": [
+        "refs/heads/main"
+      ]
+    },
+    "timeouts": {
+      "inspectMs": 30000,
+      "fetchMs": 60000,
+      "pushMs": 60000,
+      "verifyMs": 30000,
+      "addMs": 30000,
+      "commitMs": 600000
+    },
+    "retries": {
+      "inspectAttempts": 3,
+      "fetchAttempts": 3,
+      "pushAttempts": 2,
+      "verifyAttempts": 3
+    },
+    "checkpoint": {
+      "namespace": "harness-checkpoint",
+      "retention": 100,
+      "compensation": "tag"
+    },
+    "credentials": {
+      "providerRefs": [],
+      "allowedMethods": [
+        "credential-helper",
+        "ssh-agent"
+      ]
+    },
+    "neverPush": {
+      "additiveRules": [
+        {
+          "pattern": "\\.bridlewise/",
+          "classification": "harness-private-state"
+        },
+        {
+          "pattern": "\\.(env|key|pem|p12|pfx|keystore)$",
+          "classification": "credentials-and-secret-like-content"
+        },
+        {
+          "pattern": "^node_modules/",
+          "classification": "caches-and-dependency-trees"
+        }
+      ]
+    },
+    "capabilities": {
+      "objectFormat": "sha1",
+      "refStorage": "files",
+      "credential": "credential-helper",
+      "host": "local-bare",
+      "submodule": "none",
+      "lfs": "none",
+      "signer": "none",
+      "filesystem": "posix"
+    },
+    "interaction": {
+      "safeRecommendation": true,
+      "approvalRequired": true
+    },
+    "gitIoLimits": {
+      "maxOutputBytes": 8388608,
+      "maxErrorBytes": 2097152,
+      "maxInputBytes": 1048576
+    },
+    "gitExecutablePath": "/usr/bin/git",
+    "pythonExecutable": "/usr/bin/python3",
+    "gitAskPass": "/bin/false"
+  },
+  "performance": {
+    "schemaVersion": "bridlewise-performance-config/v1",
+    "enabled": true,
+    "scope": {
+      "excludedModules": []
+    },
+    "sampling": {
+      "traceSamplingRate": 0,
+      "maxTracesPerScope": 1000,
+      "maxTraceDepth": 32
+    },
+    "histograms": {
+      "bucketCount": 64,
+      "maxDurationMs": 60000,
+      "bucketStrategy": "log-linear"
+    },
+    "budgets": {
+      "regressionBudgetPercent": 10,
+      "overheadBudgetPercent": 5,
+      "maxBenchmarkDurationMs": 300000,
+      "maxBenchmarkRepetitions": 100,
+      "minBenchmarkRepetitions": 3
+    },
+    "retention": {
+      "maxSnapshots": 10000,
+      "maxSnapshotAgeMs": 2592000000,
+      "maxRawSamples": 1000000
+    },
+    "exporters": {
+      "enabledExporters": [
+        "timeline"
+      ],
+      "exportIntervalMs": 60000,
+      "maxExportBatchSize": 10000
+    },
+    "labelSchema": {
+      "maxLabelCount": 32,
+      "maxLabelLength": 256,
+      "forbiddenLabelNames": [
+        "prompt",
+        "content",
+        "payload",
+        "diff",
+        "source-code"
+      ]
+    },
+    "cardinality": {
+      "maxSeriesPerScope": 10000,
+      "maxTotalSeries": 100000
+    },
+    "privacy": {
+      "redactCredentials": true,
+      "redactPii": true,
+      "redactPrompts": true,
+      "redactFileContents": true,
+      "maxLabelValueLength": 256
+    },
+    "backpressure": {
+      "maxQueueDepth": 10000,
+      "policy": "drop-oldest"
+    },
+    "failureBehavior": {
+      "onCollectorError": "continue-with-error-event",
+      "onExporterError": "continue-with-error-event"
+    },
+    "diagnosticModes": {
+      "excludedModes": [],
+      "modeTimeoutMs": 30000,
+      "modeBudgetMs": 60000
+    }
+  },
+  "selfProtection": {
+    "schemaVersion": "bridlewise-self-protection-config/v1",
+    "enabled": true
+  },
+  "debug": {
+    "schemaVersion": "bridlewise-debug-config/v1",
+    "enabled": false,
+    "level": "warn",
+    "categories": [
+      "agent-runtime-bridge",
+      "atomic-write",
+      "auto-check-runner",
+      "auto-heal",
+      "blocks",
+      "db",
+      "db-crypto",
+      "dedup-bridge",
+      "editor-bridge",
+      "file-tree",
+      "git-bridge",
+      "harness-config",
+      "history-cursor",
+      "intelligence",
+      "landlock",
+      "llm",
+      "llm-bridge",
+      "mcp-bridge",
+      "mcp-runtime",
+      "memory",
+      "migration",
+      "process",
+      "rewind",
+      "router",
+      "run",
+      "run-feed",
+      "safety-runtime",
+      "sse",
+      "timeline-bridge",
+      "tool",
+      "tool-executor",
+      "tools-bridge",
+      "ui-schema",
+      "worker-pool"
+    ],
+    "audit": {
+      "enabled": true,
+      "maxRetainedEvents": 10000,
+      "categories": []
+    },
+    "errorHandling": {
+      "reportingPolicy": "always",
+      "samplingRate": 1,
+      "dedupWindowMs": 5000
+    },
+    "sinks": {
+      "enabledSinks": [
+        "console"
+      ]
+    },
+    "redaction": {
+      "enabled": true,
+      "maxContextValueLength": 256,
+      "maxContextDepth": 32,
+      "additionalSensitiveKeyNames": []
+    }
+  },
+  "privacy": {
+    "maxContextLines": 10,
+    "maxFileBytes": 1048576,
+    "maxRegexPatternBytes": 4096,
+    "maxMatchCount": 1000,
+    "semanticModeEnabled": false,
+    "preserveLineCount": true,
+    "preserveStructure": true,
+    "failClosedOnUncertainty": true,
+    "heldCredentialMinimumLength": 6
+  },
+  "memory": {
+    "contextTokenLimit": 32768,
+    "trimThreshold": 0.8,
+    "recentTurnWindow": 10,
+    "shortTermTurnLimit": 50,
+    "longTermFactLimit": 1000,
+    "searchResultLimit": 100,
+    "summaryMaxTokens": 512,
+    "contentMaxCharacters": 1048576,
+    "maxTagsPerEntry": 64,
+    "maxTopicCharacters": 512,
+    "searchEngine": "inverted-index",
+    "dedupCompression": {
+      "dedupMode": "block"
+    },
+    "windowSize": 4096,
+    "windowTrimThreshold": 0.85,
+    "windowTrimStep": 0.1,
+    "promoteOnTurnBoundary": true,
+    "defaultTier": "short",
+    "maxCorrupted": 0
+  },
+  "search": {
+    "maxResults": 50,
+    "fuzzyThreshold": 0.85,
+    "indexFreshnessSeconds": 300,
+    "queryTimeoutMs": 5000,
+    "languageFilter": ""
+  },
+  "context": {
+    "maxContext": 32768,
+    "trimThreshold": 0.85,
+    "trimStep": 0.1,
+    "preserveSystem": true,
+    "preserveLast": true,
+    "compactStrategy": "oldest",
+    "retrievalTopK": 5,
+    "retrievalMinScore": 0.3
+  },
+  "awareness": {
+    "compactMaxTokens": 8192,
+    "refreshIntervalMs": 1000,
+    "backgroundMonitor": true,
+    "alertThreshold": 0.9,
+    "metric": "all",
+    "monitoredModules": "",
+    "detailedReport": false
+  },
+  "bias": {
+    "threshold": 0.5,
+    "preventionMode": "warn",
+    "auditMode": "summary",
+    "biasTypes": "gender,race,age,religion,nationality",
+    "recordInputs": false,
+    "escalateToOperator": true,
+    "maxAuditRows": 1000
+  },
+  "hallucination": {
+    "threshold": 0.5,
+    "groundingThreshold": 0.7,
+    "autoCorrect": true,
+    "escalateOnMiss": true,
+    "layers": "factual,logical,self-contradiction,temporal",
+    "layerMode": "all",
+    "evidenceTopK": 5,
+    "correctivePrompt": true
+  },
+  "learning": {
+    "maxRules": 100,
+    "minConfidence": 0.7,
+    "plateauThreshold": 0.05,
+    "relearnInterval": 1000,
+    "autoLearnEnabled": true,
+    "recallThreshold": 0.6
+  },
+  "quality": {
+    "thresholdCritical": 0,
+    "thresholdHigh": 0.25,
+    "thresholdMedium": 0.5,
+    "thresholdLow": 0.75,
+    "failOnCritical": true,
+    "failOnHigh": false,
+    "failOnMedium": false,
+    "failOnLow": false,
+    "enabledChecks": "duplicate-body-detector,duplicated-literals,dead-exports,schema-drift"
+  },
+  "safety": {
+    "threshold": 0.5,
+    "whitelistEnabled": true,
+    "groundingEnabled": true,
+    "failClosed": true,
+    "groundingMode": "strict",
+    "toolCallGate": {
+      "enableGhostToolDetection": true,
+      "enableSchemaValidation": true,
+      "enableLoopDetection": true,
+      "enablePartialArgumentMemory": true,
+      "partialArgumentsLimit": 64,
+      "maxRepeatCount": 5,
+      "loopWindow": 16
+    },
+    "eventFeed": {
+      "families": {
+        "bandaid": {
+          "enabled": true,
+          "minEvents": 1
+        },
+        "workaround": {
+          "enabled": true,
+          "minEvents": 1
+        },
+        "deviation": {
+          "enabled": true,
+          "minEvents": 1
+        },
+        "stepSkip": {
+          "enabled": true,
+          "minEvents": 1
+        }
+      },
+      "deviationMinTaskSimilarity": 0.2,
+      "deviationMinTurnsBeforeDeviation": 3,
+      "deviationWindowSize": 3,
+      "deviationPersistentThreshold": 3,
+      "pauseAskWaitTimeoutMs": 600000
+    }
+  },
+  "editor": {
+    "maxFileBytes": 67108864,
+    "maxPatchBytes": 1048576,
+    "maxInsertTextBytes": 1048576,
+    "viewportLines": 50,
+    "maxRetries": 3,
+    "fuzzyThreshold": 0.85,
+    "syntaxValidationEnabled": true,
+    "atomicWriteEnabled": true,
+    "feedbackLoopEnabled": false,
+    "historyRetention": 100,
+    "backupOnEdit": true,
+    "unifiedEditEnabled": true,
+    "healCascadeEnabled": true,
+    "jsonRepairEnabled": true
+  },
+  "timeline": {
+    "maxDocumentBytes": 16777216,
+    "maxDocuments": 1000000,
+    "maxEdges": 10000000,
+    "dbFilename": "timeline.db",
+    "sqliteCacheSize": -65536,
+    "sqliteBusyTimeoutMs": 5000,
+    "queryDefaultLimit": 1000
+  },
+  "resourceLock": {
+    "timeoutMs": 30000,
+    "pollIntervalMs": 100,
+    "staleMs": 60000
+  },
+  "evaluation": {
+    "identityAttestationTimeoutMs": 30000
+  },
+  "migrationAuthority": {
+    "leaseTtlMs": 600000,
+    "heartbeatIntervalMs": 30000,
+    "renewalCeilingMs": 600000,
+    "orphanGraceMs": 300000,
+    "reconciliationTimeoutMs": 600000,
+    "busyTimeoutMs": 30000,
+    "checkpointCadenceMs": 10000,
+    "recoveryDirectionPreference": "next"
+  },
+  "testExecution": {
+    "concurrency": "auto",
+    "runtimeBudgetMs": 120000,
+    "serialPhaseConcurrency": 6,
+    "fullSuiteSerialPhaseConcurrency": 8,
+    "fullSuiteInProcessSerialPhaseConcurrency": 4,
+    "fullSuiteParallelConcurrency": 12,
+    "compileCachePruning": {
+      "maxEntryAgeDays": 7,
+      "maxEntries": 400000,
+      "timeBudgetMs": 10000
+    },
+    "integrationSuiteCpuBudget": {
+      "phase": "accumulation",
+      "minimumJudgedRuns": 5,
+      "maxPopulationDriftFraction": 0.03
+    },
+    "webUiSuiteCpuBudget": {
+      "baselineFloorMsPerTestFile": 1926,
+      "derivedAtTestFileCount": 521,
+      "maxPopulationDriftFraction": 0.03,
+      "sameTreeSpreadFraction": 0.026,
+      "baselineWindowRuns": 12,
+      "ambientInflationSlopePerCpu": 0.05,
+      "ambientInflationCapFraction": 0.12
+    },
+    "webUiTestFileCostShareMax": 0.05,
+    "instrumentLock": {
+      "cacheRelativeLockPath": "bridlewise/instrument.lock",
+      "minimumTestFiles": 2,
+      "pollIntervalMs": 1000,
+      "wholeInstruments": [
+        "playwright",
+        "coverage",
+        "profile",
+        "slot",
+        "flake-reproduction"
+      ]
+    },
+    "flakeReproduction": {
+      "statisticalRuns": 10,
+      "significance": 0.01,
+      "deterministicShims": [
+        "engine/test/support/flake-shim-hold-requests.ts",
+        "engine/test/support/flake-shim-routing-rss.ts"
+      ]
+    },
+    "webSuiteWatchdog": {
+      "stallTimeoutMs": 300000,
+      "hardCeilingMs": 1800000,
+      "killGraceMs": 3000
+    },
+    "engineSuiteWatchdog": {
+      "stallTimeoutMs": 300000,
+      "hardCeilingMs": 1800000,
+      "killGraceMs": 3000
+    }
+  },
+  "harness": {
+    "typecheckTimeoutMs": 120000,
+    "commandErroredRetries": 2,
+    "commandRetryBackoffMs": 60000
+  },
+  "workspaceIsolation": {
+    "workspaceRoot": "../bridlewise-worktrees",
+    "branchNamespace": "agent/",
+    "baseStalenessCommits": 50,
+    "preserveOnFailure": true,
+    "quarantineTtlMs": 604800000,
+    "leaseTtlMs": 86400000,
+    "admissionLock": {
+      "name": "workspace-admission",
+      "timeoutMs": 120000,
+      "staleMs": 300000
+    },
+    "mergeLock": {
+      "name": "workspace-merge",
+      "timeoutMs": 3600000,
+      "staleMs": 300000
+    },
+    "landTargets": [
+      "main"
+    ],
+    "killGraceMs": 3000,
+    "links": [
+      "engine/large-codebases"
+    ],
+    "commands": {
+      "web-deps": {
+        "cwd": ".",
+        "argv": [
+          "npm",
+          "ci",
+          "--prefer-offline",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "timeoutMs": 600000,
+        "inputs": [
+          "package.json",
+          "package-lock.json"
+        ]
+      },
+      "engine-deps": {
+        "cwd": "engine",
+        "argv": [
+          "npm",
+          "ci",
+          "--prefer-offline",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "timeoutMs": 600000,
+        "inputs": [
+          "engine/package.json",
+          "engine/package-lock.json"
+        ]
+      },
+      "guardian": {
+        "cwd": "engine/guardian",
+        "argv": [
+          "make",
+          "all"
+        ],
+        "timeoutMs": 120000,
+        "inputs": [
+          "engine/guardian"
+        ]
+      },
+      "test-supervisor": {
+        "cwd": "engine/guardian",
+        "argv": [
+          "make",
+          "test_process_supervisor"
+        ],
+        "timeoutMs": 120000,
+        "inputs": [
+          "engine/guardian/Makefile",
+          "engine/guardian/test-process-supervisor.c"
+        ]
+      },
+      "bundle": {
+        "cwd": "engine",
+        "argv": [
+          "npm",
+          "run",
+          "build:bundle"
+        ],
+        "timeoutMs": 120000
+      },
+      "web-module-cache": {
+        "cwd": ".",
+        "argv": [
+          "npx",
+          "vitest",
+          "list"
+        ],
+        "timeoutMs": 600000,
+        "inputs": [
+          "package-lock.json"
+        ],
+        "holdsInstrumentLock": true
+      },
+      "web-typecheck": {
+        "cwd": ".",
+        "argv": [
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "timeoutMs": 600000
+      },
+      "engine-typecheck": {
+        "cwd": "engine",
+        "argv": [
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "timeoutMs": 600000
+      },
+      "engine-check": {
+        "cwd": "engine",
+        "argv": [
+          "node",
+          "src/cli.ts",
+          "harness",
+          "check",
+          "--skip-typecheck"
+        ],
+        "timeoutMs": 900000
+      },
+      "engine-candidate-format": {
+        "cwd": "engine",
+        "argv": [
+          "npm",
+          "run",
+          "-s",
+          "manifest:candidate"
+        ],
+        "timeoutMs": 300000
+      },
+      "engine-format": {
+        "cwd": "engine",
+        "argv": [
+          "node",
+          "src/cli.ts",
+          "harness",
+          "format",
+          "--check"
+        ],
+        "timeoutMs": 300000
+      },
+      "engine-guards": {
+        "cwd": "engine",
+        "argv": [
+          "npm",
+          "run",
+          "test:guards"
+        ],
+        "timeoutMs": 900000
+      },
+      "harness-sync": {
+        "cwd": "engine",
+        "argv": [
+          "node",
+          "src/cli.ts",
+          "harness",
+          "sync",
+          "--with-bundle"
+        ],
+        "timeoutMs": 1800000
+      },
+      "engine-suite": {
+        "cwd": "engine",
+        "argv": [
+          "npm",
+          "test"
+        ],
+        "timeoutMs": 3600000,
+        "ledger": "engine"
+      },
+      "perf-profile": {
+        "cwd": ".",
+        "argv": [
+          "npm",
+          "run",
+          "-s",
+          "perf:profile"
+        ],
+        "timeoutMs": 1800000
+      },
+      "web-suite": {
+        "cwd": ".",
+        "argv": [
+          "npm",
+          "test"
+        ],
+        "timeoutMs": 3600000,
+        "ledger": "web",
+        "requires": [
+          "perf-profile"
+        ]
+      },
+      "web-build": {
+        "cwd": ".",
+        "argv": [
+          "npm",
+          "run",
+          "build"
+        ],
+        "timeoutMs": 900000
+      },
+      "lockfile": {
+        "cwd": ".",
+        "argv": [
+          "npm",
+          "install",
+          "--package-lock-only",
+          "--ignore-scripts",
+          "--no-audit",
+          "--no-fund",
+          "--prefer-offline"
+        ],
+        "timeoutMs": 300000
+      }
+    },
+    "phases": {
+      "setup": [
+        "web-deps",
+        "engine-deps",
+        "guardian",
+        "test-supervisor",
+        "bundle",
+        "web-module-cache"
+      ],
+      "validate": [
+        "engine-format",
+        "engine-candidate-format",
+        "web-typecheck",
+        "engine-typecheck",
+        "engine-check",
+        "engine-guards"
+      ],
+      "regenerate": [
+        "harness-sync"
+      ],
+      "merge": [
+        "engine-suite",
+        "web-suite"
+      ]
+    }
+  },
+  "promotion": {
+    "profileDirectory": "promotion"
+  },
+  "codeIntelligence": {
+    "autoIndexOnProjectAdd": true,
+    "indexPollMs": 1500,
+    "indexTimeoutMs": 120000,
+    "mapCacheTtlMs": 60000,
+    "retrieval": {
+      "classBoost": 0.15,
+      "basenameBoost": 0.1,
+      "pathSegBoost": 0.1,
+      "phraseBoost": 0.25,
+      "stage1K": 8,
+      "finalK": 15,
+      "importSlots": 4,
+      "reverseSlots": 1,
+      "packageSlots": 2,
+      "stage1CoreK": 4,
+      "phraseMaxFiles": 5,
+      "basenameMaxFiles": 3,
+      "pathSegMaxFiles": 10,
+      "minBasenameLength": 4,
+      "minPathSegLength": 5,
+      "minQueryWordLength": 3,
+      "packageMinDirHits": 2,
+      "importSemanticFloor": 0.3,
+      "importClassMultiplier": 0.5,
+      "bm25K1": 1.2,
+      "bm25B": 0.75,
+      "hybridBm25Weight": 0.6,
+      "hybridSpecificBm25WeightFloor": 0.7,
+      "hybridVagueBm25WeightCeiling": 0.4,
+      "searchBiasDirectoryThreshold": 0.6,
+      "searchBiasMinResults": 3,
+      "searchSealRatio": 1.8,
+      "searchSealMinScore": 0.5
+    }
+  },
+  "artifacts": {
+    "maxBytes": 524288,
+    "iframeSandbox": "allow-scripts"
+  },
+  "redaction": {
+    "toolCallArgumentsCacheEntries": 256
+  },
+  "webUi": {
+    "graph": {
+      "maxNodes": 500,
+      "repulsion": 8000,
+      "springLength": 80,
+      "springStrength": 0.04,
+      "centering": 0.008,
+      "damping": 0.85,
+      "iterations": 120,
+      "maxNodeRadius": 14,
+      "minNodeRadius": 4,
+      "nodeSpacing": 90,
+      "minSeparation": 24,
+      "labelMinNodeScreenPx": 9,
+      "labelTopDegreeCount": 12,
+      "minZoom": 0.3,
+      "maxZoom": 5,
+      "minCanvasPx": 200,
+      "maxFitScale": 2,
+      "fitMarginPx": 40,
+      "fallbackWidth": 800,
+      "fallbackHeight": 600,
+      "labelFontPx": 11,
+      "labelShowAllZoom": 1.5,
+      "hitPaddingPx": 4,
+      "wheelZoomFactor": 1.1,
+      "buttonZoomIn": 1.2,
+      "buttonZoomOut": 0.8,
+      "indexingPollMs": 2000,
+      "maxCyclesDisplayed": 10
+    },
+    "metrics": {
+      "pollMs": 8000,
+      "historyMax": 60
+    },
+    "selfImproving": {
+      "minSampleCount": 5,
+      "errorRateThreshold": 0.25,
+      "maxSuggestions": 10
+    },
+    "quality": {
+      "scoreMax": 100,
+      "scoreMin": 0,
+      "penaltyCapIssuesPerKloc": 30,
+      "penaltyCapHotspots": 20,
+      "penaltyCapClones": 15,
+      "penaltyCapUntyped": 15,
+      "penaltyCapIssueDensity": 20,
+      "penaltyWeightIssuesPerKloc": 5,
+      "penaltyWeightHotspots": 2,
+      "penaltyWeightClones": 30,
+      "penaltyWeightUntyped": 20,
+      "penaltyWeightIssueDensity": 100,
+      "lintGate": {
+        "maxIssuesPerKloc": 10,
+        "maxComplexityHotspots": 5,
+        "maxCloneRatio": 0.15,
+        "minTypedFileFraction": 0.5
+      }
+    },
+    "promptGenerator": {
+      "roles": [
+        {
+          "id": "senior-engineer",
+          "label": "Senior engineer",
+          "instruction": "Act as a senior software engineer with deep expertise in the requested language and domain."
+        },
+        {
+          "id": "code-reviewer",
+          "label": "Code reviewer",
+          "instruction": "Act as a meticulous code reviewer focused on correctness, readability, and edge cases."
+        },
+        {
+          "id": "architect",
+          "label": "Architect",
+          "instruction": "Act as a software architect prioritizing modularity, cohesion, and long-term maintainability."
+        },
+        {
+          "id": "debugger",
+          "label": "Debugger",
+          "instruction": "Act as a debugger: reproduce the failure, isolate the root cause, and fix at the owner."
+        },
+        {
+          "id": "mentor",
+          "label": "Mentor",
+          "instruction": "Act as a patient mentor who explains decisions and trade-offs clearly."
+        }
+      ],
+      "tones": [
+        {
+          "id": "concise",
+          "label": "Concise",
+          "instruction": "Be concise and direct; omit filler."
+        },
+        {
+          "id": "detailed",
+          "label": "Detailed",
+          "instruction": "Be thorough and detailed; explain your reasoning."
+        },
+        {
+          "id": "friendly",
+          "label": "Friendly",
+          "instruction": "Use a friendly, approachable tone."
+        },
+        {
+          "id": "formal",
+          "label": "Formal",
+          "instruction": "Use a formal, professional tone."
+        }
+      ],
+      "outputFormats": [
+        {
+          "id": "bullet-points",
+          "label": "Bullet points",
+          "instruction": "Format the answer as bullet points."
+        },
+        {
+          "id": "code-only",
+          "label": "Code only",
+          "instruction": "Respond with code only \u2014 no prose."
+        },
+        {
+          "id": "explanation-plus-code",
+          "label": "Explanation + code",
+          "instruction": "Give a short explanation followed by the code."
+        },
+        {
+          "id": "step-by-step",
+          "label": "Step by step",
+          "instruction": "Work through the task in numbered steps."
+        }
+      ],
+      "languages": [
+        {
+          "id": "typescript",
+          "label": "TypeScript",
+          "instruction": "Write code in TypeScript."
+        },
+        {
+          "id": "python",
+          "label": "Python",
+          "instruction": "Write code in Python."
+        },
+        {
+          "id": "rust",
+          "label": "Rust",
+          "instruction": "Write code in Rust."
+        },
+        {
+          "id": "go",
+          "label": "Go",
+          "instruction": "Write code in Go."
+        },
+        {
+          "id": "javascript",
+          "label": "JavaScript",
+          "instruction": "Write code in JavaScript."
+        }
+      ],
+      "constraints": [
+        {
+          "id": "no-external-deps",
+          "label": "No external deps",
+          "instruction": "Do not introduce any third-party dependencies; use the standard library."
+        },
+        {
+          "id": "handle-errors",
+          "label": "Handle errors",
+          "instruction": "Handle and surface errors explicitly; never swallow them."
+        },
+        {
+          "id": "add-tests",
+          "label": "Add tests",
+          "instruction": "Include tests covering the happy path and edge cases."
+        },
+        {
+          "id": "explain-assumptions",
+          "label": "Explain assumptions",
+          "instruction": "State any assumptions you make."
+        },
+        {
+          "id": "consider-edge-cases",
+          "label": "Consider edge cases",
+          "instruction": "Consider and handle edge cases (empty, boundary, invalid input)."
+        }
+      ]
+    },
+    "performance": {
+      "lcpMaxMs": 1500,
+      "clsMax": 0.12,
+      "longTaskWorstMaxMs": 100,
+      "longTaskTotalMaxMs": 800,
+      "tabSwitchMaxMs": 200,
+      "tabDomNodesMax": 8000,
+      "typingMeanMaxMs": 60,
+      "apiResponseMaxMs": 250,
+      "longSessionHeapGrowthMaxMb": 12,
+      "longSessionDomGrowthMax": 1500,
+      "longChatRenderMaxMs": 2000,
+      "manyProjectsRenderMaxMs": 3000,
+      "viewportLcpMaxMs": 2000
+    }
+  }
+}
