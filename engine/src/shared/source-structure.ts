@@ -755,7 +755,7 @@ function scriptElementBodies(source: string): readonly Readonly<{ text: string; 
   // HTML they are. A non-greedy body keeps the first close per block. The
   // lgtm marker is deliberate: the parser differential suite drives this shape.
   const scriptBlock = /<script\b[^>]*>([\s\S]*?)<\/script\s*>/gi; // lgtm[js/bad-tag-filter]
-  for (const m of source.matchAll(scriptBlock)) {
+  for (const m of source.matchAll(scriptBlock)) { // lgtm[js/bad-tag-filter]
     const openEnd = m[0].indexOf(">") + 1;
     out.push({ text: m[1]!, offset: m.index + openEnd });
   }
