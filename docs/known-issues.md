@@ -72,7 +72,7 @@ Read the capability decisions, not just the boolean. Use a disposable copy. Trea
 
 ## 5. CodeQL findings
 
-**What it is.** CodeQL analysis runs and uploads results. At the 2026-10-19 snapshot, the product repository had 15 open security-query alerts plus 29 OpenSSF Scorecard checks in the same queue. The code was then changed: unknown server errors no longer expose arbitrary messages, HTML script-tag parsing is case-insensitive, and action references and token permissions were hardened. Test-only, benchmark, and documented-limitation findings were dismissed with path-specific reasons. The reviewed script-tag false positive also carries an inline suppression with the reason in the source.
+**What it is.** CodeQL analysis runs and uploads results. At the 2026-10-19 snapshot, the product repository had 15 open security-query alerts plus 29 OpenSSF Scorecard checks in the same queue. The code was then changed: unknown server errors no longer expose arbitrary messages, HTML script-tag parsing is case-insensitive, and action references and token permissions were hardened. Test-only, benchmark, and documented-limitation findings were dismissed with path-specific reasons. The script-tag reader now recognizes browser-valid closing tags with attributes and case-folded tag names; the parser differential suite covers the shape.
 
 **Impact.** A dismissed finding is not a fixed finding unless the comment says so. A green CodeQL workflow proves the analyzer ran, not that the code is clean. The preview does not claim a clean scan.
 

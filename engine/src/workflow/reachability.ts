@@ -98,8 +98,10 @@ export function isWalkableModule(path: string): boolean {
 
 /** The JS/TS text of a module the walk parses: a Svelte component's `<script>` blocks, a script module whole; `null` for anything else. */
 function scriptText(path: string, text: string): string | null {
-  // The lgtm marker is deliberate; the reachability tests drive this shape.
-  if (path.endsWith(".svelte")) return [...text.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script\s*>/giu)].map((match) => match[1]!).join("\n;\n"); // lgtm[js/bad-tag-filter]
+  // A browser accepts a closing tag with attributes (`</script foo="bar">`)
+  // and upper-case tag names, so both sides of this structural read use the
+  // same `[^>]*` shape.
+  if (path.endsWith(".svelte")) return [...text.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script\b[^>]*>/giu)].map((match) => match[1]!).join("\n;\n");
   return REACHABLE_SOURCE_EXTENSIONS.some((extension) => path.endsWith(extension)) ? text : null;
 }
 

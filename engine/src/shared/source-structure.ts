@@ -750,12 +750,12 @@ function tryParseScript(text: string): Readonly<{ ast?: AstNode; message?: strin
  */
 function scriptElementBodies(source: string): readonly Readonly<{ text: string; offset: number }>[] {
   const out: { text: string; offset: number }[] = [];
-  // One case-insensitive expression for both tags: the closing tag must be
-  // complete and case-folded too, so `<SCRIPT>` / `</SCRIPT >` are read as the
-  // HTML they are. A non-greedy body keeps the first close per block. The
-  // lgtm marker is deliberate: the parser differential suite drives this shape.
-  const scriptBlock = /<script\b[^>]*>([\s\S]*?)<\/script\s*>/gi; // lgtm[js/bad-tag-filter]
-  for (const m of source.matchAll(scriptBlock)) { // lgtm[js/bad-tag-filter]
+  // One case-insensitive expression for both tags: a browser accepts a
+  // closing tag with attributes (`</script foo="bar">`) and upper-case tag
+  // names, so both sides use the same `[^>]*` shape. A non-greedy body keeps
+  // the first close per block.
+  const scriptBlock = /<script\b[^>]*>([\s\S]*?)<\/script\b[^>]*>/gi;
+  for (const m of source.matchAll(scriptBlock)) {
     const openEnd = m[0].indexOf(">") + 1;
     out.push({ text: m[1]!, offset: m.index + openEnd });
   }
