@@ -31,7 +31,7 @@ credited in the change that lands.
    public API changes.
 2. Open a pull request against `main`. Keep one concern per change.
 3. Required checks must pass: the build and verification job, the secret and
-   privacy scan, and the docs link gate.
+   privacy scan, the relative docs-link gate, and the CodeQL analysis.
 4. A maintainer reviews and merges. The repository uses linear history.
 5. Security reports go through the private advisory flow in
    [`SECURITY.md`](https://github.com/LLM-4-People/bridlewise/blob/main/SECURITY.md),

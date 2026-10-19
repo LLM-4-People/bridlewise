@@ -67,7 +67,7 @@ A green run means the steps in that workflow exited zero. It does not mean the w
 
 Two details are easy to miss:
 
-- **Only two checks are required on `main`**: `Build and verify` and `Secret and privacy scan`. CodeQL, Scorecard, dependency review, and the docs build are configured but are not required merge checks.
+- **Four checks are required on `main`**: `Build and verify`, `Secret and privacy scan`, `Relative Markdown links`, and `Analyze JavaScript and TypeScript`. Dependency review, Scorecard, and the Pages build are configured but are not required merge checks.
 - **CodeQL is not a clean bill.** The analysis can succeed while the code-scanning queue holds open alerts. The workflow proves the analyzer ran; the Security tab holds the findings.
 
 ## Security: custody, not a certificate
@@ -98,13 +98,13 @@ The `v0.0.2-preview` assets are not OS-signed. They carry SPDX SBOMs and a GitHu
 
 A tag ruleset named `protect-release-tags` is active for `refs/tags/v*`; it blocks deletion, force-update, and update. Classic branch protection on `main` is doing the merge work:
 
-- required status checks: **Build and verify**, **Secret and privacy scan**;
+- required status checks: **Build and verify**, **Secret and privacy scan**, **Relative Markdown links**, **Analyze JavaScript and TypeScript**;
 - strict: the branch must be up to date before merging;
 - conversation resolution: required;
 - required pull-request reviews: none;
 - enforce for administrators: off.
 
-That is a real merge gate, and it is narrower than it looks. A change can land with two green checks and no human approval. The project compensates with a [contribution guide](https://github.com/LLM-4-People/bridlewise/blob/main/CONTRIBUTING.md), a [testing floor](https://github.com/LLM-4-People/bridlewise-testing), and a review culture — not with a GitHub setting. Do not read the gate as a review.
+That is a real merge gate, and it is narrower than it looks. A change can land with four green checks and no human approval. The project compensates with a [contribution guide](https://github.com/LLM-4-People/bridlewise/blob/main/CONTRIBUTING.md), a [testing floor](https://github.com/LLM-4-People/bridlewise-testing), and a review culture — not with a GitHub setting. Do not read the gate as a review.
 
 ## Codespaces: a workspace, not a boundary
 

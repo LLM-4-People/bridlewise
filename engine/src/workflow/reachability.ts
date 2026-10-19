@@ -98,7 +98,7 @@ export function isWalkableModule(path: string): boolean {
 
 /** The JS/TS text of a module the walk parses: a Svelte component's `<script>` blocks, a script module whole; `null` for anything else. */
 function scriptText(path: string, text: string): string | null {
-  if (path.endsWith(".svelte")) return [...text.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/giu)].map((match) => match[1]!).join("\n;\n");
+  if (path.endsWith(".svelte")) return [...text.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script\s*>/giu)].map((match) => match[1]!).join("\n;\n");
   return REACHABLE_SOURCE_EXTENSIONS.some((extension) => path.endsWith(extension)) ? text : null;
 }
 
