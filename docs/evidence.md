@@ -222,7 +222,7 @@ gh attestation verify bridlewise-v0.0.2-preview-source.tar.gz \
   --repo LLM-4-People/bridlewise
 ```
 
-The attestation binds the asset digest to the release workflow run and commit under GitHub's OIDC identity. It does not prove the source is correct or the build is reproducible. On 2026-10-19 the command exited `0` for the source archive.
+The attestation binds the asset digest to the release workflow run and commit under GitHub's OIDC identity. It does not prove the source is correct or the build is reproducible. On 2026-10-19 the command exited `0` for all five attested assets.
 
 ## 6. The docs
 

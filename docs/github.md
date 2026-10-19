@@ -92,7 +92,7 @@ The [v0.0.2-preview release](https://github.com/LLM-4-People/bridlewise/releases
 - `bridlewise-v0.0.2-preview-sbom-web.spdx.json` and `...-engine.spdx.json` — SPDX SBOMs;
 - `SHA256SUMS` — checksums for all assets.
 
-The release is a **prerelease**, and its assets are not OS-signed. All five checksummed assets passed `sha256sum -c` on 2026-10-19 (the release has six assets, including `SHA256SUMS`); the source archive passed `gh attestation verify`. The provenance attestation is signed by GitHub's OIDC identity, not by a maintainer key, and it is not a reproducible-build proof. `SHA256SUMS` proves that the bytes you downloaded match the published list. See [Evidence]({{ '/evidence/' | relative_url }}) for the verification commands.
+The release is a **prerelease**, and its assets are not OS-signed. All five checksummed assets passed `sha256sum -c` on 2026-10-19 (the release has six assets, including `SHA256SUMS`); all five attested assets passed `gh attestation verify`. The provenance attestation is signed by GitHub's OIDC identity, not by a maintainer key, and it is not a reproducible-build proof. `SHA256SUMS` proves that the bytes you downloaded match the published list. See [Evidence]({{ '/evidence/' | relative_url }}) for the verification commands.
 
 ## Rulesets: the gate that exists, and the review that does not
 

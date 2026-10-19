@@ -106,7 +106,7 @@ Read the capability decisions, not just the boolean. Use a disposable copy. Trea
 
 **Impact.** `SHA256SUMS` proves the downloaded bytes match the published list. A provenance attestation says which workflow and commit produced the asset under GitHub's OIDC identity; it does not prove the source is correct, the build is reproducible, or the maintainer account was uncompromised. A tag ruleset reduces accidental or forced tag movement but is not a signature.
 
-**Mitigation.** Build from source and compare what you run. For `v0.0.2-preview`, all five checksummed assets passed `sha256sum -c`, the release is marked prerelease with six assets, and `gh attestation verify` exited `0` for the source archive. Review the commit and the workflow. Do not treat the release as a deployment artifact.
+**Mitigation.** Build from source and compare what you run. For `v0.0.2-preview`, all five checksummed assets passed `sha256sum -c`, the release is marked prerelease with six assets, and `gh attestation verify` exited `0` for all five attested assets. Review the commit and the workflow. Do not treat the release as a deployment artifact.
 
 **Status:** Partial. Provenance and SBOM are added for new releases; OS signing and independent audit remain absent. See [Shipping and releases]({{ '/shipping/' | relative_url }}) and [Evidence]({{ '/evidence/' | relative_url }}#5-the-release).
 
