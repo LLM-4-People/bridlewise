@@ -71,6 +71,14 @@ struct landlock_path_beneath_attr {
 #  define __NR_landlock_restrict_self 446
 #endif
 
+/* Older UAPI headers (for example Ubuntu 24.04's 6.8 headers) know the
+ * Landlock syscalls but predate IOCTL_DEV. The bit is stable kernel ABI;
+ * define it locally so the flag table compiles. mask_flags_to_abi() drops
+ * it on kernels whose probed ABI is older than 5. */
+#ifndef LANDLOCK_ACCESS_FS_IOCTL_DEV
+#  define LANDLOCK_ACCESS_FS_IOCTL_DEV         (1ULL << 15)
+#endif
+
 /* ---- Flag table ------------------------------------------------------- */
 
 /*

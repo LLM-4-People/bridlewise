@@ -30,6 +30,7 @@
 #include <sys/prctl.h>
 #include <sys/syscall.h>
 #include <linux/openat2.h>
+#include <linux/version.h>
 
 #include "landlock-guardian.h"
 
@@ -1121,7 +1122,9 @@ static void cmd_apply(const char *spec_path, char **payload_argv)
     memset(&attr, 0, sizeof(attr));
     attr.handled_access_fs = masked_handled;
     attr.handled_access_net = 0;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)
     attr.scoped = 0;
+#endif
     int ruleset_fd = (int)syscall(__NR_landlock_create_ruleset, &attr, sizeof(attr), 0);
     if (ruleset_fd < 0) {
         fail(6, "landlock_create_ruleset failed (errno=%d: %s)", errno, strerror(errno));
