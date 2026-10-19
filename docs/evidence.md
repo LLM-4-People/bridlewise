@@ -47,7 +47,7 @@ gh run list \
 Expected shape at the snapshot:
 
 ```json
-[{"conclusion":"success","headSha":"7c254aa416c5c9f92d947af492784a6f76b0d8f8","url":"https://github.com/LLM-4-People/bridlewise/actions/runs/39341694098"}]
+[{"conclusion":"success","headSha":"2e9f0a350ab37a8b4d4ec87f17d446429c9ca0b2","url":"https://github.com/LLM-4-People/bridlewise/actions/runs/39342916053"}]
 ```
 
 Read the jobs, not only the run:
