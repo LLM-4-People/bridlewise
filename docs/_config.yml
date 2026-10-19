@@ -1,0 +1,46 @@
+title: Bridlewise
+tagline: "Every run, recorded. Every tool, governed."
+description: "An experimental, local-first coding cockpit. Runs are recorded as causal streams; tools are governed, checked, and confined on Linux. Developer preview — not for sensitive code."
+url: "https://llm-4-people.github.io"
+baseurl: "/bridlewise"
+lang: en
+license: "AGPL-3.0"
+repository_url: "https://github.com/LLM-4-People/bridlewise"
+testing_url: "https://github.com/LLM-4-People/bridlewise-testing"
+security_url: "https://github.com/LLM-4-People/bridlewise/blob/main/SECURITY.md"
+
+plugins:
+  - jekyll-relative-links
+
+relative_links:
+  enabled: true
+  collections: false
+
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+timezone: UTC
+
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+  auto_ids: true
+  toc_levels: 1..3
+
+defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: default
+      image: /assets/hero.png
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - node_modules
+  - .jekyll-cache
+  - _site
+  - "*.gemspec"

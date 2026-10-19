@@ -1,0 +1,27 @@
+# Gitleaks configuration for the public preview.
+# The repository is a sanitized snapshot; this file keeps local scans useful
+# without hiding real credentials in source.
+title = "Bridlewise public preview"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Synthetic test fixtures and documentation examples"
+paths = [
+  '''engine/test/.*''',
+  '''tests/.*''',
+  '''bench/.*''',
+  '''engine/src/privacy/.*''',
+  '''engine/src/shared/debug/.*''',
+  '''docs/.*''',
+]
+regexes = [
+  '''AKIAIOSFODNN7EXAMPLE''',
+  '''sk-\.\.\.''',
+  '''sk-AAAAAAAAAAAAAAAAAAAAAAAA''',
+  '''ghp_AAAAAAAAAAAAAAAAAAAAAAAA''',
+  '''sk_abcdefghijklmnopqrstuvwx''',
+  '''ghp_abcdefghijklmnopqrstuvwx''',
+  '''sk-abcdefghijklmnopqrstuvwxyz123456''',
+]

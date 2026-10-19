@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you reference Bridlewise in research, cite this repository."
+title: "Bridlewise: a local-first, inspectable coding cockpit"
+abstract: "An experimental developer preview of a local-first coding harness with a governed tool surface, causal run record, code intelligence, memory, and a Svelte cockpit."
+type: software
+license: AGPL-3.0-only
+repository-code: "https://github.com/LLM-4-People/bridlewise"
+url: "https://llm-4-people.github.io/bridlewise/"
+authors:
+  - name: "Bridlewise contributors"
+version: "0.0.1-preview"
+date-released: "2026-10-19"
+keywords:
+  - coding agents
+  - local-first
+  - agent observability
+  - code intelligence
+  - developer tools
