@@ -48,12 +48,12 @@ jobs:
       actions: read
       security-events: read
       vulnerability-alerts: read
-    uses: LLM-4-People/bridlewise-testing/.github/workflows/promotion-gate.yml@d9779e892e54c791a4d88a44ade10016187c4540
+    uses: LLM-4-People/bridlewise-testing/.github/workflows/promotion-gate.yml@a9fbfb6e945b0ccfef0c5ffea7f4ef49f338ae48
     with:
       product_repo: ${{ github.repository }}
       product_sha: ${{ needs.meta.outputs.sha }}
       product_tag: ${{ needs.meta.outputs.tag }}
-      testing_sha: d9779e892e54c791a4d88a44ade10016187c4540
+      testing_sha: a9fbfb6e945b0ccfef0c5ffea7f4ef49f338ae48
 
   release:
     name: Build and publish release
