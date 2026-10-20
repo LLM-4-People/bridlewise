@@ -25,6 +25,8 @@ A local-first coding cockpit for working with language models on real repositori
 >
 > **Do not use Bridlewise on proprietary, regulated, client-confidential, or production codebases.** Run it on a disposable copy, in a disposable environment, with credentials you can revoke. Keep your own backups and use version control. Read [Security and limits](https://llm-4-people.github.io/bridlewise/security/) before you run anything important.
 
+The [roadmap](https://llm-4-people.github.io/bridlewise/roadmap/) names the milestones, gaps, and exit criteria. The [development floor](https://llm-4-people.github.io/bridlewise-testing/) is the contributor hub for testing, building on the harness, and the engineering work breakdown.
+
 Bridlewise is a coding harness you run on your own machine. A conversation becomes a **run**: an executable, recorded unit of work that streams the model's words, every tool call, every file effect, every check, and every finding into one causal timeline. Tools are not handed to the model as an open-ended shell; they pass through a registry, typed pre-dispatch checks, runtime detectors, and (on Linux) an OS-level filesystem boundary. The cockpit is the instrument panel for that run — not a chat box with a file tree bolted on.
 
 ## The 90-second tour
