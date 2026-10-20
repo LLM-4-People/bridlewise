@@ -141,7 +141,7 @@ The public queue is part of the record. These issues are scoped, labeled, and op
 - [Restore or explicitly refuse the missing inventory-test-run fixture](https://github.com/LLM-4-People/bridlewise-testing/issues/9) — a public test should not fail with `ERR_MODULE_NOT_FOUND`.
 - [Give the docs link checker a failure fixture](https://github.com/LLM-4-People/bridlewise-testing/issues/10) — a gate that has never failed is not evidence.
 
-An issue is a finding with an owner-shaped next step, not a promise. The [milestone](https://github.com/LLM-4-People/bridlewise/milestone/1) is `v0.0.2-preview`.
+An issue is a finding with an owner-shaped next step, not a promise. The [milestone](https://github.com/LLM-4-People/bridlewise/milestone/1) is `v0.0.3-preview`.
 
 ## What is not on this list
 

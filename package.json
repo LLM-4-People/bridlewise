@@ -1,6 +1,6 @@
 {
   "name": "bridlewise-web",
-  "version": "0.0.2",
+  "version": "0.0.3-preview",
   "private": true,
   "type": "module",
   "description": "Bridlewise cockpit: a local-first, inspectable coding harness (developer preview).",

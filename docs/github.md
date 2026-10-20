@@ -127,7 +127,7 @@ That is a useful disposable workspace. It is not a governed run, and it does not
 
 **Topics** are luggage tags. The product repository carries `agpl`, `ai`, `coding-agents`, `developer-tools`, `landlock`, `llm`, `local-first`, `nodejs`, `sqlite`, `svelte`, and `typescript`. They help someone find the project; they do not describe its readiness.
 
-**Citation** is a return address. `CITATION.cff` names the project, version `0.0.2-preview`, license, repository, site, and release date. It makes the work citable. It does not make it peer-reviewed.
+**Citation** is a return address. `CITATION.cff` names the project, version `0.0.3-preview`, license, repository, site, and release date. It makes the work citable. It does not make it peer-reviewed.
 
 ## What the record does not show
 

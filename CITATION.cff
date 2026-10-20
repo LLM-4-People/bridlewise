@@ -8,8 +8,8 @@ repository-code: "https://github.com/LLM-4-People/bridlewise"
 url: "https://llm-4-people.github.io/bridlewise/"
 authors:
   - name: "Bridlewise contributors"
-version: "0.0.2-preview"
-date-released: "2026-10-19"
+version: "0.0.3-preview"
+date-released: "2026-10-20"
 keywords:
   - coding agents
   - local-first
