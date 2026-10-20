@@ -87,6 +87,7 @@
       </a>
 
       <nav class="site-nav" id="site-nav" aria-label="Primary">
+        {% if site.testing_hub_url %}<a href="{{ site.testing_hub_url | relative_url }}" {% if page.url == '/' %}aria-current="page"{% endif %}>Build</a>{% endif %}
         <a href="{{ '/quickstart/' | relative_url }}" {% if page.url == '/quickstart/' %}aria-current="page"{% endif %}>Quickstart</a>
         <a href="{{ '/run/' | relative_url }}" {% if page.url == '/run/' %}aria-current="page"{% endif %}>Run record</a>
         <a href="{{ '/policy-lab/' | relative_url }}" {% if page.url == '/policy-lab/' %}aria-current="page"{% endif %}>Policy lab</a>
@@ -172,6 +173,7 @@
         <p class="footer-label">Project</p>
         <a href="{{ site.repository_url }}">Product repository</a>
         <a href="{{ site.testing_url }}">Testing floor</a>
+        {% if site.testing_hub_url %}<a href="{{ site.testing_hub_url | relative_url }}">Contributor hub</a>{% endif %}
         <a href="{{ site.repository_url }}/blob/main/PRODUCTS.md">Products</a>
         <a href="{{ site.repository_url }}/blob/main/CONTRIBUTING.md">Contributing</a>
         <a href="{{ site.repository_url }}/blob/main/GOVERNANCE.md">Governance</a>

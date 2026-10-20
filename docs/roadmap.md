@@ -13,7 +13,7 @@ Bridlewise is an **experimental developer preview**. This page is a status repor
 
 | Dimension | Current state |
 |---|---|
-| Version | `0.1.0` pre-release; no stable release |
+| Version | `0.0.3-preview`; no stable release |
 | Engine readiness | **Pre-admission**. `preflight` reports `harnessReady: false`; interactive capabilities are `deny` until the governance gate admits them |
 | Distribution | Source and unsigned preview artifacts; no installers, signed binaries, or signed tags |
 | Hosted service | None; the server is a local loopback process |
@@ -22,6 +22,18 @@ Bridlewise is an **experimental developer preview**. This page is a status repor
 | Data durability | No guarantee. Breaking changes and data loss are expected |
 | License | AGPL-3.0 |
 | Tests | The product tree exposes type checks; the prevention suite, benchmarks, and verification tooling live in `bridlewise-testing` |
+
+## Milestones
+
+The development floor owns the detailed engineering roadmap: [Build the floor](https://llm-4-people.github.io/bridlewise-testing/floor/roadmap/). This table is the product-facing summary. A milestone closes when its exit criteria are reproducible, not when a badge changes.
+
+| Milestone | State | What must be true |
+|---|---|---|
+| **M0 · Public preview and floor** | Done | Both repositories, Pages, the public gate, failure reporting, the promotion gate, and `v0.0.3-preview` are live. |
+| **M1 · Reproducible, sharded floor** | Active | The full suite runs on shards, merges into one receipt, and every canonical test file runs once with its prerequisites named. |
+| **M2 · Admission evidence** | Next | Readiness is reported per capability, with evidence and a remedy attached. A single boolean is not enough. |
+| **M3 · Product hardening** | Next | Backup and restore, provider coverage, portability, scale, and accessibility have tested failure paths. |
+| **M4 · Sustainable contribution** | Active | A new contributor can go from clone to a merged test or docs change using only public instructions. |
 
 ## What works today
 
@@ -50,7 +62,7 @@ These are the gaps we know about. The list is not exhaustive, and a gap being li
 
 - **Pre-admission.** The engine's governance gate has not admitted the interactive capabilities. The evidence trail is still being assembled; the preflight receipt is integrity-only.
 - **No security audit.** No independent review of auth, encryption, redaction, Landlock policy, or the tool surface.
-- **No signed releases or provenance.** The preview release assets are unsigned. There is no artifact signing, reproducible-build attestation, or release verification beyond `SHA256SUMS`.
+- **No signed releases.** The preview release assets are not signed. The release has checksums and GitHub attestations, but there is no independent signing key, reproducible-build proof, or verification path beyond `SHA256SUMS` and `gh attestation verify`.
 - **No compliance posture.** No SOC 2, ISO 27001, HIPAA, GDPR program, or data-processing agreement. The timeline is not a compliance audit log.
 - **No published performance envelope.** The cockpit is designed for responsiveness, but there is no public benchmark suite in the product repository proving behavior at large repositories or many concurrent runs.
 
@@ -99,6 +111,7 @@ Themes, not commitments. No dates. An item may be dropped if the evidence does n
 ## How to follow or help
 
 - Read the [testing floor](https://github.com/LLM-4-People/bridlewise-testing) for the prevention suite, benchmarks, design records, and decision log.
+- Start with [How to help](https://llm-4-people.github.io/bridlewise-testing/floor/help/) and the [build roadmap](https://llm-4-people.github.io/bridlewise-testing/floor/roadmap/) for the workstreams and exit criteria.
 - Open a reproducible issue with the exact command, typed error, and run id. Redact secrets and private code.
 - Read [CONTRIBUTING.md](https://github.com/LLM-4-People/bridlewise/blob/main/CONTRIBUTING.md) before sending a change.
 - Report vulnerabilities privately, not in a public issue. See [Security and limits]({{ '/security/' | relative_url }}).
