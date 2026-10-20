@@ -52,6 +52,7 @@ The `release.yml` workflow repeats this gate on a `v*` tag, then publishes:
 - `bridlewise-<tag>-engine-bundle.js` — the esbuild bundle;
 - `bridlewise-<tag>-sbom-web.spdx.json` — the SPDX SBOM for the root package;
 - `bridlewise-<tag>-sbom-engine.spdx.json` — the SPDX SBOM for the engine package;
+- `bridlewise-<tag>-promotion-receipt.json` — the gate receipt;
 - `SHA256SUMS` — checksums for all assets.
 
 From `v0.0.2-preview`, the workflow also attests the release assets with
@@ -59,7 +60,7 @@ From `v0.0.2-preview`, the workflow also attests the release assets with
 not an OS package signature. Verify an asset with:
 
 ```bash
-gh attestation verify bridlewise-v0.0.2-preview-source.tar.gz \
+gh attestation verify bridlewise-v0.0.3-preview-source.tar.gz \
   --repo LLM-4-People/bridlewise
 sha256sum -c SHA256SUMS --ignore-missing
 ```

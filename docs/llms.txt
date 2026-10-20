@@ -34,7 +34,7 @@ tests are the authority.
 
 - Product: https://github.com/LLM-4-People/bridlewise
 - Development floor: https://github.com/LLM-4-People/bridlewise-testing
-- Release: https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.2-preview
+- Release: https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.3-preview
 - License: AGPL-3.0-only for both repositories.
 - Runtime: Node.js >=24.18.0 <25.0.0. Linux-first; Landlock confinement is
   Linux-only. The cockpit server binds loopback by default.

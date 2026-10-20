@@ -22,7 +22,7 @@ Not every visitor needs the same depth. Pick a path, follow four to six links, a
 1. [The landing page]({{ '/' | relative_url }}) — the warning, the cockpit, and the run-record idea in one screen.
 2. [The interactive run]({{ '/run/' | relative_url }}) — a synthetic record of a run, not a live model call.
 3. [Security and limits]({{ '/security/' | relative_url }}) — the short version, including what is not protected.
-4. [The preview release](https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.2-preview) — what actually ships: source, cockpit, engine bundle, checksums, no installer.
+4. [The preview release](https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.3-preview) — what actually ships: source, cockpit, engine bundle, checksums, no installer.
 
 **You should conclude:** this is a local-first coding cockpit that records a run as a causal stream; it is a developer preview, pre-admission, unaudited, and not for sensitive code. The release is an inspection artifact, not a deployment.
 

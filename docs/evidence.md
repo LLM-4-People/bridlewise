@@ -25,7 +25,7 @@ All observations below are from the **2026-10-19** public snapshot. Counts and a
 | The secret scanner passes | `npm run check:secrets` | Verified: `secret scan: clean` |
 | The audited dependency trees are clean | `npm audit` in the root and engine | Verified: 0 vulnerabilities at the lockfile snapshot |
 | Scorecard runs | [Scorecard](https://github.com/LLM-4-People/bridlewise/actions/workflows/scorecard.yml) | Verified: score 5.8; heuristic, not an audit |
-| Release assets match their checksums | [v0.0.2-preview](https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.2-preview) | Verified with `sha256sum -c` for the five listed assets (six published); prerelease; attestation verified |
+| Release assets match their checksums | [v0.0.3-preview](https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.3-preview) | Verified with `sha256sum -c` for six listed assets (seven published); prerelease; attestation verified; promotion receipt included |
 | Releases are signed | — | **Not present** |
 | The docs site deploys | [Pages](https://llm-4-people.github.io/bridlewise/) | Verified: HTTP 200 |
 | Relative docs links resolve | `npm run docs:links` | Verified: `docs links: clean` |
@@ -200,29 +200,30 @@ The [Scorecard viewer](https://scorecard.dev/viewer/?uri=github.com/LLM-4-People
 ## 5. The release
 
 ```bash
-curl -LO https://github.com/LLM-4-People/bridlewise/releases/download/v0.0.2-preview/SHA256SUMS
-curl -LO https://github.com/LLM-4-People/bridlewise/releases/download/v0.0.2-preview/bridlewise-v0.0.2-preview-source.tar.gz
+curl -LO https://github.com/LLM-4-People/bridlewise/releases/download/v0.0.3-preview/SHA256SUMS
+curl -LO https://github.com/LLM-4-People/bridlewise/releases/download/v0.0.3-preview/bridlewise-v0.0.3-preview-source.tar.gz
 sha256sum -c SHA256SUMS --ignore-missing
 ```
 
-Expected (the actual verification on 2026-10-19):
+Expected (the actual verification on 2026-10-20):
 
 ```text
-./bridlewise-v0.0.2-preview-cockpit.tar.gz: OK
-./bridlewise-v0.0.2-preview-engine-bundle.js: OK
-./bridlewise-v0.0.2-preview-sbom-engine.spdx.json: OK
-./bridlewise-v0.0.2-preview-sbom-web.spdx.json: OK
-./bridlewise-v0.0.2-preview-source.tar.gz: OK
+./bridlewise-v0.0.3-preview-cockpit.tar.gz: OK
+./bridlewise-v0.0.3-preview-engine-bundle.js: OK
+./bridlewise-v0.0.3-preview-sbom-engine.spdx.json: OK
+./bridlewise-v0.0.3-preview-sbom-web.spdx.json: OK
+./bridlewise-v0.0.3-preview-source.tar.gz: OK
+./bridlewise-v0.0.3-preview-promotion-receipt.json: OK
 ```
 
-Download the cockpit archive, engine bundle, and both SPDX SBOMs too; the same check covers every asset in `SHA256SUMS`. The `v0.0.2-preview` release is marked **prerelease** and publishes a GitHub build-provenance attestation. It does **not** publish an OS-signed installer, a maintainer signature, a reproducible-build proof, or a hosted deployment.
+Download the cockpit archive, engine bundle, both SPDX SBOMs, and the promotion receipt too; the same check covers every asset in `SHA256SUMS`. The `v0.0.3-preview` release is marked **prerelease** and publishes a GitHub build-provenance attestation. It does **not** publish an OS-signed installer, a maintainer signature, a reproducible-build proof, or a hosted deployment.
 
 ```bash
-gh attestation verify bridlewise-v0.0.2-preview-source.tar.gz \
+gh attestation verify bridlewise-v0.0.3-preview-source.tar.gz \
   --repo LLM-4-People/bridlewise
 ```
 
-The attestation binds the asset digest to the release workflow run and commit under GitHub's OIDC identity. It does not prove the source is correct or the build is reproducible. On 2026-10-19 the command exited `0` for all five attested assets.
+The attestation binds the asset digest to the release workflow run and commit under GitHub's OIDC identity. It does not prove the source is correct or the build is reproducible. On 2026-10-20 the command exited `0` for all seven published assets.
 
 ## 6. The docs
 

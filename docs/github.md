@@ -28,7 +28,7 @@ That sequence is not a metaphor pasted onto a README. It is the same shape the h
 | **Check** | The check, its before/after, and the delta | [CI](https://github.com/LLM-4-People/bridlewise/actions/workflows/ci.yml), [CodeQL](https://github.com/LLM-4-People/bridlewise/actions/workflows/codeql.yml), [secret scan](https://github.com/LLM-4-People/bridlewise/actions/workflows/secret-scan.yml), [Scorecard](https://github.com/LLM-4-People/bridlewise/actions/workflows/scorecard.yml) |
 | **Finding** | What a check or detector found, with its derivation | [Issues](https://github.com/LLM-4-People/bridlewise/issues), [Security tab: code scanning and Dependabot](https://github.com/LLM-4-People/bridlewise/security) |
 | **Decision** | Allow, deny, stop, retry, or escalate — with a reason | [Discussions](https://github.com/LLM-4-People/bridlewise/discussions), pull requests, [decision records](https://github.com/LLM-4-People/bridlewise/tree/main/docs/decisions) |
-| **Release** | What leaves the harness, and what the record says about it | [The preview release](https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.2-preview), [Citation](https://github.com/LLM-4-People/bridlewise/blob/main/CITATION.cff), [Pages](https://llm-4-people.github.io/bridlewise/) |
+| **Release** | What leaves the harness, and what the record says about it | [The preview release](https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.3-preview), [Citation](https://github.com/LLM-4-People/bridlewise/blob/main/CITATION.cff), [Pages](https://llm-4-people.github.io/bridlewise/) |
 
 ## The surfaces, and what they actually prove
 
@@ -84,12 +84,13 @@ Custody means the surfaces exist and someone can inspect them. It does not mean 
 
 ## Releases: an effect with a receipt
 
-The [v0.0.2-preview release](https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.2-preview) is the public effect of the release workflow. It carries:
+The [v0.0.3-preview release](https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.3-preview) is the public effect of the release workflow. It carries:
 
-- `bridlewise-v0.0.2-preview-source.tar.gz` — the tracked source tree;
-- `bridlewise-v0.0.2-preview-cockpit.tar.gz` — the built static cockpit;
-- `bridlewise-v0.0.2-preview-engine-bundle.js` — the esbuild bundle;
-- `bridlewise-v0.0.2-preview-sbom-web.spdx.json` and `...-engine.spdx.json` — SPDX SBOMs;
+- `bridlewise-v0.0.3-preview-source.tar.gz` — the tracked source tree;
+- `bridlewise-v0.0.3-preview-cockpit.tar.gz` — the built static cockpit;
+- `bridlewise-v0.0.3-preview-engine-bundle.js` — the esbuild bundle;
+- `bridlewise-v0.0.3-preview-sbom-web.spdx.json` and `...-engine.spdx.json` — SPDX SBOMs;
+- `bridlewise-v0.0.3-preview-promotion-receipt.json` — the gate receipt;
 - `SHA256SUMS` — checksums for all assets.
 
 The release is a **prerelease**, and its assets are not OS-signed. All five checksummed assets passed `sha256sum -c` on 2026-10-19 (the release has six assets, including `SHA256SUMS`); all five attested assets passed `gh attestation verify`. The provenance attestation is signed by GitHub's OIDC identity, not by a maintainer key, and it is not a reproducible-build proof. `SHA256SUMS` proves that the bytes you downloaded match the published list. See [Evidence]({{ '/evidence/' | relative_url }}) for the verification commands.
@@ -148,7 +149,7 @@ Those are not hidden in a footnote. They are on the [known issues]({{ '/known-is
 
 1. Open the latest [CI run](https://github.com/LLM-4-People/bridlewise/actions/workflows/ci.yml). Read the job name and the conclusion. Then read the steps.
 2. Open [code scanning](https://github.com/LLM-4-People/bridlewise/security). Sort by severity. Note what is open, not just what is closed.
-3. Open the [release](https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.2-preview). Download `SHA256SUMS` and one asset. Verify the checksum.
+3. Open the [release](https://github.com/LLM-4-People/bridlewise/releases/tag/v0.0.3-preview). Download `SHA256SUMS` and one asset. Verify the checksum.
 4. Open [branch protection](https://github.com/LLM-4-People/bridlewise/branches). See which checks are required and which are advisory.
 5. Read [known issues]({{ '/known-issues/' | relative_url }}). Compare it with what the badges imply.
 
