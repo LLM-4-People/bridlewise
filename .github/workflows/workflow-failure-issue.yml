@@ -25,4 +25,4 @@ jobs:
       contents: read
       issues: write
       actions: read
-    uses: LLM-4-People/bridlewise-testing/.github/workflows/reusable-workflow-failure.yml@4e4460d0d104293da396230d9e94a80a739d6a68
+    uses: LLM-4-People/bridlewise-testing/.github/workflows/reusable-workflow-failure.yml@d9779e892e54c791a4d88a44ade10016187c4540
