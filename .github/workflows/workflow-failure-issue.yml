@@ -1,0 +1,28 @@
+name: Report workflow failure
+
+on:
+  workflow_run:
+    workflows:
+      - CI
+      - CodeQL
+      - Docs links
+      - Secret scan
+      - Docs site
+      - Dependency review
+      - Release
+      - Promotion check
+      - OpenSSF Scorecard
+    types: [completed]
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  report:
+    permissions:
+      contents: read
+      issues: write
+      actions: read
+    uses: LLM-4-People/bridlewise-testing/.github/workflows/reusable-workflow-failure.yml@4e4460d0d104293da396230d9e94a80a739d6a68

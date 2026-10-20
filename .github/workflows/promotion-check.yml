@@ -1,0 +1,27 @@
+name: Promotion check
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Product commit to verify, default is the selected branch head
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: Run the floor promotion gate
+    permissions:
+      contents: read
+      actions: read
+      security-events: read
+      vulnerability-alerts: read
+    uses: LLM-4-People/bridlewise-testing/.github/workflows/promotion-gate.yml@4e4460d0d104293da396230d9e94a80a739d6a68
+    with:
+      product_repo: ${{ github.repository }}
+      product_sha: ${{ inputs.sha || github.sha }}
+      product_tag: dry-run
+      testing_sha: 4e4460d0d104293da396230d9e94a80a739d6a68

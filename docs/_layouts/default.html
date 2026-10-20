@@ -26,6 +26,9 @@
 
   <link rel="icon" href="{{ '/assets/mark.svg' | relative_url }}" type="image/svg+xml">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  {% if page.floor_assets %}
+  <link rel="stylesheet" href="{{ '/assets/floor/floor.css' | relative_url }}">
+  {% endif %}
 
   <script>
     (function () {
@@ -64,6 +67,14 @@
     </div>
   </div>
 
+  {% if site.floor_notice %}
+  <div class="floor-banner" role="note" aria-label="Testing floor mirror notice">
+    <div class="wrap">
+      <strong>Testing floor mirror.</strong> {{ site.floor_notice }} <a href="{{ site.floor_notice_url | default: '/floor/' | relative_url }}">Open the development floor</a>.
+    </div>
+  </div>
+  {% endif %}
+
   <header class="site-header">
     <div class="wrap header-inner">
       <a class="brand" href="{{ '/' | relative_url }}" aria-label="Bridlewise home">
@@ -82,6 +93,7 @@
         <a href="{{ '/architecture/' | relative_url }}" {% if page.url == '/architecture/' %}aria-current="page"{% endif %}>Architecture</a>
         <a href="{{ '/cli/' | relative_url }}" {% if page.url == '/cli/' %}aria-current="page"{% endif %}>CLI</a>
         <a href="{{ '/testing/' | relative_url }}" {% if page.url == '/testing/' %}aria-current="page"{% endif %}>Testing</a>
+        {% if site.testing_floor_url %}<a href="{{ site.testing_floor_url | relative_url }}" {% if page.url == '/floor/' %}aria-current="page"{% endif %}>Floor</a>{% endif %}
         <a href="{{ '/evidence/' | relative_url }}" {% if page.url == '/evidence/' %}aria-current="page"{% endif %}>Evidence</a>
         <a href="{{ '/security/' | relative_url }}" {% if page.url == '/security/' %}aria-current="page"{% endif %}>Security</a>
         <a href="{{ '/design/' | relative_url }}" {% if page.url == '/design/' %}aria-current="page"{% endif %}>Design</a>
@@ -143,6 +155,7 @@
         <a href="{{ '/run/' | relative_url }}">Run record</a>
         <a href="{{ '/policy-lab/' | relative_url }}">Policy lab</a>
         <a href="{{ '/testing/' | relative_url }}">Testing</a>
+        {% if site.testing_floor_url %}<a href="{{ site.testing_floor_url | relative_url }}">Development floor</a>{% endif %}
         <a href="{{ '/evidence/' | relative_url }}">Evidence</a>
         <a href="{{ '/github/' | relative_url }}">The repo as a run record</a>
         <a href="{{ '/extending/' | relative_url }}">Building on the harness</a>
@@ -193,6 +206,7 @@
     </div>
   </dialog>
 
+  {% if page.floor_assets %}<script src="{{ '/assets/floor/floor.js' | relative_url }}" defer></script>{% endif %}
   <script src="{{ '/assets/js/site.js' | relative_url }}" defer></script>
 </body>
 </html>

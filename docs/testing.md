@@ -15,7 +15,7 @@ permalink: /testing/
 | Layer | Repository | What it proves | Fresh-clone status |
 |---|---|---|---|
 | Public smoke tests | `bridlewise` | The shipped CLI launcher, the typed refusal surface, the preflight receipt, the secret scanner, the safety warning and docs | Green with `npm run test:public` |
-| Development floor | `bridlewise-testing` | Prevention guards, server/cockpit unit tests, engine domain tests, performance and E2E suites | Typecheck and a curated subset are green; the full suite has prerequisites below |
+| Development floor | `bridlewise-testing` | Prevention guards, server/cockpit unit tests, engine domain tests, performance and E2E suites | CI runs typechecks and the public smoke suite; the full suite has prerequisites below |
 
 The product repository intentionally carries no large test tree. Publishing a test inventory without its fixtures and frozen records would create a false impression of coverage. The development floor is published separately so the machinery can be inspected.
 
@@ -156,7 +156,7 @@ test("a blank query is refused, not broadened", () => {
 
 The product repository runs Node 24, two `npm ci` installs, both typechecks, the secret scan, the public smoke tests, the cockpit build, the engine bundle, and the guardian build/test on every push and pull request.
 
-The testing repository runs both typechecks, the public smoke suite, the guardian build/test, and a curated development guard set. The full corpus-backed and E2E suites are documented as manual/nightly work until the corpus can be published reproducibly.
+The testing repository runs both typechecks, the secret scan, the public smoke suite, both builds, and the guardian build/test. It does not run the full prevention guards, the corpus-backed suite, or the E2E suite. Those remain documented manual or nightly work until the corpus can be published reproducibly.
 
 ## Flakiness
 

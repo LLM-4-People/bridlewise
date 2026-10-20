@@ -1525,3 +1525,32 @@ pre:hover .copy-code,
 @media (hover: none) {
   .copy-code { opacity: 1; }
 }
+
+/* ---- Testing-floor mirror notice --------------------------------------- */
+
+.floor-banner {
+  border-bottom: 1px solid var(--line-strong);
+  background: color-mix(in srgb, var(--beam) 8%, var(--surface-1));
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.floor-banner .wrap {
+  padding-block: 9px;
+}
+
+.floor-banner strong {
+  color: var(--ink);
+}
+
+.floor-banner a {
+  color: var(--beam);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.floor-banner a:hover,
+.floor-banner a:focus-visible {
+  border-bottom-color: currentColor;
+}
