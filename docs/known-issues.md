@@ -52,11 +52,11 @@ Read the capability decisions, not just the boolean. Use a disposable copy. Trea
 
 ## 3. Full corpus not published
 
-**What it is.** The full engine suite depends on a 4.1 GB external corpus at `engine/large-codebases`. The corpus and the performance report are deliberately not published. The runners refuse with a named prerequisite rather than silently skipping.
+**What it is.** The full engine suite depends on a 4.1 GB external corpus at `engine/large-codebases`. The floor pins a public subset manifest for the corpus-backed tests, but the raw cache and the performance report are deliberately not published. The runners refuse a missing prerequisite by name rather than silently skipping.
 
 **Impact.** A fresh clone of the product or the testing floor cannot reproduce the complete engine inventory. Coverage claims are limited to what the public smoke suites and CI actually run. Large-repository behavior is not publicly reproducible.
 
-**Mitigation.** The public smoke suites, the guardian tests, and the CI gate are reproducible. The testing floor documents every prerequisite. If you need the full suite, you need the corpus and the report; the project does not pretend otherwise.
+**Mitigation.** The public smoke suites, the guardian tests, and the CI gate are reproducible. The testing floor documents every prerequisite. If you need the complete suite, you need the full corpus and the report; the project does not pretend otherwise.
 
 **Status:** By design for now. See [Testing]({{ '/testing/' | relative_url }}#development-floor-setup) and the [testing floor](https://github.com/LLM-4-People/bridlewise-testing).
 

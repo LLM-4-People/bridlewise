@@ -21,19 +21,21 @@ Bridlewise is an **experimental developer preview**. This page is a status repor
 | Security review | **None**. No audit, no penetration test, no certification |
 | Data durability | No guarantee. Breaking changes and data loss are expected |
 | License | AGPL-3.0 |
-| Tests | The product tree exposes type checks; the prevention suite, benchmarks, and verification tooling live in `bridlewise-testing` |
+| Tests | The product tree exposes type checks and a public smoke suite; the prevention suite, benchmarks, and verification tooling live in `bridlewise-testing` |
 
 ## Milestones
 
-The development floor owns the detailed engineering roadmap: [Build the floor](https://llm-4-people.github.io/bridlewise-testing/floor/roadmap/). This table is the product-facing summary. A milestone closes when its exit criteria are reproducible, not when a badge changes.
+The development floor owns the detailed engineering roadmap: [Build the floor](https://llm-4-people.github.io/bridlewise-testing/floor/roadmap/), and the floor's [tracker](https://github.com/LLM-4-People/bridlewise-testing/blob/main/docs/trackers/TASKS.md) is the state of record for counts, workstreams, and exit criteria. This table is the product-facing summary. A milestone closes when its exit criteria are reproducible, not when a badge changes.
 
 | Milestone | State | What must be true |
 |---|---|---|
-| **M0 · Public preview and floor** | Done | Both repositories, Pages, the public gate, failure reporting, the promotion gate, and `v0.0.3-preview` are live. |
-| **M1 · Reproducible, sharded floor** | Active | The full suite runs on shards, merges into one receipt, and every canonical test file runs once with its prerequisites named. |
-| **M2 · Admission evidence** | Next | Readiness is reported per capability, with evidence and a remedy attached. A single boolean is not enough. |
-| **M3 · Product hardening** | Next | Backup and restore, provider coverage, portability, scale, and accessibility have tested failure paths. |
-| **M4 · Sustainable contribution** | Active | A new contributor can go from clone to a merged test or docs change using only public instructions. |
+| **M0 · Public preview and floor** | Shipped | Both repositories, Pages, the public gate, failure reporting, the promotion gate, and `v0.0.3-preview` are live. |
+| **M1 · Reproducible, sharded floor** | In progress | The supported suite runs on shards and merges into one receipt; every canonical test file runs once with its prerequisites named; the performance report is reproducible; and a documented runner class reaches the 10x test-phase factor. |
+| **M2 · Admission evidence** | Planned | Readiness is reported per capability, with evidence and a remedy attached. A single boolean is not enough. |
+| **M3 · Product hardening** | Planned | Backup and restore, provider coverage, portability, scale, and accessibility have tested failure paths. |
+| **M4 · Sustainable contribution** | In progress | A new contributor can go from clone to a merged test or docs change using only public instructions. |
+
+State is the floor's milestone focus, not a roll-up: a planned milestone can already have workstreams in progress.
 
 ## What works today
 
@@ -78,10 +80,10 @@ These are the gaps we know about. The list is not exhaustive, and a gap being li
 
 - **Incomplete provider setup UX.** The settings room supports a generic provider with a base URL, key, models, and optional limits, but there is no guided OAuth flow, no provider-specific presets, and no universal compatibility claim. Anthropic-native and Gemini-native APIs are not verified.
 - **No migration guarantee.** Database schemas and configuration can change between previews. Back up the key home and the database; do not treat either as durable.
-- **No complete fresh-clone test reproduction.** The prevention suite, benchmarks, and verification fixtures live in the testing repository. A fresh clone of the product repository does not reproduce the full inventory.
+- **No complete fresh-clone test reproduction.** The floor proves that a fresh clone can run its supported suite. The product tree still does not carry the prevention suite, benchmarks, or verification fixtures, so a product clone cannot reproduce the full inventory.
 - **Documentation and captures are in progress.** The current site uses real captures of the preview; recapture them when a surface changes materially.
 - **Accessibility and responsive behavior are tested in the cockpit's own suite, not certified.** The design targets 40px pointer targets, keyboard reachability, reduced motion, and enlarged text; the docs site is a separate static surface with its own checks.
-- **No backup/restore product flow.** The database-key tooling supports relocation and re-keying, but there is no one-command backup, restore, or disaster-recovery story.
+- **No backup/restore in this product snapshot.** The floor has shipped a verified database and key-home backup/restore flow; this tree does not carry it yet. The database-key tooling supports relocation and re-keying; do not treat either the database or key home as durable.
 - **No hard multi-user story.** Accounts and scoping exist; isolation between mutually distrusting users has not been audited.
 - **No automatic commits.** This is deliberate, not a missing feature. The model can read git state and produce diffs; committing remains a human action.
 
@@ -93,8 +95,8 @@ Themes, not commitments. No dates. An item may be dropped if the evidence does n
 2. **Onboarding without a manual.** A first-run path that gets a disposable project, a provider, and a first recorded run working without reading the source.
 3. **Packaging and verification.** A reproducible build, a checksummed source archive, and a release process that states exactly what was verified. Signing only after there is something worth signing.
 4. **Confinement beyond Linux.** Research portability for macOS and Windows, or state clearly that the product is Linux-only for the confinement path. Do not fake a sandbox.
-5. **Test reproducibility.** A documented, fresh-clone path to the full prevention suite and benchmarks, with the fixtures and corpus requirements stated up front.
-6. **Backup and recovery.** A supported way to back up the database and key home together, verify the backup, and restore it without guessing.
+5. **Test reproducibility.** The floor's tracker is the state of record: the supported suite and its pinned corpus manifest have a documented fresh-clone path, while the performance report, the `node:test` shard runner, and the 10x test-phase factor remain open.
+6. **Backup and recovery in the product.** Project the floor's shipped, verified database and key-home backup/restore flow into this tree; the floor's tracker owns its design and evidence.
 7. **Provider coverage.** Better discovery, clearer failure copy, and verified adapters where the protocol actually matches. No "supports everything" claim.
 8. **Scale and performance evidence.** Publish the method and the measured envelope for large repositories and concurrent runs, or state the limits honestly.
 9. **Documentation and design records.** Keep the captures current; keep the design and decision records linked to the product.

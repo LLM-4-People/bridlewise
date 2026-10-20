@@ -9,7 +9,7 @@ permalink: /evidence/
 
 A claim is a hypothesis until someone can rerun the check. This page lists the checks a visitor can perform without trusting the prose, the command that performs each one, and the part it still does not prove.
 
-All observations below are from the **2026-10-19** public snapshot. Counts and alert queues move; the commands do not.
+All observations below are from the **2026-10-19** public snapshot unless a row or section names a later floor observation. Counts and alert queues move; the commands do not.
 
 ## The evidence ladder
 
@@ -18,7 +18,7 @@ All observations below are from the **2026-10-19** public snapshot. Counts and a
 | The product gate is green | [CI workflow](https://github.com/LLM-4-People/bridlewise/actions/workflows/ci.yml) | Verified: latest run `success` |
 | The development floor gate is green | [Testing CI](https://github.com/LLM-4-People/bridlewise-testing/actions/workflows/ci.yml) | Verified: latest run `success` |
 | Product smoke tests pass | `npm run test:public` | Verified: 11/11 |
-| Development-floor smoke tests pass | `npm run test:public` in `bridlewise-testing` | Verified: 18/18 |
+| Development-floor smoke tests pass | `npm run test:public` in `bridlewise-testing` | Recorded green at the floor's 2026-10-20 tracker head; run the command for the current count |
 | Guardian checks pass | `make -C engine/guardian all test` | Verified: 40/40 in CI; 44/44 locally where the mount-namespace checks run |
 | CodeQL analysis runs | [CodeQL workflow](https://github.com/LLM-4-People/bridlewise/actions/workflows/codeql.yml) | Verified: latest run `success` |
 | CodeQL is clean | [Security tab](https://github.com/LLM-4-People/bridlewise/security) | **Not claimed**: 0 open security-query alerts; test-only and false positives are dismissed with reasons, and a dismissal is not a fix |
@@ -34,7 +34,7 @@ All observations below are from the **2026-10-19** public snapshot. Counts and a
 
 ## 1. The CI gate
 
-The product job is **Build and verify**; the development-floor job is **Typecheck, public tests, build**. Both repositories also run **Secret and privacy scan** as a separate workflow.
+The product job is **Build and verify**; the development-floor jobs are **Typecheck, public tests, build** and **Full suite shards**. Both repositories also run **Secret and privacy scan** as a separate workflow.
 
 ```bash
 gh run list \
@@ -72,13 +72,14 @@ Expected:
 Build and verify: success
 ```
 
-For the development floor, the expected job line is:
+For the development floor at its 2026-10-20 head, the expected job lines are:
 
 ```text
 Typecheck, public tests, build: success
+Full suite shards: success
 ```
 
-The product job runs typechecks, the public-snapshot secret scan, the public smoke suite, both builds, and the guardian build and tests. The testing job adds the tracked hooks, the larger typecheck surface, and the same build and guardian steps. Neither job runs the full corpus-backed suite.
+The product job runs typechecks, the public-snapshot secret scan, the public smoke suite, both builds, and the guardian build and tests. The testing repository adds the tracked hooks, the larger typecheck surface, the sharded supported suite, and the same build and guardian steps. Neither runs the full corpus-backed suite or the E2E suite.
 
 ## 2. The public smoke suites
 
@@ -110,15 +111,15 @@ chmod 600 engine/bridlewise.config.json
 npm run test:public
 ```
 
-Expected:
+Expected (the count follows the suite; the floor's tracker records the latest run):
 
 ```text
-ℹ tests 13
-ℹ pass 13
+ℹ tests <n>
+ℹ pass <n>
 ℹ fail 0
 ```
 
-The product suite verifies the launcher, the version output, the typed `harness` refusal, the `preflight` receipt (`harnessReady: false`), the secret scanner's pass and fail paths, the safety warning in the README, the shipped docs, and the community files. The testing suite adds engine smoke checks for canonical JSON and redaction.
+The product suite verifies the launcher, the version output, the typed `harness` refusal, the `preflight` receipt (`harnessReady: false`), the secret scanner's pass and fail paths, the safety warning in the README, the shipped docs, and the community files. The testing suite adds engine smoke checks for canonical JSON and redaction, plus checks on the floor's data and design pages and on the shard manifest and receipt contract.
 
 These are smoke tests. They do not exercise a live provider, a full run, the cockpit, or the large-repository path.
 

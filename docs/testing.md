@@ -15,7 +15,7 @@ permalink: /testing/
 | Layer | Repository | What it proves | Fresh-clone status |
 |---|---|---|---|
 | Public smoke tests | `bridlewise` | The shipped CLI launcher, the typed refusal surface, the preflight receipt, the secret scanner, the safety warning and docs | Green with `npm run test:public` |
-| Development floor | `bridlewise-testing` | Prevention guards, server/cockpit unit tests, engine domain tests, performance and E2E suites | CI runs typechecks and the public smoke suite; the full suite has prerequisites below |
+| Development floor | `bridlewise-testing` | Prevention guards, server/cockpit unit tests, engine domain tests, performance and E2E suites | CI runs typechecks, the public smoke suite, and the sharded supported suite; the corpus-backed engine and E2E suites have prerequisites below |
 
 The product repository intentionally carries no large test tree. Publishing a test inventory without its fixtures and frozen records would create a false impression of coverage. The development floor is published separately so the machinery can be inspected.
 
@@ -63,7 +63,7 @@ Requirements beyond the product:
 - The 4.1 GB external corpus at `engine/large-codebases` for the full engine suite.
 - `tests/performance/.report.json`, produced by `npm run perf:profile`, for the root performance-regression test.
 
-The corpus and the performance report are deliberately not published. A fresh clone therefore cannot run the full suites; the runners refuse with a named prerequisite instead of silently skipping.
+The raw corpus and the performance report are deliberately not published. The floor pins a public subset manifest: `npm run corpus:fetch` materialises only the files the corpus-backed tests read, and `npm run corpus:verify` judges the subset. The complete engine suite still needs the other host prerequisites above, and the performance gate needs a fresh profile.
 
 ## Commands
 
@@ -156,7 +156,7 @@ test("a blank query is refused, not broadened", () => {
 
 The product repository runs Node 24, two `npm ci` installs, both typechecks, the secret scan, the public smoke tests, the cockpit build, the engine bundle, and the guardian build/test on every push and pull request.
 
-The testing repository runs both typechecks, the secret scan, the public smoke suite, both builds, and the guardian build/test. It does not run the full prevention guards, the corpus-backed suite, or the E2E suite. Those remain documented manual or nightly work until the corpus can be published reproducibly.
+The testing repository runs both typechecks, the secret scan, the public smoke suite, both builds, the guardian build/test, and the supported suite through the shard gate. It does not run the corpus-backed engine suite or the E2E suite; both remain documented manual or nightly work with the prerequisites above.
 
 ## Flakiness
 

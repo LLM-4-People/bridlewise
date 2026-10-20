@@ -61,7 +61,7 @@ The product repository runs one build gate and several security gates:
 | [Docs links](https://github.com/LLM-4-People/bridlewise/actions/workflows/docs-links.yml) | **Relative Markdown links** | Push, pull request, manual |
 | [Docs site](https://github.com/LLM-4-People/bridlewise/actions/workflows/pages.yml) | **Build Jekyll site**, **Deploy to GitHub Pages** | Push to `main`, manual |
 
-The testing floor has its own gate, with the job name **Typecheck, public tests, build**, plus the same **Secret and privacy scan**. Its CI also builds and tests the guardian.
+The testing floor has its own gate, with the jobs **Typecheck, public tests, build** and **Full suite shards**, plus the same **Secret and privacy scan**. Its CI also builds and tests the guardian.
 
 A green run means the steps in that workflow exited zero. It does not mean the workflow covered the failure you care about. Read the steps, not just the badge.
 
@@ -137,7 +137,7 @@ The repository is a record of what the project did, not a certificate of what it
 - no OS-signed installer; `v0.0.2-preview` adds GitHub build-provenance attestations and SPDX SBOMs, which are not a substitute for an independent audit;
 - no required human review on `main`;
 - no hosted demo or hosted execution;
-- no published 4.1 GB test corpus, so the full suite is not reproducible from a fresh clone;
+- no published 4.1 GB test corpus, so the full corpus-backed suite is not reproducible from a fresh clone;
 - open code-scanning and dependency alerts that are not all triaged;
 - Linux-only Landlock confinement, with no equivalent on macOS or Windows;
 - provider coverage limited to OpenAI-style protocols, with native Anthropic and Gemini adapters unverified;
