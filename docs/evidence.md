@@ -18,7 +18,7 @@ All observations below are from the **2026-10-19** public snapshot. Counts and a
 | The product gate is green | [CI workflow](https://github.com/LLM-4-People/bridlewise/actions/workflows/ci.yml) | Verified: latest run `success` |
 | The development floor gate is green | [Testing CI](https://github.com/LLM-4-People/bridlewise-testing/actions/workflows/ci.yml) | Verified: latest run `success` |
 | Product smoke tests pass | `npm run test:public` | Verified: 11/11 |
-| Development-floor smoke tests pass | `npm run test:public` in `bridlewise-testing` | Verified: 17/17 |
+| Development-floor smoke tests pass | `npm run test:public` in `bridlewise-testing` | Verified: 18/18 |
 | Guardian checks pass | `make -C engine/guardian all test` | Verified: 40/40 in CI; 44/44 locally where the mount-namespace checks run |
 | CodeQL analysis runs | [CodeQL workflow](https://github.com/LLM-4-People/bridlewise/actions/workflows/codeql.yml) | Verified: latest run `success` |
 | CodeQL is clean | [Security tab](https://github.com/LLM-4-People/bridlewise/security) | **Not claimed**: 0 open security-query alerts; test-only and false positives are dismissed with reasons, and a dismissal is not a fix |
