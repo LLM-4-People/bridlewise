@@ -30,3 +30,15 @@ jobs:
 
       - name: Check relative links
         run: node scripts/check-docs-links.mjs
+
+      # The shared records are PROJECTED from the development floor; a hand
+      # edit in this tree drifts silently. The floor is public, so the check
+      # reads it rather than trusting a copy.
+      - name: Check out the development floor
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: LLM-4-People/bridlewise-testing
+          path: .floor
+
+      - name: Check the shared records match the floor
+        run: node scripts/sync-docs.mjs --floor .floor --check
