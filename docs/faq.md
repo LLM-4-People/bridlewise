@@ -66,7 +66,7 @@ The product branch is computed from the development branch by the promotion tool
 
 Tools operate inside the selected project. File effects go through the transactional editor and are recorded; edits can be rolled back. `execute_command` runs with the project as its confinement root on Linux. Deleting a project from the harness removes it from the harness database only — it does not delete files from disk.
 
-Committing is a human action. `git_commit` is exposed but returns a governance blocker; the other git tools are read-only. That is deliberate: an agent that can rewrite history is a different risk class.
+From chat, committing is a human action: the chat tool surface exposes `git_commit`, but it returns a governance blocker, and the other chat git tools are read-only. The engine runtime's own git tools are a separate surface and can commit. That is deliberate: an agent that can rewrite history is a different risk class.
 
 That does not make the preview safe. A shell command can still do damage inside the project, the editor can overwrite content, and there is no data-loss guarantee. Use a disposable copy, keep a clean git state, and do not rely on undo as a backup.
 
