@@ -103,7 +103,7 @@ This is an architectural preference with a cost: the projection layer is complex
 
 Intelligence is served from `engine/src/intelligence/` through `server/intelligence/`. Tree-sitter parses source; the engine builds repository maps, symbol indexes, dependency graphs (including cycles), data-flow views, reuse candidates, and AST-accurate slices. The model asks for a symbol or a dependency edge instead of receiving a grep dump.
 
-The editor is one unified `edit` tool. It supports replace, insert, delete, and create through an exact old-string/new-string match, plans and validates the change, and can roll back. The cockpit renders the resulting diff as an effect beat. There is no autonomous commit: `git_commit` is exposed but returns a governance blocker.
+The editor is one unified `edit` tool. It supports replace, insert, delete, and create through an exact old-string/new-string match, plans and validates the change, and can roll back. The cockpit renders the resulting diff as an effect beat. There is no autonomous commit from chat: the chat tool surface exposes `git_commit`, but it returns a governance blocker. The engine runtime's own git tools (`engine/src/runtime/git-tools.ts`) are a separate surface and can commit.
 
 ## Confinement
 

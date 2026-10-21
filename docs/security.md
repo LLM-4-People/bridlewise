@@ -57,7 +57,7 @@ This page describes the intended boundary and its limits. It is not a security g
 | Landlock | Project-scoped confinement for spawned shell commands and stdio MCP servers on Linux. The CLI itself is not re-exec'd. Fails closed with a typed error when a confined spawn is requested and unavailable. | `engine/guardian/`, `server/safety/landlock-runner.ts`, `engine/src/filesystem/self-protection/` |
 | Artifact isolation | Model-generated HTML renders in a sandboxed iframe without same-origin access. | `src/cockpit/render/ArtifactFrame.svelte` |
 | Append-only recording | The timeline rejects mutation at the application layer and chains each record locally. | `engine/src/timeline/` |
-| Explicit commits | `git_commit` is exposed as a governance blocker; the model does not auto-commit. | `server/tools/` |
+| Explicit commits | From a chat tool call, `git_commit` returns a typed governance blocker (`governance_required`); the model does not commit from chat. The engine runtime's own git tools (`engine/src/runtime/git-tools.ts`) are a separate surface and can commit. | `server/tools/` |
 
 These are implemented controls, not independently verified assurances. A control can have a bug. The pre-admission state means the governance evidence is still being assembled.
 

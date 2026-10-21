@@ -87,7 +87,7 @@ The cockpit renders that sequence as a causal stream. The [interactive run](http
 |---|---|
 | **The run as the unit** | A run executes exactly once, owns its stream, and can be reopened without starting a second execution. The stream is the product; chat is one view of it. |
 | **A causal record** | Turns, tool calls, file effects, check deltas, and findings share one ordered timeline. Each beat says what caused it and what it changed. |
-| **A governed tool surface** | One registry, one executor, typed blockers. An unconfigured adapter refuses by name. `git_commit` is deliberately blocked; the model does not auto-commit. |
+| **A governed tool surface** | One registry, one executor, typed blockers. An unconfigured adapter refuses by name. From a chat tool call, `git_commit` returns a typed governance blocker (`governance_required`): the model does not commit from chat, and the commit stays yours. |
 | **Gates before and during dispatch** | Ghost-tool and schema checks run before a call; bias, deviation, bandaid, workaround, and step-skip detectors watch a turn as it streams. |
 | **Code intelligence** | Repository maps, symbol search, dependency graphs (including cycles), data flow, reuse discovery, and AST-accurate slices — backed by tree-sitter. |
 | **A transactional editor** | One `edit` tool plans, applies, and validates exact replacements, with rollback and a reviewable diff. |
