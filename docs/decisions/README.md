@@ -7,10 +7,6 @@ permalink: /decisions/
 
 # Decisions
 
-> [!NOTE]
-> These records are historical. Some name the private development branches `testing` and `master`, or files that are not part of the public snapshots. Links to the private process guides point to the public [contributor guide](https://github.com/LLM-4-People/bridlewise/blob/main/CONTRIBUTING.md). They are published as the decision record, not as a description of the public release topology.
-
-
 The ONE home of every user rule and every decision in force: one file per
 decision, found by name and cited by id, never only in a scratch plan. Other
 documents link a decision by its id instead of restating it.
@@ -99,7 +95,7 @@ check` reports it stale): change a decision's file, never its row.
 | [REQUIRES](REQUIRES-a-gate-runs-after-what-it-judges.md) | A gate runs after the steps that produce what it judges | coordinator | done |
 | [UD-AUDIT-NO-FORGIVENESS](UD-AUDIT-NO-FORGIVENESS-no-rerun-forgiveness-no-ambient-allowance.md) | No rerun forgiveness, no ambient-load allowance | user | partial (AMBIENT-ALLOWANCE-REMOVE) |
 | [UD-CORE-NO-BYPASS](UD-CORE-NO-BYPASS-a-module-cannot-bypass-core.md) | A module cannot bypass core | user | pending (CORE-NO-BYPASS) |
-| [UD-LOG-NEVER-DISABLED](UD-LOG-NEVER-DISABLED-warn-and-error-always-reported.md) | Logging is never disabled | user | pending (LOG-NEVER-DISABLED) |
+| [UD-LOG-NEVER-DISABLED](UD-LOG-NEVER-DISABLED-warn-and-error-always-reported.md) | Logging is never disabled | user | done |
 | [UR-24-BUDGETS](UR-24-BUDGETS-a-budget-breach-joins-the-one-judgement.md) | A budget breach joins the one judgement | coordinator | partial (AMBIENT-ALLOWANCE-REMOVE) |
 
 ## Earlier engine decisions (coordinator)

@@ -8,6 +8,7 @@ implementation: partial
 route: A5-CANDIDATE-RETIRE
 acted_in: [engine/src/workflow/workspace-manager.ts, engine/src/workflow/workspace-cli.ts, engine/src/workflow/workspace-registry.ts, engine/src/workflow/checkout-setup.ts, engine/bridlewise.config.json, package.json]
 ---
+
 # Isolation tooling: one workspace tool
 
 The existing `harness workspace` (with a root npm alias) is fixed and
@@ -20,7 +21,7 @@ the Codex evidence directory is kept. Until A5 lands, writers qualify in a
 candidate checkout (`engine/scripts/tooling/candidate-checkout.ts`).
 
 Carried out by A5 (2026-09-30): the flow is
-[WORKFLOW.md, Isolated workspaces](https://github.com/LLM-4-People/bridlewise/blob/main/CONTRIBUTING.md);
+[MERGE-GUIDE.md §1b](https://github.com/LLM-4-People/bridlewise-testing/blob/main/docs/process/MERGE-GUIDE.md#1b-feature--testing-the-workspace-merge--refusals-and-the-land);
 the dirty tree was adopted by the step-6 commit, so the checkpoint is deleted.
 Open: the candidate checkout's retirement once the first workspace lands
 (A5-CANDIDATE-RETIRE, for the coordinator).

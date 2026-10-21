@@ -475,7 +475,7 @@ undifferentiated `shared/`, and this is how you stop paying it.**
 - **Outline.** 367 files, both sides, zero cross-layer runtime cycles, 39.9k stars, active.
 - **VS Code.** A 115-entry `base/common` at enormous scale — with the discipline of §2.6.
 - **Backstage mandates barrels, in a written ADR.**
-  [ADR004: Module Export Structure](https://github.com/backstage/backstage/blob/main/docs/architecture-decisions/adr004-module-export-structure.md):
+  [ADR004: Module Export Structure](https://github.com/backstage/backstage/blob/master/docs/architecture-decisions/adr004-module-export-structure.md):
   "We will make each exported symbol traceable through index files all the way down to the root of
   the package … Each index file will only re-export from its own immediate directory children."
   Their problem was the *opposite* of the folklore — unpredictable ad-hoc re-exports. Note this is

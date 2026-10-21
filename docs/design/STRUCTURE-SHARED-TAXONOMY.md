@@ -751,7 +751,7 @@ Measured: barrels exist in 4 subtrees and are bypassed on 42 of 59 edges. Adding
 to `src/shared/` today would produce a 42nd door, not consolidate 41.
 
 **7.5 There is an existing, blocked, and stale migration plan, and it must not be forked.**
-`integration/docs/architecture/physical-migration-plan.md` (1,295 lines, status
+`integration/the private migration record` (1,295 lines, status
 `non-authoritative-plan/pending-independent-re-review`) and
 `physical-migration-map.md` (130 lines, `planned-open-blocking`) already define a target layout:
 `src/kernel/{architecture,config,errors,integrity,policy,requirements}/`,
@@ -801,7 +801,7 @@ existing ones is the two-paths defect in the artifacts that describe the fix.**
 
 **What I read in full or in substantial part:** `TIER1-AGENT-CONTRACT.md`;
 `integration/src/architecture-manifest.ts` (types, `moduleContract`, `LAYERS`, sample entries);
-`docs/architecture/physical-migration-plan.md` (opening ~7 kB) and `physical-migration-map.md`
+`the private migration record` (opening ~7 kB) and `physical-migration-map.md`
 (all 130 lines); `web/tests/prevention/error-message-projection-owner.test.ts`;
 `web/tests/prevention/no-unused-exports-index.test.ts` (header);
 `integration/src/quality/checks/barrel-detection.ts`;

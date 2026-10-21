@@ -7,6 +7,7 @@ status: in-force
 implementation: done
 acted_in: [engine/src/process/instrument-lock.ts, engine/src/filesystem/file-lock.ts, engine/src/workflow/slot-cli.ts, engine/scripts/tooling/test-run-lock.ts, tests/setup/concurrency-lock.ts, engine/src/kernel/config-contracts.ts]
 ---
+
 # The host has one instrument lock
 
 The coordinator's HEAVY-SLOT decision (PLAN.md, 2026-10-04; superseding the
@@ -45,6 +46,16 @@ nothing about either tree).
   source patterns over named files (engine/test/prevention/test-run-lock.test.ts),
   not a search for every spawn of a runner (L-3, owned by the TASKS row
   LOCK-DOOR-CENSUS).
+  **Amendment (round 4):** the claim above is the VITEST DOOR's, and the door
+  does not run for `vitest list`. Measured: `vitest list --filesOnly --json`
+  never invokes the global setup, so the listing process takes no lock. A raw
+  listing is therefore exempt in fact, whatever this bullet says, and this
+  amendment does not pretend otherwise: the shard path now uses `list` in
+  `scripts/test-shard-manifest.mjs`, which records a content fingerprint of the
+  working tree before and after the listing; `verify` recomputes it and
+  refuses a raw array or a listing from another tree. The listing STILL takes
+  no instrument lock — that is a stated gap, not a silent one — but it is bound
+  to one tree state, which is what a population claim needs.
 - **A second heavy run WAITS**, saying who holds the lock. The wait is
   asynchronous and honours SIGTERM, SIGINT and SIGHUP: a signal ends it with a
   typed exit (128 + the signal's number), and nothing is taken.

@@ -6,6 +6,7 @@ group: user-rules
 status: in-force
 implementation: standing
 ---
+
 # The continuation mandate: never stop
 
 "You are prohibited from ever stopping — loop forever" (user, 2026-10-04).
@@ -14,7 +15,7 @@ checkpoint is never treated as completion. The loop ends only when the user
 says stop.
 
 This file is the canonical home of the standing directive the workflow already
-carries: [WORKFLOW.md, "The loop never stops (the user's standing directive, on record)"](https://github.com/LLM-4-People/bridlewise/blob/main/CONTRIBUTING.md) owns
+carries: [WORKFLOW.md, "The loop"](https://github.com/LLM-4-People/bridlewise-testing/blob/main/docs/process/WORKFLOW.md#the-loop) owns
 the round cadence, and the cutover block's standing rule cites this id
 instead of restating it. The mandate hands off, never bypasses: a step
 dispatches only after its verification
