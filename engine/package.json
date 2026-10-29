@@ -23,7 +23,7 @@
   "dependencies": {
     "@babel/parser": "^8.0.4",
     "tree-sitter-wasms": "0.1.13",
-    "undici": "8.11.2",
+    "undici": "8.12.2",
     "web-tree-sitter": "0.22.6",
     "zod": "^4.4.3"
   },
